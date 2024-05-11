@@ -1,0 +1,74 @@
+// parte de usuarios e roles
+
+Table roles {
+  id integer [primary key]
+  name string
+}
+
+Table internal_users {
+  id integer [primary key]
+  cpf integer
+  password_hash string
+  email string
+  phone string
+  role_id integer
+
+  created_at timestamp
+}
+Ref: internal_users.role_id > roles.id
+
+Table external_user {
+  id integer [primary key]
+  cpf integer
+  password_hash string
+  email string
+  phone string
+  birth_date Date
+
+  created_at timestamp
+}
+
+// parte de voluntarios
+Table volunteer_kind {
+    id integer [primary key]
+    name string
+    description string
+}
+
+Table volunteer {
+    id integer [primary key]
+    name string
+    description string
+    volunteer_kind_id integer
+    user_id integer
+}
+
+Ref: volunteer.user_id > external_user.id
+Ref: volunteer.volunteer_kind_id > volunteer_kind.id
+
+Table help_kind {
+    id integer [primary key]
+    name string
+    description string
+
+    volunteer_kind_id integer [null]
+}
+
+Ref: help_kind.volunteer_kind_id > volunteer_kind.id
+
+Table help_ticket {
+    id integer [primary key]
+    name string
+    description string
+    need_degree integer
+
+    help_kind_id integer
+
+    external_id integer
+    volunteer_id integer [null]
+}
+
+Ref: help_ticket.help_kind_id > help_kind.id
+Ref: external_user.id < help_ticket.external_id
+Ref: volunteer.id < help_ticket.volunteer_id
+
