@@ -10,24 +10,6 @@ app.config["SECRET_KEY"] = secrets.token_hex(32)
 app.app_context().push()
 db = SQLAlchemy(app)
 
-class Volunteer(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(255), nullable=False)
-    email = db.Column(db.String(255), nullable=False)
-    phone = db.Column(db.String(11), nullable=False)
-    cpf = db.Column(db.String(11), nullable=False)
-    birth_date = db.Column(db.Date, nullable=False)
-    volunteer_kind = db.Column("volunteer_kind_id", db.Integer, nullable=False)
-
-    def __init__(self, name, city, email, phone, cpf, birth_date, volunteer_kind):
-        self.name = name
-        self.city = city
-        self.email = email
-        self.phone = phone
-        self.cpf = cpf
-        self.birth_date = birth_date
-        self.volunteer_kind = volunteer_kind
-
 # show tables from database
 # result = db.session.execute(text("SHOW TABLES;"))
 # for row in result:
