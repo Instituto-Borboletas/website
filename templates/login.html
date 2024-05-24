@@ -5,13 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bem-Vindo ao Instituto Borboleta</title>
     <link rel="stylesheet" type="text/css" href="/public/login.css">
+    <link rel="stylesheet" type="text/css" href="/public/main.css">
 </head>
 <body>
-    <h1>Bem-Vindo ao Instituto Borboleta!!</h1>
+    <h1 class="helper">Bem-Vindo ao Instituto Borboleta!!</h1>
     <p class="small-text"><a href="#">Clique aqui para saber mais sobre nós!!</a></p>
     <img src="/public/usuario.png" alt="Foto de Perfil" class="profile-pic">
     <div class="login-form">
-        <form action="nada ainda" method="POST">
+        <form action="/login" method="POST">
             <label for="username" class="login-label">Nome de Cadastro:</label><br>
             <input type="text" id="username" name="username" class="login-input" required><br>
             <label for="password" class="login-label">Senha:</label><br>
