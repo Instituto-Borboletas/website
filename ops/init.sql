@@ -2,44 +2,55 @@ CREATE DATABASE IF NOT EXISTS borboletas;
 
 USE borboletas;
 
- -- ser voluntario init
-CREATE TABLE IF NOT EXISTS volunteer_kind (
-    id SERIAL PRIMARY KEY,
-    name VARCHAR(255) NOT NULL,
-    description TEXT
+-- usuarios + roles
+CREATE TABLE IF NOT EXISTS users (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    email VARCHAR(255) NOT NULL,
+    password_hash VARCHAR(255) NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS volunteer (
-    id SERIAL PRIMARY KEY,
+CREATE TABLE IF NOT EXISTS internal_users (
+    user_id INT PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
-    email VARCHAR(255) NOT NULL,
-    phone VARCHAR(11) NOT NULL,
-    cpf VARCHAR(11) NOT NULL,
+    FOREIGN KEY (user_id) REFERENCES users(id)
+);
+
+CREATE TABLE IF NOT EXISTS external_users (
+    user_id INT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+
+    FOREIGN KEY (user_id) REFERENCES users(id)
+);
+
+CREATE TABLE IF NOT EXISTS external_users_extra_data (
+    user_id INT PRIMARY KEY,
+    cpf CHAR(11) NOT NULL,
+    email VARCHAR(255) NULL,
+    phone CHAR(11) NULL,
     birth_date DATE NOT NULL,
-    volunteer_kind_id INTEGER NOT NULL,
+    address VARCHAR(255) NOT NULL,
 
-    FOREIGN KEY (volunteer_kind_id) REFERENCES volunteer_kind(id)
-);
--- ser voluntario end
+    -- validar dados necessarios para o formulario de medida protetiva
 
--- parte usuario init
-CREATE TABLE IF NOT EXISTS people (
-    id SERIAL PRIMARY KEY,
-    cpf VARCHAR(11) NOT NULL,
-    password_hash VARCHAR(255) NOT NULL,
+    FOREIGN KEY (user_id) REFERENCES external_users(user_id)
 );
 
-CREATE TABLE IF NOT EXISTS internal (
-    id SERIAL PRIMARY KEY,
-    email VARCHAR(255) NOT NULL,
-
-    FOREIGN KEY (id) REFERENCES people(id)
+CREATE TABLE IF NOT EXISTS roles (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS external (
-    id SERIAL PRIMARY KEY,
-    phone CHAR(11) NOT NULL,
-
-    FOREIGN KEY (id) REFERENCES people(id)
+CREATE TABLE IF NOT EXISTS roles_to_users (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    role_id INT NOT NULL,
+    FOREIGN KEY (user_id) REFERENCES users(id),
+    FOREIGN KEY (role_id) REFERENCES roles(id)
 );
--- parte usuario end
+-- usuarios + roles end
+
+-- voluntario
+-- voluntario end
+
+-- help
+-- help end
