@@ -1,0 +1,28 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #f8f9fa;
+}
+
+.container {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+}
+
+.content {
+    text-align: center;
+}
+
+.content img {
+    width: 150px; /* Reduzindo o tamanho das imagens */
+    height: auto;
+    margin-bottom: 20px; /* Espaçamento entre a imagem e o texto */
+    display: block; /* Para garantir que a margem automática funcione */
+    margin: auto; /* Centralizar horizontalmente */
+}
