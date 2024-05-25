@@ -14,3 +14,4 @@ services:
       MYSQL_DATABASE: borboletas
       MYSQL_USER: server
       MYSQL_PASSWORD: senhaserver
+      MYSQL_ROOT_HOST: '%'
