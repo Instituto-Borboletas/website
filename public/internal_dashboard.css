@@ -1,0 +1,87 @@
+body {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+}
+
+header {
+    background-color: var(--primary-color);
+    color: white;
+    padding: .8rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+header nav {
+    display: flex;
+    justify-content: center;
+}
+
+header nav ul {
+    list-style: none;
+}
+header nav ul li a {
+    text-decoration: underline;
+}
+
+header .title {
+    font-size: .9rem;
+    font-weight: bold;
+}
+
+header .title .user {
+    text-transform: uppercase;
+}
+
+header .logout a {
+    text-align: right;
+    color: white;
+    font-weight: bold;
+    text-decoration: none;
+    padding: .5rem;
+    border-radius: 5px;
+    background-color: var(--danger-color);
+}
+
+main {
+    flex: 1;
+    display: flex;
+}
+
+main aside {
+    background-color: var(--background-color);
+    color: white;
+    padding: 1rem;
+    width: 20%;
+    max-width: 200px;
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    border-right: 1px solid var(--darkier-background-color);
+}
+
+main aside ul {
+    list-style: none;
+}
+
+main aside ul li {
+    margin: .5rem 0;
+}
+
+main aside ul li a {
+    text-decoration: none;
+    color: black;
+    font-weight: bold;
+    padding: .5rem;
+    border-radius: 5px;
+    display: block;
+    background-color: var(--darkier-background-color);
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+main .content {
+    flex: 1;
+    padding: 1rem;
+}

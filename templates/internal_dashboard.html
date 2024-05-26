@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Acesso interno</title>
+        <link rel="stylesheet" type="text/css" href="/public/internal_dashboard.css">
+        <link rel="stylesheet" type="text/css" href="/public/main.css">
+    </head>
+    <body>
+        <!-- Handle messages with a modal -->
+        <!-- {%- for category, message in get_flashed_messages(with_categories = true) %} -->
+        <!--     <div class = "alert alert-danger"> -->
+        <!--         {{ message }} -->
+        <!--     </div> -->
+        <!-- {%- endfor %} -->
+
+
+        <header>
+            <div class="title">
+                <h2>Instituto Borboletas</h2>
+                <h3 class="user">{{ data.user.name }}<h3>
+            </div>
+
+            <nav>
+                <ul>
+                    <li><a>Acessar pagina principal</a></li>
+                </ul>
+            </nav>
+
+            <div class="logout">
+                <a href="/usuarios/interno/logout">Sair</a>
+            </div>
+        </header>
+
+        <main>
+            <aside>
+                <ul>
+                    <li><a>Ajudas</a></li>
+                    <li><a>Doacoes</a></li>
+                    <li><a>Voluntarios</a></li>
+                </ul>
+            </aside>
+
+            <div class="content">
+                <h1>Dashboard</h1>
+                <p>Seja bem-vindo ao seu dashboard interno!</p>
+            </div>
+        </main>
+    </body>
+</html>

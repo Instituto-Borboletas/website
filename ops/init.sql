@@ -55,7 +55,7 @@ CREATE TABLE IF NOT EXISTS external_users_extra_data (
 CREATE TABLE IF NOT EXISTS sessions (
     id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT NOT NULL,
-    expiries_at TIMESTAMP NOT NULL,
+    expires_at TIMESTAMP NOT NULL DEFAULT (CURRENT_TIMESTAMP + INTERVAL 12 HOUR),
     token VARCHAR(255) NOT NULL,
 
     INDEX session_token_index (token)
