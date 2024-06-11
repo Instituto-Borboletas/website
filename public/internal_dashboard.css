@@ -18,10 +18,8 @@ header nav {
     justify-content: center;
 }
 
-header nav ul {
-    list-style: none;
-}
-header nav ul li a {
+header nav a {
+    color: white;
     text-decoration: underline;
 }
 
@@ -81,7 +79,15 @@ main aside ul li a {
     text-overflow: ellipsis;
 }
 
+main aside ul li a.active {
+    background-color: #AAA;
+}
+
 main .content {
     flex: 1;
     padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
 }

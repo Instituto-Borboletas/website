@@ -34,6 +34,16 @@ class InternalUser(db.Model):
             'updated_at': self.updated_at,
         }
 
+    @property
+    def serialize_html(self):
+        return {
+            'id': self.id,
+            'name': self.name,
+            'email': self.email,
+            'created_at': self.created_at.strftime('%d/%m/%Y %H:%M:%S'),
+        }
+
+
 class ExternalUser(db.Model):
     __tablename__ = 'external_users'
 

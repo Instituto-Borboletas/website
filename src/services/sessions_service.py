@@ -11,6 +11,11 @@ class SessionsService:
 
         return new_session
 
+    @staticmethod
+    def delete_session(token):
+        session = Sessions.query.filter_by(token=token).first()
+        db.session.delete(session)
+        db.session.commit()
 
     @staticmethod
     def find_session(token):

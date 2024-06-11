@@ -32,6 +32,19 @@ class InternalUserService:
         return session, user
 
     @staticmethod
+    def logout(token):
+        SessionsService.delete_session(token)
+
+    @staticmethod
+    def list_users(token):
+        session = SessionsService.find_session(token)
+        if session is None:
+            return None
+
+        users = InternalUser.query.all()
+        return [user.serialize_html for user in users]
+
+    @staticmethod
     def get_dashboard_data(token):
         session = SessionsService.find_session(token)
         if session is None:

@@ -1,0 +1,26 @@
+<h2>Usuarios internos</h2>
+
+{% if data %}
+    <table>
+        <thead>
+            <tr>
+                <th>Nome</th>
+                <th>Email</th>
+                <th>Data de criacao</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for user in data %}
+            <tr id="{{user.email}}">
+                <td>{{ user.name }}</td>
+                <td>{{ user.email }}</td>
+                <td>{{ user.created_at }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% else %}
+    <p>
+        Nenhum usuario interno encontrado.
+    </p>
+{% endif %}

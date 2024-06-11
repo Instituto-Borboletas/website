@@ -44,6 +44,25 @@ def internal_login():
 
     return render_template('internal_login.html')
 
+@users_bp.route('/usuarios/interno/logout', methods=['GET'])
+def internal_logout():
+    token = request.cookies.get('token')
+
+    if token is not None:
+        InternalUserService.logout(token)
+
+    response = make_response(redirect(url_for('users_bp.internal_login')))
+
+    response.set_cookie(
+        'token',
+        '',
+        httponly=True,
+        samesite='Strict',
+        max_age=0
+    )
+
+    return response
+
 @users_bp.route('/interno', methods=['GET'])
 def internal_dashboard():
     token = request.cookies.get('token')
@@ -57,6 +76,19 @@ def internal_dashboard():
         return redirect(url_for('users_bp.internal_login'))
 
     return render_template('internal_dashboard.html', data=data)
+
+@users_bp.route('/interno/internos', methods=['GET'])
+def internal_users_crud():
+    token = request.cookies.get('token')
+
+    if token is None:
+        return redirect(url_for('users_bp.internal_login'))
+
+    data = InternalUserService.list_users(token)
+    if data is None:
+        data = []
+
+    return render_template('list_internal_users.html', data=data)
 
 @users_bp.route('/users/<int:user_id>', methods=['PUT'])
 def update_user(user_id):
