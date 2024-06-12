@@ -5,6 +5,8 @@ users_bp = Blueprint('users_bp', __name__)
 
 @users_bp.route('/users/internal', methods=['POST'])
 def create_user():
+    # TODO: add session check
+    # TODO: handle exceptions and render error messages
     request_json = request.get_json()
     name = request_json.get('name')
     email = request_json.get('email')
