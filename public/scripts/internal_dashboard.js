@@ -5,6 +5,7 @@ const PAGES = {
     'external_users': renderExternalUsers,
     'internal_users': renderInternalUsers
 }
+let selectedPage = null;
 
 /**
     * @params {HtmlElement} element
@@ -111,9 +112,13 @@ function init(contentElement) {
     for (const [page, renderFunction] of Object.entries(PAGES)) {
         const element = document.getElementById(page)
         element.addEventListener('click', function clickHandler() {
+            if (selectedPage === page) {
+                return
+            }
+            selectedPage = page
+
             renderLoading(contentElement)
             renderFunction(contentElement)
-
 
             const { parentElement } = element.parentElement
             const activeElement = parentElement.querySelector('.active')

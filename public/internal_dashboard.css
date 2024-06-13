@@ -77,6 +77,7 @@ main aside ul li a {
     background-color: var(--darkier-background-color);
     overflow: hidden;
     text-overflow: ellipsis;
+    cursor: pointer;
 }
 
 main aside ul li a.active {
