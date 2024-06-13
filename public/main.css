@@ -16,8 +16,25 @@
 
 * {
     font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
 
 body {
     background-color: var(--background-color);
+}
+
+.helper-text {
+    max-width: 300px;
+    font-size: 1rem;
+    color: var(--info-color);
+    text-decoration: none;
+    padding: 1rem;
+}
+
+.helper-text a {
+    color: var(--info-color);
+    text-decoration: underline;
+    cursor: pointer;
 }
