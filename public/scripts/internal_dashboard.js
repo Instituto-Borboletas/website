@@ -40,6 +40,9 @@ async function renderInternalUsers(element) {
         const closeButton = document.getElementsByClassName("close")[0];
         const button = document.getElementById("create_user");
         const userForm = document.getElementById("user_form");
+        const emailInput = userForm.email;
+        const submitButton = document.getElementById("submit_button")
+        const messageWrapper = document.getElementById("message_wrapper");
 
         closeButton.addEventListener("click", function closeButtonClickHandler() {
             modal.style.display = "none";
@@ -53,6 +56,13 @@ async function renderInternalUsers(element) {
                     window.removeEventListener("keydown", escKeyHandlerOnModal);
                 }
             })
+        })
+
+        emailInput.addEventListener("input", function emailInputHandler() {
+            if (submitButton.disabled) {
+                submitButton.disabled = false
+                messageWrapper.innerText = ''
+            }
         })
 
         userForm.addEventListener("submit", async function submitHandler(event) {
@@ -76,11 +86,16 @@ async function renderInternalUsers(element) {
                     modal.style.display = "none";
                     renderInternalUsers(element)
                 } else {
-                    throw new Error(response)
+                    const responseJson = await response.json()
+                    throw new Error(responseJson.message)
                 }
             } catch (err) {
-                console.error(err)
-                alert('Erro ao criar usuário, tente novamente mais tarde.')
+                if (err instanceof Error) {
+                    messageWrapper.innerText = err.message
+                    submitButton.disabled = true
+                } else {
+                    alert('Erro ao criar usuário, tente novamente mais tarde.')
+                }
             }
         })
     } catch (error) {

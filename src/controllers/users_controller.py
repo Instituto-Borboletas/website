@@ -5,16 +5,26 @@ users_bp = Blueprint('users_bp', __name__)
 
 @users_bp.route('/users/internal', methods=['POST'])
 def create_user():
-    # TODO: add session check
-    # TODO: handle exceptions and render error messages
+    token = request.cookies.get('token')
+    if token is None:
+        return redirect(url_for('users_bp.internal_login'))
+
     request_json = request.get_json()
     name = request_json.get('name')
     email = request_json.get('email')
     password = request_json.get('password')
 
-    user = InternalUserService.create_user(name, email, password)
+    try:
+        user = InternalUserService.create_user(token, name, email, password)
+        return jsonify(user.serialize), 201
+    except Exception as e:
+        if str(e) == 'Invalid session':
+            return jsonify({'error': 'Invalid session'}), 401
 
-    return jsonify(user.serialize), 201
+        if str(e) == 'User already exists':
+            return jsonify({'message': 'Já existe um usuário com esse email'}), 409
+
+        return jsonify({'error': 'Internal server error'}), 500
 
 
 @users_bp.route('/usuarios/interno/login', methods=['POST', 'GET'])

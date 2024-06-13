@@ -111,7 +111,7 @@ label {
 input[type="text"],
 input[type="email"],
 input[type="password"],
-input[type="submit"] {
+form button {
     width: calc(100% - 22px);
     padding: 10px;
     border: 1px solid #ccc;
@@ -119,7 +119,7 @@ input[type="submit"] {
     box-sizing: border-box;
 }
 
-input[type="submit"] {
+form button {
     background-color: #0056b3;
     color: white;
     border: none;
@@ -127,6 +127,15 @@ input[type="submit"] {
     margin-top: 20px;
 }
 
-input[type="submit"]:hover {
+form button:hover {
     background-color: #004494;
+}
+
+form button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
+#message_wrapper {
+    color: var(--danger-color);
 }

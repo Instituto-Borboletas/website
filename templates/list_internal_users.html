@@ -1,5 +1,10 @@
+<div class="top-content">
+    <h2>Usuários internos</h2>
 
-<h2>Usuários internos</h2>
+    <button id="create_user" class="create-user-button">
+        Criar um usuário
+    </button>
+</div>
 
 {% if data %}
     <table>
@@ -27,11 +32,6 @@
 {% endif %}
 
 <footer>
-    <button id="create_user" class="create-user-button">
-        Criar um usuário
-    </button>
-
-
     <div id="user_modal" class="modal">
         <div class="modal-content">
             <form id="user_form" autocomplete="off">
@@ -47,32 +47,35 @@
                 <label for="password">Senha</label>
                 <input required type="password" id="password" name="password" value="" autocomplete="off"><br><br>
 
-                <input type="submit" value="Enviar">
+                <p id="message_wrapper"></p>
+
+                <button type="submit" id="submit_button">Enviar</button>
             </form>
         </div>
     </div>
 </footer>
 
 <style>
-footer {
+.top-content {
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin-top: 20px;
     width: 90%;
-    justify-content: end;
+    max-width: 950px;
 }
 
-footer .create-user-button {
+.top-content .create-user-button {
     border-radius: 5px;
     background-color: #4CAF50;
     border: none;
     color: white;
-    padding: 15px 32px;
+    padding: 10px 20px;
     text-align: center;
     text-decoration: none;
     display: inline-block;
-    font-size: 16px;
+    font-size: 14px;
+    font-weight: bold;
     margin: 4px 2px;
     cursor: pointer;
 }

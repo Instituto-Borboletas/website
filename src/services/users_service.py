@@ -11,12 +11,21 @@ def hash_password(password):
 
 class InternalUserService:
     @staticmethod
-    def create_user(name, email, password):
+    def create_user(current_user_token, name, email, password):
+        session = SessionsService.find_session(current_user_token)
+        if session is None:
+            raise Exception('Invalid session')
+
         password_hash = hash_password(password)
         new_user = InternalUser(name=name, email=email, password_hash=password_hash)
 
-        db.session.add(new_user)
-        db.session.commit()
+        try:
+            db.session.add(new_user)
+            db.session.commit()
+        except Exception as e:
+            if 'Duplicate entry' in str(e) and 'internal_users.users_email_index' in str(e):
+                raise Exception('User already exists')
+            raise e
 
         return new_user
 
