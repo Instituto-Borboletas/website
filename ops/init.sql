@@ -64,6 +64,25 @@ CREATE TABLE IF NOT EXISTS sessions (
 -- usuarios + session + roles end
 
 -- voluntario
+CREATE TABLE IF NOT EXISTS volunteers_kind (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL
+    description TEXT NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS volunteers (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    email VARCHAR(255) NULL,
+    phone CHAR(11) NOT NULL,
+    google_maps_link VARCHAR(255) NOT NULL,
+    -- address
+    kind_id INT NOT NULL,
+    created_by INT NOT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    FOREIGN KEY (kind_id) REFERENCES volunteers_kind(id)
+);
 -- voluntario end
 
 -- help
