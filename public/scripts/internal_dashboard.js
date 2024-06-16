@@ -1,10 +1,28 @@
-const PAGES = {
-    'helps': renderHelps,
-    'donations': renderDonations,
-    'volunteers': renderVolunteers,
-    'external_users': renderExternalUsers,
-    'internal_users': renderInternalUsers
+/**
+  * @param {HtmlElement} target
+*/
+function renderScript(target) {
+    const scripts = target.getElementsByTagName("script");
+    for (let script of scripts) {
+        const newScript = document.createElement("script");
+        if (script.src) {
+            newScript.src = script.src;
+        } else {
+            newScript.textContent = script.textContent;
+        }
+        document.body.appendChild(newScript);
+        script.remove(); // Remove the old script to clean up the DOM
+    }
 }
+
+const PAGES = {
+    'ajudas': renderHelps,
+    'doacoes': renderDonations,
+    'voluntarios': renderVolunteers,
+    'usuarios_externos': renderExternalUsers,
+    'usuarios_internos': renderInternalUsers
+}
+let selectedPage = null;
 
 /**
     * @params {HtmlElement} element
@@ -20,12 +38,21 @@ async function renderHelps() {
 }
 
 async function renderDonations() {
+
 }
 
-async function renderVolunteers() {
-}
-
-async function renderExternalUsers() {
+/**
+    * @params {HtmlElement} target
+*/
+async function renderVolunteers(target) {
+    try {
+        const volunteers = await fetch('/voluntarios').then(response => response.text())
+        target.innerHTML = volunteers
+        renderScript(target)
+    } catch (err) {
+        console.error(err)
+        element.innerHTML = 'Erro ao carregar os dados, tente novamente mais tarde.'
+    }
 }
 
 /**
@@ -33,7 +60,7 @@ async function renderExternalUsers() {
 */
 async function renderInternalUsers(element) {
     try {
-        const internalUsers = await fetch('/interno/internos').then(response => response.text())
+        const internalUsers = await fetch('/interno/usuarios/internos').then(response => response.text())
         element.innerHTML = internalUsers
 
         const modal = document.getElementById("user_modal");
@@ -104,6 +131,9 @@ async function renderInternalUsers(element) {
     }
 }
 
+async function renderExternalUsers() {
+}
+
 /**
     * @params {HtmlElement} element
 */
@@ -111,9 +141,16 @@ function init(contentElement) {
     for (const [page, renderFunction] of Object.entries(PAGES)) {
         const element = document.getElementById(page)
         element.addEventListener('click', function clickHandler() {
+            if (selectedPage === page) {
+                return
+            }
+            selectedPage = page
+            const url = new URL(window.location.href)
+            url.searchParams.set('menu', page)
+            window.history.pushState({}, '', url)
+
             renderLoading(contentElement)
             renderFunction(contentElement)
-
 
             const { parentElement } = element.parentElement
             const activeElement = parentElement.querySelector('.active')
@@ -124,6 +161,17 @@ function init(contentElement) {
             element.classList.add('active')
         })
     }
+
+    const params = new URLSearchParams(window.location.search)
+    const page = params.get('menu')
+    if (page && PAGES[page]) {
+        document.getElementById(page).click()
+    } else {
+        const url = new URL(window.location.href)
+        url.searchParams.delete('menu')
+        window.history.pushState({}, '', url)
+    }
+
 }
 
 init(document.getElementById('content'))

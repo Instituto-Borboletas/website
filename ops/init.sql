@@ -64,7 +64,52 @@ CREATE TABLE IF NOT EXISTS sessions (
 -- usuarios + session + roles end
 
 -- voluntario
+CREATE TABLE IF NOT EXISTS volunteers_kind (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    description TEXT NOT NULL,
+    enabled BOOLEAN NOT NULL DEFAULT TRUE,
+    created_by INT NOT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    FOREIGN KEY (created_by) REFERENCES internal_users(id)
+);
+
+CREATE TABLE IF NOT EXISTS volunteers (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    email VARCHAR(255) NULL,
+    phone CHAR(11) NOT NULL,
+    kind_id INT NOT NULL,
+    registered_by INT NOT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    FOREIGN KEY (kind_id) REFERENCES volunteers_kind(id),
+    FOREIGN KEY (registered_by) REFERENCES external_users(id)
+);
 -- voluntario end
 
 -- help
+CREATE TABLE IF NOT EXISTS helps_kind (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    description TEXT NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS helps (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    title VARCHAR(255) NOT NULL,
+    description TEXT NOT NULL,
+
+    help_kind_id INT NOT NULL,
+    requested_by INT NOT NULL,
+
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    FOREIGN KEY (help_kind_id) REFERENCES helps_kind(id),
+    FOREIGN KEY (requested_by) REFERENCES external_users(id)
+);
 -- help end
+
+-- donations
+-- donations end

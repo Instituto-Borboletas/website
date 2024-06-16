@@ -1,0 +1,251 @@
+<section id="volunteers-wrapper">
+    <header>
+        <h2>Voluntários</h2>
+    </header>
+
+    <div class="table-wrapper">
+    {% if volunteers %}
+        <table>
+            <thead>
+                <tr>
+                    <th>Nome</th>
+                    <th>Contato</th>
+                    <th>Registrado por</th>
+                    <th>Tipo</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for volunteer in volunteers %}
+                <tr id="{{volunteer.id}}">
+                    <td>{{ volunteer.name }}</td>
+                    <td>
+                        {{ volunteer.phone }}
+                        {% if volunteer.email%}
+                            <br>{{ volunteer.email }}
+                        {% endif %}
+                    </td>
+                    <td>
+                        {{ volunteer.registered_by.name }}<br>
+                        {{ volunteer.registered_by.email }}
+                    </td>
+                    <td>{{ volunteer.kind.name }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>
+            Nenhum voluntários registrado.
+        </p>
+    {% endif %}
+    </div>
+</section>
+
+<section id="volunteers-kind-wrapper">
+    <header>
+        <h2>Tipos de voluntários</h2>
+
+        <button id="create_volunteer_kind" class="create-button">
+            Criar tipo de voluntariado
+        </button>
+    </header>
+
+    {% if kinds %}
+        <table>
+            <thead>
+                <tr>
+                    <th>Nome</th>
+                    <th>Descrição</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for kind in kinds %}
+                <tr id="{{ kind.id }}">
+                    <td>{{ kind.name }}</td>
+                    <td>
+                        <div class="description-td">
+                            {{ kind.description }}
+                        </div>
+                    </td>
+                    <td onclick="detailKind" class="action-td">Detalhar</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>
+            Nenhum tipo de voluntariado registrado.
+        </p>
+    {% endif %}
+</section>
+
+<footer>
+    <div id="volunteers-kind-modal" class="modal">
+        <div class="modal-content">
+            <form id="new-kind-modal" autocomplete="off">
+                <span class="close">&times;</span>
+                <h2>Criar tipo de voluntariado</h2>
+
+                <label for="name">Nome</label>
+                <input required type="text" id="name" name="name" value="" autocomplete="off"><br>
+
+                <label for="email">Descrição</label>
+                <textarea required id="description" name="description" value="" autocomplete="off" resize="none"></textarea><br><br>
+
+                <button type="submit" id="submit_button">Enviar</button>
+            </form>
+        </div>
+    </div>
+</footer>
+
+<script type="text/javascript">
+/**
+   * @param {Event} event
+*/
+function detailKind(event) {
+    console.log(event)
+}
+
+const kindForm = document.getElementById('new-kind-modal');
+const modal = document.getElementById('volunteers-kind-modal');
+const closeButton = document.getElementsByClassName('close')[0];
+const createVolunteerKind = document.getElementById('create_volunteer_kind');
+
+createVolunteerKind.onclick = function() {
+    modal.style.display = 'block';
+}
+
+window.onclick = function(event) {
+    if (event.target === modal) {
+        modal.style.display = 'none';
+    }
+}
+
+closeButton.onclick = function() {
+    modal.style.display = 'none';
+}
+
+window.addEventListener("keydown", function escKeyHandlerOnModal(event) {
+    if (event.key === "Escape") {
+        modal.style.display = "none";
+        window.removeEventListener("keydown", escKeyHandlerOnModal);
+    }
+})
+
+kindForm.onsubmit = async function handleKindFormSubmit(event) {
+    event.preventDefault();
+
+    const name = document.getElementById('name').value;
+    const description = document.getElementById('description').value;
+    const submitButton = document.getElementById('submit_button');
+    submitButton.disabled = true;
+    submitButton.innerText = 'Criando...';
+
+    const response = await fetch('/voluntarios/tipos', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            name,
+            description
+        })
+    })
+
+    if (!response.ok) {
+        const message = await response.json();
+        kindForm.getElementById('message_wrapper').innerText = message;
+    } else {
+        modal.style.display = 'none';
+        window.location.reload();
+    }
+}
+</script>
+
+<style>
+main .content {
+    justify-content: unset;
+}
+section {
+    margin-top: 20px;
+    width: 90%;
+    max-width: 950px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: var(--light-color);
+    border-radius: 10px;
+    padding: 20px;
+}
+
+section header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    max-width: 950px;
+    padding-block: 10px;
+    padding-inline: 0;
+    color: var(--primary-color);
+    background-color: unset;
+}
+
+section table {
+    width: 100%;
+}
+
+#volunteers-wrapper .table-wrapper {
+    max-height: 400px;
+    overflow-y: auto;
+    width: 100%;
+}
+
+#volunteers-wrapper table td, #volunteers-wrapper table th {
+    text-align: center;
+}
+
+.description-td {
+    max-height: 60px !important;
+    overflow-y: auto;
+}
+.action-td {
+    cursor: pointer;
+    text-decoration: underline;
+}
+
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgb(0,0,0);
+    background-color: rgba(0,0,0,0.4);
+}
+
+.modal-content {
+    background-color: #fefefe;
+    margin: 15% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 40%;
+}
+
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+</style>
