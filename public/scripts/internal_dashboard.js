@@ -1,9 +1,26 @@
+/**
+  * @param {HtmlElement} target
+*/
+function renderScript(target) {
+    const scripts = target.getElementsByTagName("script");
+    for (let script of scripts) {
+        const newScript = document.createElement("script");
+        if (script.src) {
+            newScript.src = script.src;
+        } else {
+            newScript.textContent = script.textContent;
+        }
+        document.body.appendChild(newScript);
+        script.remove(); // Remove the old script to clean up the DOM
+    }
+}
+
 const PAGES = {
-    'helps': renderHelps,
-    'donations': renderDonations,
-    'volunteers': renderVolunteers,
-    'external_users': renderExternalUsers,
-    'internal_users': renderInternalUsers
+    'ajudas': renderHelps,
+    'doacoes': renderDonations,
+    'voluntarios': renderVolunteers,
+    'usuarios_externos': renderExternalUsers,
+    'usuarios_internos': renderInternalUsers
 }
 let selectedPage = null;
 
@@ -116,6 +133,9 @@ function init(contentElement) {
                 return
             }
             selectedPage = page
+            const url = new URL(window.location.href)
+            url.searchParams.set('menu', page)
+            window.history.pushState({}, '', url)
 
             renderLoading(contentElement)
             renderFunction(contentElement)
@@ -129,6 +149,17 @@ function init(contentElement) {
             element.classList.add('active')
         })
     }
+
+    const params = new URLSearchParams(window.location.search)
+    const page = params.get('menu')
+    if (page && PAGES[page]) {
+        document.getElementById(page).click()
+    } else {
+        const url = new URL(window.location.href)
+        url.searchParams.delete('menu')
+        window.history.pushState({}, '', url)
+    }
+
 }
 
 init(document.getElementById('content'))
