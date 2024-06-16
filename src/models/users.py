@@ -54,6 +54,8 @@ class ExternalUser(db.Model):
     created_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow, onupdate=datetime.utcnow)
 
+    volunteer = db.relationship('Volunteer', backref='external_users')
+
     __table_args__ = (
         db.UniqueConstraint('email', name='users_email_index'),
         db.Index('users_email_password_hash_index', 'email', 'password_hash'),

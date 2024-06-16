@@ -26,6 +26,21 @@ body {
     background-color: var(--background-color);
 }
 
+.create-button {
+    border-radius: 5px;
+    background-color: var(--primary-color-dark);
+    border: none;
+    color: white;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 14px;
+    font-weight: bold;
+    margin: 4px 2px;
+    cursor: pointer;
+}
+
 .helper-text {
     max-width: 300px;
     font-size: 1rem;
@@ -92,4 +107,26 @@ th, td {
 }
 th {
     background-color: #f2f2f2;
+}
+
+textarea {
+    resize: none;
+}
+
+*::-webkit-scrollbar {
+    width: 8px;
+}
+
+*::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+*::-webkit-scrollbar-thumb {
+    background-color: var(--primary-color);
+    border-radius: 10px;
+    border: 2px solid #f1f1f1;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+    background: var(--primary-color-dark);
 }

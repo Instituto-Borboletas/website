@@ -38,12 +38,21 @@ async function renderHelps() {
 }
 
 async function renderDonations() {
+
 }
 
-async function renderVolunteers() {
-}
-
-async function renderExternalUsers() {
+/**
+    * @params {HtmlElement} target
+*/
+async function renderVolunteers(target) {
+    try {
+        const volunteers = await fetch('/voluntarios').then(response => response.text())
+        target.innerHTML = volunteers
+        renderScript(target)
+    } catch (err) {
+        console.error(err)
+        element.innerHTML = 'Erro ao carregar os dados, tente novamente mais tarde.'
+    }
 }
 
 /**
@@ -51,7 +60,7 @@ async function renderExternalUsers() {
 */
 async function renderInternalUsers(element) {
     try {
-        const internalUsers = await fetch('/interno/internos').then(response => response.text())
+        const internalUsers = await fetch('/interno/usuarios/internos').then(response => response.text())
         element.innerHTML = internalUsers
 
         const modal = document.getElementById("user_modal");
@@ -120,6 +129,9 @@ async function renderInternalUsers(element) {
         console.error(error)
         element.innerHTML = 'Erro ao carregar os dados, tente novamente mais tarde.'
     }
+}
+
+async function renderExternalUsers() {
 }
 
 /**

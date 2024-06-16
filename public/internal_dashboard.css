@@ -112,6 +112,7 @@ label {
 input[type="text"],
 input[type="email"],
 input[type="password"],
+textarea,
 form button {
     width: calc(100% - 22px);
     padding: 10px;

@@ -1,14 +1,12 @@
 from flask import Blueprint, request, jsonify, render_template, flash, redirect, url_for, make_response
 from src.services.users_service import InternalUserService
+from src.middlewares.auth_middleware import token_required_internal
 
 users_bp = Blueprint('users_bp', __name__)
 
-@users_bp.route('/users/internal', methods=['POST'])
-def create_user():
-    token = request.cookies.get('token')
-    if token is None:
-        return redirect(url_for('users_bp.internal_login'))
-
+@users_bp.route('/usuarios/interno', methods=['POST'])
+@token_required_internal
+def create_user(token):
     request_json = request.get_json()
     name = request_json.get('name')
     email = request_json.get('email')
@@ -57,11 +55,9 @@ def internal_login():
     return render_template('internal_login.html')
 
 @users_bp.route('/usuarios/interno/logout', methods=['GET'])
-def internal_logout():
-    token = request.cookies.get('token')
-
-    if token is not None:
-        InternalUserService.logout(token)
+@token_required_internal
+def internal_logout(token):
+    InternalUserService.logout(token)
 
     response = make_response(redirect(url_for('users_bp.internal_login')))
 
@@ -76,12 +72,8 @@ def internal_logout():
     return response
 
 @users_bp.route('/interno', methods=['GET'])
-def internal_dashboard():
-    token = request.cookies.get('token')
-
-    if token is None:
-        return redirect(url_for('users_bp.internal_login'))
-
+@token_required_internal
+def internal_dashboard(token):
     data = InternalUserService.get_dashboard_data(token)
 
     if data is None:
@@ -89,20 +81,22 @@ def internal_dashboard():
 
     return render_template('internal_dashboard.html', data=data)
 
-@users_bp.route('/interno/internos', methods=['GET'])
-def internal_users_crud():
-    token = request.cookies.get('token')
-
-    if token is None:
-        return redirect(url_for('users_bp.internal_login'))
-
+@users_bp.route('/interno/usuarios/internos', methods=['GET'])
+@token_required_internal
+def internal_users_crud(token):
     data = InternalUserService.list_users(token)
     if data is None:
         data = []
 
     return render_template('list_internal_users.html', data=data)
 
-@users_bp.route('/users/<int:user_id>', methods=['PUT'])
-def update_user(user_id):
-    print(user_id)
-    return jsonify({'error': 'not implemented'}), 501
+# TODO: listagem de usuarios externos
+# @users_bp.route('/interno/externos', methods=['GET'])
+# @token_required_internal
+# def internal_users_crud(token):
+
+# @users_bp.route('/users/<int:user_id>', methods=['PUT'])
+# @token_required_internal
+# def update_user(token, user_id):
+#     print(user_id)
+#     return jsonify({'error': 'not implemented'}), 501
