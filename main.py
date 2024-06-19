@@ -4,6 +4,7 @@ from flask import Flask, send_from_directory
 from src.database import db
 from src.controllers.users_controller import users_bp
 from src.controllers.volunteer_controller import volunteer_bp
+from src.controllers.helps_controller import helps_bp
 
 # get env value
 is_offline = os.environ.get('IS_OFFLINE', 'false') == 'true'
@@ -24,6 +25,7 @@ def public(filename):
 if __name__ == '__main__':
     app.register_blueprint(users_bp)
     app.register_blueprint(volunteer_bp, url_prefix="/voluntarios")
+    app.register_blueprint(helps_bp, url_prefix="/ajudas")
 
     @app.errorhandler(404)
     def not_found(e):

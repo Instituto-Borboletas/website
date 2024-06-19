@@ -90,10 +90,33 @@ CREATE TABLE IF NOT EXISTS volunteers (
 -- voluntario end
 
 -- help
+-- TODO: use address table on external user and help requests
+-- CREATE TABLE IF NOT EXISTS addresses (
+--     id INT AUTO_INCREMENT PRIMARY KEY,
+--     user_id INT NOT NULL,
+--     cep CHAR(8) NOT NULL,
+--     street VARCHAR(255) NOT NULL,
+--     number INT NOT NULL,
+--     complement VARCHAR(255) NULL,
+--     neighborhood VARCHAR(255) NOT NULL,
+--     city VARCHAR(255) NOT NULL,
+--     state CHAR(2) NOT NULL,
+--
+--     is_from_location BOOLEAN NOT NULL DEFAULT FALSE,
+--     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+--
+--     FOREIGN KEY (user_id) REFERENCES external_users(id)
+-- );
+
 CREATE TABLE IF NOT EXISTS helps_kind (
     id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
-    description TEXT NOT NULL
+    description TEXT NOT NULL,
+    enabled BOOLEAN NOT NULL DEFAULT TRUE,
+    created_by INT NOT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    FOREIGN KEY (created_by) REFERENCES internal_users(id)
 );
 
 CREATE TABLE IF NOT EXISTS helps (
@@ -109,6 +132,17 @@ CREATE TABLE IF NOT EXISTS helps (
     FOREIGN KEY (help_kind_id) REFERENCES helps_kind(id),
     FOREIGN KEY (requested_by) REFERENCES external_users(id)
 );
+
+-- TODO: add relation between helps and volunteers so internal user can link a volunteer to a help request
+-- CREATE TABLE IF NOT EXISTS helps_volunteers (
+--     id INT AUTO_INCREMENT PRIMARY KEY,
+--     help_id INT NOT NULL,
+--     volunteer_id INT NOT NULL,
+--     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+--
+--     FOREIGN KEY (help_id) REFERENCES helps(id),
+--     FOREIGN KEY (volunteer_id) REFERENCES volunteers(id)
+-- );
 -- help end
 
 -- donations

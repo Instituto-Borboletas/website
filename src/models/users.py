@@ -11,6 +11,9 @@ class InternalUser(db.Model):
     created_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow, onupdate=datetime.utcnow)
 
+    volunteer_kind = db.relationship('VolunteerKind', backref='internal_users')
+    help_kind_ids = db.relationship('HelpKind', back_populates='internal_users')
+
     __table_args__ = (
         db.UniqueConstraint('email', name='users_email_index'),
         db.Index('users_email_password_hash_index', 'email', 'password_hash'),
@@ -55,6 +58,7 @@ class ExternalUser(db.Model):
     updated_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow, onupdate=datetime.utcnow)
 
     volunteer = db.relationship('Volunteer', backref='external_users')
+    help = db.relationship('Help', backref='external_users')
 
     __table_args__ = (
         db.UniqueConstraint('email', name='users_email_index'),

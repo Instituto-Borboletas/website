@@ -12,6 +12,7 @@ class VolunteerKind(db.Model):
     created_by = db.Column(db.Integer, db.ForeignKey('internal_users.id'), nullable=False)
 
     volunteer = db.relationship('Volunteer', backref='volunteer_kinds')
+    internal_user = db.relationship('InternalUser', backref='volunteer_kinds')
 
     def __init__(self, name, description, created_by):
         self.name = name
@@ -52,8 +53,8 @@ class Volunteer(db.Model):
     registered_by = db.Column(db.Integer, db.ForeignKey('external_users.id'), nullable=False)
     created_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
 
-    external_user = db.relationship('ExternalUser', backref='volunteers')
     volunteer_kind = db.relationship('VolunteerKind', backref='volunteers')
+    external_user = db.relationship('ExternalUser', backref='volunteers')
 
     def __init__(self, name, email, phone, kind_id, registered_by):
         self.name = name

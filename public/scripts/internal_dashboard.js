@@ -34,7 +34,18 @@ function renderLoading(element) {
     `
 }
 
-async function renderHelps() {
+/**
+    * @params {HtmlElement} target
+*/
+async function renderHelps(target) {
+    try {
+        const helps = await fetch('/ajudas').then(response => response.text())
+        target.innerHTML = helps
+        renderScript(target)
+    } catch (err) {
+        console.error(err)
+        element.innerHTML = 'Erro ao carregar os dados, tente novamente mais tarde.'
+    }
 }
 
 async function renderDonations() {
