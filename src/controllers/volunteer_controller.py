@@ -9,16 +9,12 @@ volunteer_bp = Blueprint('volunteer_bp', __name__)
 @volunteer_bp.route('/tipos', methods=['POST'])
 @token_required_internal
 def create_volunteer_kind(token):
-    if request.method == 'POST':
-        request_json = request.get_json()
-        name = request_json.get('name')
-        description = request_json.get('description')
+    request_json = request.get_json()
+    name = request_json.get('name')
+    description = request_json.get('description')
 
-        created_kind = VolunteerKindService.create_volunteer_kind(token, name, description)
-        return jsonify(created_kind.serialize), 201
-
-    data = VolunteerKindService.list_volunteer_kinds(token)
-    return render_template('list_volunteer_kinds.html', data=data)
+    created_kind = VolunteerKindService.create_volunteer_kind(token, name, description)
+    return jsonify(created_kind.serialize), 201
 
 @volunteer_bp.route('/tipos/<int:kind_id>', methods=['GET', 'PUT', 'DELETE'])
 @token_required_internal

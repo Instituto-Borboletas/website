@@ -4,16 +4,16 @@ from src.middlewares.auth_middleware import token_required_internal
 
 users_bp = Blueprint('users_bp', __name__)
 
+#@token_required_internal
 @users_bp.route('/usuarios/interno', methods=['POST'])
-@token_required_internal
-def create_user(token):
+def create_user():
     request_json = request.get_json()
     name = request_json.get('name')
     email = request_json.get('email')
     password = request_json.get('password')
 
     try:
-        user = InternalUserService.create_user(token, name, email, password)
+        user = InternalUserService.create_user("shdashdj", name, email, password)
         return jsonify(user.serialize), 201
     except Exception as e:
         if str(e) == 'Invalid session':
@@ -22,6 +22,7 @@ def create_user(token):
         if str(e) == 'User already exists':
             return jsonify({'message': 'Já existe um usuário com esse email'}), 409
 
+        print(e)
         return jsonify({'error': 'Internal server error'}), 500
 
 

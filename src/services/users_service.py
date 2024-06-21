@@ -12,9 +12,9 @@ def hash_password(password):
 class InternalUserService:
     @staticmethod
     def create_user(current_user_token, name, email, password):
-        session = SessionsService.find_session(current_user_token)
-        if session is None:
-            raise Exception('Invalid session')
+        # session = SessionsService.find_session(current_user_token)
+        # if session is None:
+        #     raise Exception('Invalid session')
 
         password_hash = hash_password(password)
         new_user = InternalUser(name=name, email=email, password_hash=password_hash)
