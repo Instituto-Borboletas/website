@@ -3,13 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bem-Vindo ao Instituto Borboleta</title>
+    <title>Login</title>
     <link rel="stylesheet" type="text/css" href="/public/login.css">
-    <link rel="stylesheet" type="text/css" href="/public/main.css">
 </head>
 <body>
+    <header>
+        <div class="menu">
+                <li><a href="#">Instituto Borboleta</a> </li>
+        </div>
+        
+    </header>
     <h1 class="helper">Bem-Vindo ao Instituto Borboleta!!</h1>
-    <p class="small-text"><a href="#">Clique aqui para saber mais sobre nós!!</a></p>
     <img src="/public/usuario.png" alt="Foto de Perfil" class="profile-pic">
     <div class="login-form">
         <form action="/login" method="POST">
@@ -19,7 +23,7 @@
             <input type="password" id="password" name="password" class="login-input" required><br>
             <input type="submit" value="Efetuar Login" class="login-submit"><br>
         </form>
-        <a href="/" class="return-initial">Voltar Para Página Inicial</a>
+        <a href="/website-main/templates/homepage.html" class="return-initial">Voltar Para Página Inicial</a>
     </div>
 </body>
 </html>
