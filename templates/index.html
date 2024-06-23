@@ -1,28 +1,77 @@
-<html>
+<!DOCTYPE html>
+<html lang="pt">
     <head>
-        <title>Borboletas</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="/public/main.css">
+        <link rel="stylesheet" href="/public/home.css">
+        <title>Instituto Borboletas</title>
     </head>
     <body>
         <header>
-            <h2>Institulo borboletas</h2>
+            <div class="logo-container">
+                <a href="/">
+                    <img src="/public/logo.jpg" alt="Logo do Instituto">
+                </a>
+            </div>
+
             <nav>
-                <ul>
-                    <li><a href="/sobre">Sobre</a></li>
-                    <li><a href="/contato">Contato</a></li>
-                </ul>
+                <a href="#quem-somos">Quem somos</a>
+                <a href="#ajuda">Preciso de ajuda</a></li>
+                <a href="#voluntario">Seja voluntario</a>
+            </nav>
+
+            <nav>
+                {% if session.logged_in %}
+                    <a href="/eu">Meus dados</a>
+                {% else %}
+                    <a href="/login">Fazer login</a>
+                {% endif %}
             </nav>
         </header>
 
         <main>
             <section id="quem-somos">
-                <h1>Seja bem-vindo ao instituto borboletas</h1>
-                <p>SKJDKJASHDKJASHKJDHASKJDHJKASHDKASHDKASHKDHASJKD</p>
+                <div class="about">
+                    <h1>Sobre Nós</h1>
+                    <p>
+                        O Instituto Borboletas é uma organização sem fins lucrativos que tem como objetivo ajudar pessoas vitimas de violência domestica.
+                    </p>
+                </div>
             </section>
 
-            <section id="seja-voluntario">
-                <h2>Seja um voluntário</h2>
-                <p>Conheça nosso trabalho e faça parte dessa causa.</p>
+            <section id="ajuda">
+                <div>
+                    <h1>Preciso de ajuda</h1>
+                    <p>
+                        Se você é uma vitima de violência domestica, entre em contato conosco para que possamos te ajudar.
+                    </p>
+                    <a href="/ajuda">Pedir ajuda</a>
+                </div>
+
+                <div>
+                    <!-- <img src="/public/ajuda.jpg" alt="Ajuda"> -->
+                    <img src="/public/image.png" alt="Ajuda">
+                </div>
+            </section>
+
+            <section id="voluntario">
+                <div>
+                    <h1>Seja voluntario</h1>
+                    <p>
+                        Se você deseja ajudar as pessoas vitimas de violência domestica, torne-se um voluntario do Instituto Borboletas.
+                    </p>
+                    <a href="/voluntario">Seja voluntario</a>
+                </div>
+
+                <div>
+                    <!-- <img src="/public/voluntario.jpg" alt="Voluntario"> -->
+                    <img src="/public/image.png" alt="Voluntario">
+                </div>
             </section>
         </main>
+
+        <footer>
+        </footer>
     </body>
 </html>

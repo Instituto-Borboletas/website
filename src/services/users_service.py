@@ -67,3 +67,11 @@ class InternalUserService:
             'user': user.serialize
         }
 
+    @staticmethod
+    def session_details(token):
+        session = SessionsService.find_session(token)
+
+        if session is None:
+            return None
+
+        return session.serialize

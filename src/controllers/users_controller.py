@@ -1,12 +1,12 @@
 from flask import Blueprint, request, jsonify, render_template, flash, redirect, url_for, make_response
 from src.services.users_service import InternalUserService
-from src.middlewares.auth_middleware import token_required_internal
+from src.middlewares.auth_middleware import token_required_external, token_required_internal
 
 users_bp = Blueprint('users_bp', __name__)
 
-#@token_required_internal
 @users_bp.route('/usuarios/interno', methods=['POST'])
-def create_user():
+@token_required_internal
+def create_user(token):
     request_json = request.get_json()
     name = request_json.get('name')
     email = request_json.get('email')
@@ -101,3 +101,13 @@ def internal_users_crud(token):
 # def update_user(token, user_id):
 #     print(user_id)
 #     return jsonify({'error': 'not implemented'}), 501
+
+@users_bp.route('/eu', methods=['GET'])
+@token_required_external
+def detail_session_user(token):
+    session = InternalUserService.session_details(token)
+    if session is None:
+        return jsonify({'error': 'Invalid session'}), 401
+
+    return jsonify(session.serialize), 200
+

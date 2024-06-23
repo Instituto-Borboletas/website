@@ -16,6 +16,10 @@ CREATE TABLE IF NOT EXISTS internal_users (
     INDEX users_email_password_hash_is_active_index (email, password_hash, is_active)
 );
 
+-- TEST DATA
+-- TODO: REMOVE ON PROD ENV
+INSERT INTO internal_users (name, email, password_hash) VALUES ('Gabriel Rocha', 'rocha@gmail.com', '03ac674216f3e15c761ee1a5e255f067953623c8b388b4459e13f978d7c846f4');
+
 CREATE TABLE IF NOT EXISTS roles (
     id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(255) NOT NULL
