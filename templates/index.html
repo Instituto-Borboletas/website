@@ -74,4 +74,20 @@
         <footer>
         </footer>
     </body>
+
+    <script>
+        const headerLinks = document.querySelectorAll('header nav a');
+        headerLinks.forEach(link => {
+            link.addEventListener('click', (event) => {
+                event.preventDefault();
+                const target = event.target.getAttribute('href');
+                const element = document.querySelector(target);
+                element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                element.classList.add('highlight');
+                setTimeout(() => {
+                    element.classList.remove('highlight');
+                }, 1200);
+            });
+        });
+    </script>
 </html>
