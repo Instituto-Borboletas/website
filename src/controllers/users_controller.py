@@ -1,5 +1,5 @@
 from flask import Blueprint, request, jsonify, render_template, flash, redirect, url_for, make_response
-from src.services.users_service import InternalUserService
+from src.services.users_service import ExternalUserService, InternalUserService
 from src.middlewares.auth_middleware import token_required_external, token_required_internal
 
 users_bp = Blueprint('users_bp', __name__)
@@ -111,3 +111,33 @@ def detail_session_user(token):
 
     return jsonify(session.serialize), 200
 
+@users_bp.route('/login', methods=['POST', 'GET'])
+def external_login():
+    next_page = request.args.get('next')
+
+    if request.method == 'POST':
+        email = request.form.get('email')
+        password = request.form.get('password')
+
+        session, user = ExternalUserService.login(email, password)
+
+        if user is not None:
+            flash('Usuário ou senha inválidos', 'danger')
+            return render_template('external_login.html', next=next_page)
+
+        if session is not None:
+            flash('Erro ao criar sessão', 'danger')
+            return render_template('external_login.html', next=next_page)
+
+        response = make_response(redirect(next_page or url_for('users_bp.detail_session_user')))
+        response.set_cookie(
+            'token',
+            'shdjkashkjd', # session.token here
+            httponly=True,
+            samesite='Strict',
+            max_age=60 * 60 * 12
+        )
+
+        return response
+
+    return render_template('external_login.html', next=next_page)

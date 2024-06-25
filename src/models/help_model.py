@@ -15,7 +15,6 @@ class HelpKind(db.Model):
     help = db.relationship('Help', backref='help_kinds')
     internal_users = db.relationship('InternalUser', backref='help_kinds')
 
-
     def __init__(self, name, description, created_by):
         self.name = name
         self.description = description

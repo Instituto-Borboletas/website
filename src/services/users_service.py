@@ -75,3 +75,12 @@ class InternalUserService:
             return None
 
         return session.serialize
+
+class ExternalUserService:
+    @staticmethod
+    def register_user(name, email, phone, city, state):
+        return None
+
+    @staticmethod
+    def login(email, password):
+        return None, None

@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="pt">
+    <head>
+        {% block extra_head %}
+        {% endblock %}
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="icon" href="/public/logo.jpg" type="image/x-icon">
+        <link rel="stylesheet" href="/public/main.css">
+        <title>{% block title %}Instituto Borboletas{% endblock %}</title>
+    </head>
+    <body>
+        {% block header %}
+            <header>
+                <div class="logo-container">
+                    <a href="/">
+                        <img src="/public/logo.jpg" alt="Logo do Instituto">
+                    </a>
+                </div>
+
+                <nav>
+                    <a href="#quem-somos">Quem somos</a>
+                    <a href="#ajuda">Preciso de ajuda</a></li>
+                    <a href="#voluntario">Seja voluntario</a>
+                </nav>
+
+                <nav>
+                    <!-- TODO: Implementar a lógica de autenticação -->
+                    {% if session.logged_in %}
+                        <a href="/eu">Meus dados</a>
+                    {% else %}
+                        <a href="/login">Fazer login</a>
+                    {% endif %}
+                </nav>
+            </header>
+        {% endblock %}
+
+
+        {% block content %}
+        {% endblock %}
+
+        {% block footer %}
+            <footer>
+            </footer>
+        {% endblock %}
+    </body>
+
+    <script>
+        const headerLinks = document.querySelectorAll('header nav a');
+        if (window.location.pathname === '/') {
+            headerLinks.forEach(link => {
+                link.addEventListener('click', (event) => {
+                    event.preventDefault();
+                    const target = event.target.getAttribute('href');
+                    const element = document.querySelector(target);
+                    element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    element.classList.add('highlight');
+                    setTimeout(() => {
+                        element.classList.remove('highlight');
+                    }, 1200);
+                });
+            });
+        } else {
+            headerLinks.forEach(link => {
+                link.addEventListener('click', (event) => {
+                    window.location.href = event.target.getAttribute('href');
+                });
+            });
+        }
+    </script>
+</html>
