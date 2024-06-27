@@ -9,7 +9,7 @@ class VolunteerKindService:
         if session is None:
             raise Exception('Invalid session')
 
-        new_volunteer_kind = VolunteerKind(name=name, description=description, created_by=session.user_id)
+        new_volunteer_kind = VolunteerKind(name=name, description=description, created_by=session['user_id'])
 
         try:
             db.session.add(new_volunteer_kind)
@@ -32,4 +32,4 @@ class VolunteerKindService:
         else:
             volunteer_kinds = VolunteerKind.query.all()
 
-        return [volunteer_kind.serialize_html for volunteer_kind in volunteer_kinds]
+        return volunteer_kinds

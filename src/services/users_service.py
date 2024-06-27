@@ -56,12 +56,14 @@ class InternalUserService:
     @staticmethod
     def get_dashboard_data(token):
         session = SessionsService.find_session(token)
+        print(session)
         if session is None:
             return None
 
-        user = InternalUser.query.get(session.user_id)
+        user = InternalUser.query.get(session['user_id'])
         if user is None:
             return None
+        print(user)
 
         return {
             'user': user.serialize
@@ -74,7 +76,7 @@ class InternalUserService:
         if session is None:
             return None
 
-        return session.serialize
+        return session
 
 class ExternalUserService:
     @staticmethod
@@ -83,4 +85,16 @@ class ExternalUserService:
 
     @staticmethod
     def login(email, password):
-        return None, None
+        password_hash = hash_password(password)
+        user = ExternalUser.query.filter_by(email=email, password_hash=password_hash).first()
+
+        if user is None:
+            return None, None
+
+        session = SessionsService.create_session(user.id)
+        return session, user
+
+    @staticmethod
+    def find_user_by_id(user_id):
+        user = ExternalUser.query.get(user_id)
+        return user.serialize if user is not None else None

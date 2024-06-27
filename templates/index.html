@@ -22,7 +22,7 @@
             </nav>
 
             <nav>
-                {% if session.logged_in %}
+                {% if has_token %}
                     <a href="/eu">Meus dados</a>
                 {% else %}
                     <a href="/login">Fazer login</a>
@@ -76,11 +76,17 @@
     </body>
 
     <script>
+        const hasTokenCookie = document.cookie.includes('token=');
+
         const headerLinks = document.querySelectorAll('header nav a');
         headerLinks.forEach(link => {
+            const target = event.target.getAttribute('href');
+            if (target.startsWith('/')) {
+                return;
+            }
+
             link.addEventListener('click', (event) => {
                 event.preventDefault();
-                const target = event.target.getAttribute('href');
                 const element = document.querySelector(target);
                 element.scrollIntoView({ behavior: 'smooth', block: 'center' });
                 element.classList.add('highlight');

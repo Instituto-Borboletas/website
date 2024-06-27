@@ -10,7 +10,7 @@ class HelpsService:
         if session is None:
             raise Exception('Invalid session')
 
-        new_help_kind = HelpKind(name=name, description=description, created_by=session.user_id)
+        new_help_kind = HelpKind(name=name, description=description, created_by=session['user_id'])
 
         try:
             db.session.add(new_help_kind)
@@ -33,7 +33,7 @@ class HelpsService:
         else:
             volunteer_kinds = HelpKind.query.all()
 
-        return [volunteer_kind.serialize_html for volunteer_kind in volunteer_kinds]
+        return volunteer_kinds
 
     @staticmethod
     def create_help(current_user_token, title, description, kind_id):
@@ -41,7 +41,7 @@ class HelpsService:
         if session is None:
             raise Exception('Invalid session')
 
-        new_help = Help(title=title, description=description, kind_id=kind_id, requested_by=session.user_id)
+        new_help = Help(title=title, description=description, kind_id=kind_id, requested_by=session['user_id'])
 
         try:
             db.session.add(new_help)
@@ -63,4 +63,4 @@ class HelpsService:
         helps = db.session.query(Help).join(HelpKind).options(joinedload(Help.external_user), joinedload(Help.help_kinds)).all()
 
 
-        return [help.serialize_html_full for help in helps]
+        return [help.serialize_html for help in helps]

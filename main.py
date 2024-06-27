@@ -1,6 +1,6 @@
 import os
 import secrets
-from flask import Flask, send_from_directory, render_template
+from flask import Flask, send_from_directory, render_template, request
 from src.database import db
 from src.controllers.users_controller import users_bp
 from src.controllers.volunteer_controller import volunteer_bp
@@ -25,7 +25,8 @@ def public(filename):
 
 @app.route("/")
 def index():
-    return render_template("index.html")
+    has_token_cookie = "token" in request.cookies
+    return render_template("index.html", has_token=has_token_cookie)
 
 if __name__ == '__main__':
     app.register_blueprint(users_bp)

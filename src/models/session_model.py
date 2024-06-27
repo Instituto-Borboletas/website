@@ -21,3 +21,11 @@ class Sessions(db.Model):
 
     def __repr__(self):
         return f'<Session {self.token}>'
+
+    def serialize(self):
+        return {
+            'id': self.id,
+            'user_id': self.user_id,
+            'token': self.token,
+            'expires_at': self.expires_at
+        }

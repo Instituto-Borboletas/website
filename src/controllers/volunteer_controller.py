@@ -38,17 +38,17 @@ def volunteer_rud(token, kind_id):
 def list_volunteers(token):
     volunteers = VolunteerService.list_volunteers(token)
     kinds = VolunteerKindService.list_volunteer_kinds(check_enabled=True, check_session=False)
+    kinds = [volunteer_kind.serialize_html for volunteer_kind in kinds or []]
 
     return render_template('list_volunteers.html', volunteers=volunteers, kinds=kinds)
 
 @volunteer_bp.route('/', methods=['POST'])
 @token_required_external
 def register_volunteer(token):
-    request_json = request.get_json()
-    name = request_json.get('name')
-    email = request_json.get('email')
-    phone = request_json.get('phone')
-    kind_id = request_json.get('kind_id')
+    name = request.form.get('name')
+    email = request.form.get('email')
+    phone = request.form.get('phone')
+    kind_id = request.form.get('kind')
 
     volunteer = VolunteerService.create_volunteer(token, name, email, phone, kind_id)
     return jsonify(volunteer.serialize), 201

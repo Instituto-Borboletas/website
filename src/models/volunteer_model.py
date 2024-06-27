@@ -41,6 +41,14 @@ class VolunteerKind(db.Model):
             'created_at': self.created_at.strftime('%d/%m/%Y %H:%M:%S'),
         }
 
+    @property
+    def serialize_for_select(self):
+        return {
+            'id': self.id,
+            'name': self.name,
+            'description': self.name,
+        }
+
 
 class Volunteer(db.Model):
     __tablename__ = 'volunteers'

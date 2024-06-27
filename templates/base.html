@@ -19,25 +19,20 @@
                 </div>
 
                 <nav>
-                    <a href="#quem-somos">Quem somos</a>
-                    <a href="#ajuda">Preciso de ajuda</a></li>
-                    <a href="#voluntario">Seja voluntario</a>
+                    <a href="/">Voltar ao início</a>
                 </nav>
 
                 <nav>
-                    <!-- TODO: Implementar a lógica de autenticação -->
-                    {% if session.logged_in %}
-                        <a href="/eu">Meus dados</a>
-                    {% else %}
-                        <a href="/login">Fazer login</a>
-                    {% endif %}
+                    <a href="/eu">Meus dados</a>
                 </nav>
             </header>
         {% endblock %}
 
 
-        {% block content %}
-        {% endblock %}
+        <section class="main-content">
+            {% block content %}
+            {% endblock %}
+        </section>
 
         {% block footer %}
             <footer>
@@ -68,4 +63,7 @@
             });
         }
     </script>
+
+    {% block extra_script %}
+    {% endblock %}
 </html>

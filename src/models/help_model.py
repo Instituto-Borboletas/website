@@ -45,6 +45,14 @@ class HelpKind(db.Model):
             'created_at': self.created_at.strftime('%d/%m/%Y %H:%M:%S'),
         }
 
+    @property
+    def serialize_for_select(self):
+        return {
+            'id': self.id,
+            'name': self.name,
+            'description': self.description,
+        }
+
 
 class Help(db.Model):
     __tablename__ = 'helps'

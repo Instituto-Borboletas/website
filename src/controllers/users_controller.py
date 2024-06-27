@@ -109,30 +109,31 @@ def detail_session_user(token):
     if session is None:
         return jsonify({'error': 'Invalid session'}), 401
 
-    return jsonify(session.serialize), 200
+    return jsonify(session), 200
 
 @users_bp.route('/login', methods=['POST', 'GET'])
 def external_login():
     next_page = request.args.get('next')
 
     if request.method == 'POST':
-        email = request.form.get('email')
-        password = request.form.get('password')
+        request_json = request.get_json()
+        email = request_json.get('email')
+        password = request_json.get('password')
 
         session, user = ExternalUserService.login(email, password)
 
-        if user is not None:
+        if user is None:
             flash('Usuário ou senha inválidos', 'danger')
             return render_template('external_login.html', next=next_page)
 
-        if session is not None:
+        if session is None:
             flash('Erro ao criar sessão', 'danger')
             return render_template('external_login.html', next=next_page)
 
         response = make_response(redirect(next_page or url_for('users_bp.detail_session_user')))
         response.set_cookie(
             'token',
-            'shdjkashkjd', # session.token here
+            session.token,
             httponly=True,
             samesite='Strict',
             max_age=60 * 60 * 12

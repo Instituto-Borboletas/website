@@ -12,7 +12,7 @@ class VolunteerService:
         if session is None:
             raise Exception('Invalid session')
 
-        new_volunteer = Volunteer(name=name, email=email, phone=phone, kind_id=kind_id, registered_by=session.user_id)
+        new_volunteer = Volunteer(name=name, email=email, phone=phone, kind_id=kind_id, registered_by=session['user_id'])
 
         try:
             db.session.add(new_volunteer)

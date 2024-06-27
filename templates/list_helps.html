@@ -17,11 +17,14 @@
             <tbody>
                 {% for help in helps %}
                 <tr id="{{help.id}}">
-                    <td>{{ help.name }}</td>
+                    <td>{{ help.requested_by.name }}</td>
                     <td>
-                        {{ help.phone }}
-                        {% if help.email%}
-                            <br>{{ help.email }}
+                        {% if help.requested_by.phone%}
+                            {{ help.requested_by.phone }}<br>
+                        {% endif %}
+
+                        {% if help.requested_by.email%}
+                            {{ help.requested_by.email }}
                         {% endif %}
                     </td>
                     <td>
