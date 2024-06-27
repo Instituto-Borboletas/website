@@ -22,10 +22,33 @@
     box-sizing: border-box;
 }
 
+html, body {
+    height: 100%;
+}
+
 body {
     background-color: var(--background-color);
     display: flex;
     flex-direction: column;
+}
+
+footer {
+    background-color: var(--primary-color-dark);
+    color: white;
+    text-align: center;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+footer a {
+    color: white;
+    text-decoration: underline;
+}
+footer div {
+    padding-bottom: 10px;
 }
 
 .main-content {
@@ -83,6 +106,7 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    color: var(--success-color);
 }
 
 .alert-success {
@@ -149,4 +173,9 @@ textarea {
 
 *::-webkit-scrollbar-thumb:hover {
     background: var(--primary-color-dark);
+}
+
+.pencil-icon {
+    width: 15px;
+    height: 15px;
 }

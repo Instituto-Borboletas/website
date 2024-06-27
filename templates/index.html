@@ -1,99 +1,93 @@
-<!DOCTYPE html>
-<html lang="pt">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link rel="stylesheet" href="/public/main.css">
-        <link rel="stylesheet" href="/public/home.css">
-        <title>Instituto Borboletas</title>
-    </head>
-    <body>
-        <header>
-            <div class="logo-container">
-                <a href="/">
-                    <img src="/public/logo.jpg" alt="Logo do Instituto">
-                </a>
-            </div>
+{% extends 'base.html' %}
 
-            <nav>
-                <a href="#quem-somos">Quem somos</a>
-                <a href="#ajuda">Preciso de ajuda</a></li>
-                <a href="#voluntario">Seja voluntario</a>
-            </nav>
+{% block extra_head %}
+<link rel="stylesheet" href="/public/home.css">
+{% endblock %}
 
-            <nav>
-                {% if has_token %}
-                    <a href="/eu">Meus dados</a>
-                {% else %}
-                    <a href="/login">Fazer login</a>
-                {% endif %}
-            </nav>
-        </header>
+{% block title %}
+Instituto Borboletas
+{% endblock %}
 
-        <main>
-            <section id="quem-somos">
-                <div class="about">
-                    <h1>Sobre Nós</h1>
-                    <p>
-                        O Instituto Borboletas é uma organização sem fins lucrativos que tem como objetivo ajudar pessoas vitimas de violência domestica.
-                    </p>
-                </div>
-            </section>
+{% block header %}
+<header>
+    <div class="logo-container">
+        <a href="/">
+            <img src="/public/logo.jpg" alt="Logo do Instituto">
+        </a>
+    </div>
 
-            <section id="ajuda">
-                <div>
-                    <h1>Preciso de ajuda</h1>
-                    <p>
-                        Se você é uma vitima de violência domestica, entre em contato conosco para que possamos te ajudar.
-                    </p>
-                    <a href="/ajuda">Pedir ajuda</a>
-                </div>
+    <nav>
+        <a href="#quem-somos">Quem somos</a>
+        <a href="#ajuda">Preciso de ajuda</a></li>
+        <a href="#voluntario">Seja voluntario</a>
+    </nav>
 
-                <div>
-                    <!-- <img src="/public/ajuda.jpg" alt="Ajuda"> -->
-                    <img src="/public/image.png" alt="Ajuda">
-                </div>
-            </section>
+    <nav>
+        {% if has_token %}
+        <a href="/eu">Meus dados</a>
+        {% else %}
+        <a href="/login">Fazer login</a>
+        {% endif %}
+    </nav>
+</header>
+{% endblock %}
 
-            <section id="voluntario">
-                <div>
-                    <h1>Seja voluntario</h1>
-                    <p>
-                        Se você deseja ajudar as pessoas vitimas de violência domestica, torne-se um voluntario do Instituto Borboletas.
-                    </p>
-                    <a href="/voluntario">Seja voluntario</a>
-                </div>
+{% block content %}
+<main>
+    <div class="alert">
+    {%- for category, message in get_flashed_messages(with_categories = true) %}
+        <p>{{ message }}</p>
+    {%- endfor %}
+    </div>
 
-                <div>
-                    <!-- <img src="/public/voluntario.jpg" alt="Voluntario"> -->
-                    <img src="/public/image.png" alt="Voluntario">
-                </div>
-            </section>
-        </main>
+    <section id="quem-somos">
+        <div class="about">
+            <h1>Sobre Nós</h1>
+            <p>
+                O Instituto Borboletas é uma organização sem fins lucrativos que tem como objetivo ajudar pessoas vitimas de violência domestica.
+            </p>
+        </div>
+    </section>
 
-        <footer>
-        </footer>
-    </body>
+    <section id="ajuda">
+        <div>
+            <h1>Preciso de ajuda</h1>
+            <p>
+                Se você é uma vitima de violência domestica, entre em contato conosco para que possamos te ajudar.
+            </p>
+            <a href="/ajuda">Pedir ajuda</a>
+        </div>
 
-    <script>
-        const hasTokenCookie = document.cookie.includes('token=');
+        <div>
+            <!-- <img src="/public/ajuda.jpg" alt="Ajuda"> -->
+            <img src="/public/image.png" alt="Ajuda">
+        </div>
+    </section>
 
-        const headerLinks = document.querySelectorAll('header nav a');
-        headerLinks.forEach(link => {
-            const target = event.target.getAttribute('href');
-            if (target.startsWith('/')) {
-                return;
-            }
+    <section id="voluntario">
+        <div>
+            <h1>Seja voluntario</h1>
+            <p>
+                Se você deseja ajudar as pessoas vitimas de violência domestica, torne-se um voluntario do Instituto Borboletas.
+            </p>
+            <a href="/voluntario">Seja voluntario</a>
+        </div>
 
-            link.addEventListener('click', (event) => {
-                event.preventDefault();
-                const element = document.querySelector(target);
-                element.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                element.classList.add('highlight');
-                setTimeout(() => {
-                    element.classList.remove('highlight');
-                }, 1200);
-            });
-        });
-    </script>
-</html>
+        <div>
+            <!-- <img src="/public/voluntario.jpg" alt="Voluntario"> -->
+            <img src="/public/image.png" alt="Voluntario">
+        </div>
+    </section>
+</main>
+{% endblock %}
+
+{% block extra_script %}
+<script>
+const alertMessages = document.querySelectorAll('.alert p');
+alertMessages.forEach(alert => {
+    setTimeout(() => {
+        alert.remove();
+    }, 3000);
+});
+</script>
+{% endblock %}

@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+{% import "macros.html" as macros %}
+
+{% block extra_head %}
+<link rel="stylesheet" type="text/css" href="/public/eu.css">
+{% endblock %}
+
+{% block title %}
+Meus dados | Instituto Borboletas
+{% endblock %}
+
+{% block content %}
+<section>
+    <h1>Meus dados</h1>
+
+    <form action="/eu" method="POST">
+        <div class="field">
+            <div>
+                <h4>Nome</h4>
+                <p>Editar</p>
+            </div>
+            <input type="text" id="name" name="name" value="{{ user.name }}" disabled>
+        </div>
+
+        <!-- TODO: adicionar dados relacionados a conta -->
+        <!-- pedidos de ajuda, voluntariado -->
+        <button id="saveButton" style="display:none;" onclick="saveChanges()">Salvar</button>
+    </form>
+
+</section>
+{% endblock %}
+
+{% block extra_script %}
+<script>
+const currentUser = {{ user | tojson }};
+
+document.addEventListener('DOMContentLoaded', (event) => {
+    let inputs = document.querySelectorAll("input");
+    inputs.forEach(input => {
+        input.value = currentUser[input.id];
+        input.previousElementSibling.addEventListener("click", function() {
+            input.disabled = false;
+            input.focus();
+        });
+
+        input.addEventListener("input", function(event) {
+            if (input.value === currentUser[input.id]) {
+                document.getElementById("saveButton").style.display = "none";
+            } else {
+                document.getElementById("saveButton").style.display = "block";
+            }
+        });
+
+        input.addEventListener("change", function(event) {
+            if (input.value === currentUser[input.id]) {
+                document.getElementById("saveButton").style.display = "none";
+            } else {
+                document.getElementById("saveButton").style.display = "block";
+            }
+        });
+
+        input.addEventListener("click", function() {
+            input.disabled = false;
+        });
+
+        input.addEventListener("input", function() {
+            document.getElementById("saveButton").style.display = "block";
+        });
+    });
+});
+
+function saveChanges() {
+    document.getElementById("saveButton").innerText = "Salvando...";
+}
+</script>
+{% endblock %}
+

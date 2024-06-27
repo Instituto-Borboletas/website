@@ -102,14 +102,28 @@ def internal_users_crud(token):
 #     print(user_id)
 #     return jsonify({'error': 'not implemented'}), 501
 
-@users_bp.route('/eu', methods=['GET'])
+@users_bp.route('/eu', methods=['GET', 'POST'])
 @token_required_external
 def detail_session_user(token):
     session = InternalUserService.session_details(token)
     if session is None:
-        return jsonify({'error': 'Invalid session'}), 401
+        raise Exception('Invalid session')
 
-    return jsonify(session), 200
+    user = None
+
+    if request.method == 'POST':
+        name = request.form.get('name')
+        email = request.form.get('email')
+
+        user = ExternalUserService.update_user(session['user_id'], name, email)
+
+    if request.method == 'GET':
+        user = ExternalUserService.find_user_by_id(session['user_id'])
+
+    if user is None:
+        raise Exception('User not found')
+
+    return render_template('meus_dados.html', user=user.serialize)
 
 @users_bp.route('/login', methods=['POST', 'GET'])
 def external_login():

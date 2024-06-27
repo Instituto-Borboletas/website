@@ -97,4 +97,21 @@ class ExternalUserService:
     @staticmethod
     def find_user_by_id(user_id):
         user = ExternalUser.query.get(user_id)
-        return user.serialize if user is not None else None
+        return user
+
+    @staticmethod
+    def update_user(user_id, name, email):
+        new_values = {}
+
+        if name is not None:
+            new_values['name'] = name
+
+        if email is not None:
+            new_values['email'] = email
+
+        update = ExternalUser.query.filter_by(id=user_id).update(new_values)
+        if update == 0:
+            return None
+
+        db.session.commit()
+        return ExternalUser.query.get(user_id)

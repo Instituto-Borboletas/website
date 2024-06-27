@@ -51,5 +51,10 @@ def register_volunteer(token):
     kind_id = request.form.get('kind')
 
     volunteer = VolunteerService.create_volunteer(token, name, email, phone, kind_id)
-    return jsonify(volunteer.serialize), 201
+    if volunteer is None:
+        flash('Erro ao criar voluntário tente novamente mais tarde', 'danger')
+        return render_template('index.html', has_token=True)
+
+    flash('Voluntário criado com sucesso', 'success')
+    return render_template('index.html', has_token=True)
 

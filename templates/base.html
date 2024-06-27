@@ -36,6 +36,14 @@
 
         {% block footer %}
             <footer>
+                <div>
+                    <h3>Contatos</h3>
+                    <p><a href="mailto:" class="email">Email</a></p>
+                    <p><a href="tel:" class="phone">Telefone</a></p>
+                    <p><a href="https://www.instagram.com/instituto.borboleta/">Instagram</a></p>
+                </div>
+
+                <p>&copy; 2024 Instituto Borboletas. Todos os direitos reservados.</p>
             </footer>
         {% endblock %}
     </body>
@@ -44,9 +52,13 @@
         const headerLinks = document.querySelectorAll('header nav a');
         if (window.location.pathname === '/') {
             headerLinks.forEach(link => {
+                const target = event.target.getAttribute('href');
+                if (target.startsWith('/')) {
+                    return;
+                }
+
                 link.addEventListener('click', (event) => {
                     event.preventDefault();
-                    const target = event.target.getAttribute('href');
                     const element = document.querySelector(target);
                     element.scrollIntoView({ behavior: 'smooth', block: 'center' });
                     element.classList.add('highlight');

@@ -34,4 +34,9 @@ def create_help_request(token):
     kind_id = request.form.get('kind')
 
     created_help = HelpsService.create_help(token, title, description, kind_id)
-    return jsonify(created_help), 201
+    if created_help is None:
+        flash('Erro ao criar voluntário tente novamente mais tarde', 'danger')
+        return render_template('index.html', has_token=True)
+
+    flash('Voluntário criado com sucesso', 'success')
+    return render_template('index.html', has_token=True)

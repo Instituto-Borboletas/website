@@ -28,7 +28,7 @@ def index():
     has_token_cookie = "token" in request.cookies
     return render_template("index.html", has_token=has_token_cookie)
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     app.register_blueprint(users_bp)
     app.register_blueprint(volunteer_bp, url_prefix="/voluntarios")
     app.register_blueprint(helps_bp, url_prefix="/ajudas")
