@@ -63,6 +63,18 @@ body {
     cursor: pointer;
 }
 
+.warn-message {
+    color: var(--info-color);
+    font-weight: thin;
+    font-size: 0.7rem;
+    padding: 1rem;
+}
+.warn-message a {
+    color: var(--danger-color);
+    text-decoration: underline;
+    cursor: pointer;
+}
+
 .alert {
     padding: 1rem;
     margin: 1rem 0;

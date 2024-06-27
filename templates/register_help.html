@@ -18,10 +18,11 @@ Pedir ajuda | Instituto Borboletas
                 <a href="tel:190">Ligar para a polícia</a>
             </div>
 
+
             <fieldset>
-                <legend>Tipo de ajuda</label>
+                <legend>Tipo de ajuda</legend>
                 <select id="kind" name="kind" required>
-                    <option value="">Selecione um tipo de ajuda</option>
+                    <option value="">Selecione um tipo de voluntariado</option>
                     {% for kind in kinds %}
                         <option value="{{kind.id}}">{{kind.name}} - {{kind.description}}</option>
                     {% endfor %}

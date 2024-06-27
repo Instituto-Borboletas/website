@@ -14,8 +14,7 @@ Seja voluntário | Instituto Borboletas
             <h1>Seja voluntário</h1>
 
             <fieldset>
-                <label for="kind">Tipo de voluntariado</label>
-                <legend>Informações de identificação</legend>
+                <legend>Tipo de voluntariado</legend>
                 <select id="kind" name="kind" required>
                     <option value="">Selecione um tipo de voluntariado</option>
                     {% for kind in kinds %}
@@ -31,8 +30,8 @@ Seja voluntário | Instituto Borboletas
             </fieldset>
 
             <fieldset>
-                <h3>Dados de contato</h3>
-                <legend>Caso necessário, entraremos em contato com você usando os seguintes dados.</legend>
+                <legend>Dados de contato</legend>
+                <p class="warn-message">Caso necessário, entraremos em contato com você usando os seguintes dados.</p>
 
                 <label for="email" value="{{email}}">E-mail</label>
                 <input type="text" id="email" name="email" required>

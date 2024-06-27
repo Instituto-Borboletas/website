@@ -46,7 +46,7 @@ class VolunteerKind(db.Model):
         return {
             'id': self.id,
             'name': self.name,
-            'description': self.name,
+            'description': self.description,
         }
 
 
