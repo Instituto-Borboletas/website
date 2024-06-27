@@ -92,10 +92,17 @@ footer div {
     font-size: 0.7rem;
     padding: 1rem;
 }
+
 .warn-message a {
     color: var(--danger-color);
     text-decoration: underline;
     cursor: pointer;
+}
+@media (max-width: 768px) {
+    .warn-message {
+        font-size: 0.8rem;
+        font-weight: bold;
+    }
 }
 
 .alert {

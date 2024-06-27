@@ -181,3 +181,32 @@ footer {
     align-items: center;
     padding: 20px;
 }
+
+@media (max-width: 768px) {
+    header {
+        padding: 10px;
+        display: grid;
+        grid-template-columns: auto;
+        grid-template-rows: auto auto;
+        grid-template-areas:
+            "logo logo"
+            "nav1 nav2";
+        justify-content: center;
+    }
+
+    header .logo-container {
+        grid-area: logo;
+        display: flex;
+        justify-content: center;
+    }
+
+    header nav:first-of-type {
+        grid-area: nav1;
+        display: flex;
+        justify-content: center;
+    }
+
+    header nav:last-of-type {
+        grid-area: nav2;
+        justify-content: center;
+    }}
