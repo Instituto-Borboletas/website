@@ -60,3 +60,43 @@ class VolunteerService:
     def list_volunteers_from_user(user_id):
         volunteers = Volunteer.query.filter_by(registered_by=user_id).all()
         return [volunteer.serialize_html_full for volunteer in volunteers]
+
+    @staticmethod
+    def uptade_volunteer_kind(current_user_token, kind_id, name, description):
+        session = SessionsService.find_session(current_user_token)
+        if session is None:
+            raise Exception('Invalid session')
+
+        kind = VolunteerKind.query.filter_by(id=kind_id).first()
+        if kind is None:
+            raise Exception('Help kind not found')
+
+        if name is not None:
+            kind.name = name
+
+        if description is not None:
+            kind.description = description
+
+        try:
+            db.session.commit()
+        except Exception as e:
+            raise e
+
+    @staticmethod
+    def delete_kind(current_user_token, kind_id):
+        session = SessionsService.find_session(current_user_token)
+        if session is None:
+            raise Exception('Invalid session')
+
+        print(kind_id)
+        kind = VolunteerKind.query.filter_by(id=kind_id).first()
+        if kind is None:
+            raise Exception('Help kind not found')
+
+        try:
+            db.session.delete(kind)
+            db.session.commit()
+        except Exception as e:
+            raise e
+
+        return kind.serialize

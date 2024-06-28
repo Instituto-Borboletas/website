@@ -17,6 +17,25 @@ def create_help_kind(token):
     created_kind = HelpsService.create_help_kind(token, name, description)
     return jsonify(created_kind), 201
 
+@helps_bp.route('/tipos/editar', methods=['PUT'])
+@token_required_internal
+def edit_help_kind(token):
+    request_json = request.get_json()
+    kind_id = request_json.get('id')
+    name = request_json.get('name')
+    description = request_json.get('description')
+
+    updated_kind = HelpsService.uptade_help_kind(token, kind_id, name, description)
+
+    return jsonify(updated_kind), 200
+
+@helps_bp.route('/tipos/deletar/<int:kind_id>', methods=['DELETE'])
+@token_required_internal
+def delete_help_kind(token, kind_id):
+    HelpsService.delete_help_kind(token, kind_id)
+
+    return jsonify({'message': f'Tipo de ajuda {kind_id} deletado'}), 202
+
 @helps_bp.route('/', methods=['GET'])
 @token_required_internal
 def list_helps(token):

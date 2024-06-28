@@ -1,3 +1,217 @@
+function editHelpKind(kind) {
+    const modal = document.getElementById("helps-kind-modal")
+    const title = document.getElementById("kind-modal-title");
+    const form = document.getElementById("helps-kind-modal");
+    const currentTitle = title.innerText;
+    const nameInput = document.querySelector("input[name='name']");
+    const descriptionInput = document.querySelector("textarea[name='description']");
+    const submitButton = document.querySelector("button[type='submit']");
+
+    title.innerText = "Editar tipo de ajuda";
+    nameInput.value = kind.name;
+    descriptionInput.value = kind.description;
+    submitButton.innerText = "Confirmar";
+
+    modal.style.display = "block";
+
+    window.addEventListener("keydown", function escKeyHandlerOnModal(event) {
+        if (event.key === "Escape") {
+            modal.style.display = "none";
+            window.removeEventListener("keydown", escKeyHandlerOnModal);
+        }
+    })
+
+    form.addEventListener("submit", async function submitHandler(event) {
+        try {
+            event.preventDefault()
+
+            const response = await fetch(`/ajudas/tipos/editar`, {
+                method: 'PUT',
+                body: JSON.stringify({
+                    id: kind.id,
+                    name: nameInput.value,
+                    description: descriptionInput.value,
+                }),
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+
+            if (response.ok) {
+                modal.style.display = "none";
+                window.location.reload();
+            } else {
+                const responseJson = await response.json()
+                throw new Error(responseJson.message)
+            }
+        } catch (err) {
+            if (err instanceof Error) {
+                alert(err.message)
+            } else {
+                alert('Erro ao editar tipo de ajuda, tente novamente mais tarde.')
+            }
+
+            title.innerText = currentTitle;
+        }
+    })
+}
+
+function deleteHelpKind(kind) {
+    const modal = document.getElementById("helps-kind-modal");
+    const title = document.getElementById("kind-modal-title");
+    const form = document.getElementById("helps-kind-modal");
+    const currentTitle = title.innerText;
+    const nameInput = document.querySelector("input[name='name']");
+    const descriptionInput = document.querySelector("textarea[name='description']");
+    const submitButton = document.querySelector("button[type='submit']");
+
+    title.innerText = "Excluir tipo de ajuda";
+    nameInput.value = kind.name;
+    nameInput.disabled = true;
+    descriptionInput.value = kind.description;
+    descriptionInput.disabled = true;
+    submitButton.innerText = "Confirmar";
+
+    modal.style.display = "block";
+
+    window.addEventListener("keydown", function escKeyHandlerOnModal(event) {
+        if (event.key === "Escape") {
+            modal.style.display = "none";
+            window.removeEventListener("keydown", escKeyHandlerOnModal);
+        }
+    })
+
+    form.addEventListener("submit", async function submitHandler(event) {
+        try {
+            event.preventDefault()
+
+            const response = await fetch(`/ajudas/tipos/deletar/${kind.id}`, { method: 'DELETE' })
+
+            if (response.ok) {
+                modal.style.display = "none";
+                window.location.reload();
+            } else {
+                const responseJson = await response.json()
+                throw new Error(responseJson.message)
+            }
+        } catch (err) {
+            if (err instanceof Error) {
+                alert(err.message)
+            } else {
+                alert('Erro ao excluir tipo de ajuda, tente novamente mais tarde.')
+            }
+
+            title.innerText = currentTitle;
+        }
+    })
+}
+
+function editVolunteerKind(kind) {
+    const modal = document.getElementById("volunteers-kind-modal")
+    const title = document.getElementById("volunteer-modal-title");
+    const form = document.getElementById("new-kind-modal");
+    const currentTitle = title.innerText;
+    const nameInput = document.querySelector("input[name='name']");
+    const descriptionInput = document.querySelector("textarea[name='description']");
+    const submitButton = document.querySelector("button[type='submit']");
+
+    title.innerText = "Editar tipo de voluntariado";
+    nameInput.value = kind.name;
+    descriptionInput.value = kind.description;
+    submitButton.innerText = "Confirmar";
+
+    modal.style.display = "block";
+
+    window.addEventListener("keydown", function escKeyHandlerOnModal(event) {
+        if (event.key === "Escape") {
+            modal.style.display = "none";
+            window.removeEventListener("keydown", escKeyHandlerOnModal);
+        }
+    })
+
+    form.addEventListener("submit", async function submitHandler(event) {
+        try {
+            event.preventDefault()
+
+            const response = await fetch(`/voluntarios/tipos/editar`, {
+                method: 'PUT',
+                body: JSON.stringify({
+                    id: kind.id,
+                    name: nameInput.value,
+                    description: descriptionInput.value,
+                }),
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+
+            if (response.ok) {
+                modal.style.display = "none";
+                window.location.reload();
+            } else {
+                const responseJson = await response.json()
+                throw new Error(responseJson.message)
+            }
+        } catch (err) {
+            if (err instanceof Error) {
+                alert(err.message)
+            } else {
+                alert('Erro ao editar tipo de ajuda, tente novamente mais tarde.')
+            }
+
+            title.innerText = currentTitle;
+        }
+    })
+}
+
+function deleteVolunteerKind(kind) {
+    const modal = document.getElementById("volunteers-kind-modal")
+    const title = document.getElementById("volunteer-modal-title");
+    const form = document.getElementById("new-kind-modal");
+    const currentTitle = title.innerText;
+    const nameInput = document.querySelector("input[name='name']");
+    const descriptionInput = document.querySelector("textarea[name='description']");
+    const submitButton = document.querySelector("button[type='submit']");
+
+    title.innerText = "Deletar tipo de voluntariado";
+    nameInput.value = kind.name;
+    descriptionInput.value = kind.description;
+    submitButton.innerText = "Confirmar";
+
+    modal.style.display = "block";
+
+    window.addEventListener("keydown", function escKeyHandlerOnModal(event) {
+        if (event.key === "Escape") {
+            modal.style.display = "none";
+            window.removeEventListener("keydown", escKeyHandlerOnModal);
+        }
+    })
+
+    form.addEventListener("submit", async function submitHandler(event) {
+        try {
+            event.preventDefault()
+
+            const response = await fetch(`/voluntarios/tipos/deletar/${kind.id}`, { method: 'DELETE' })
+
+            if (response.ok) {
+                modal.style.display = "none";
+                window.location.reload();
+            } else {
+                const responseJson = await response.json()
+                throw new Error(responseJson.message)
+            }
+        } catch (err) {
+            if (err instanceof Error) {
+                alert(err.message)
+            } else {
+                alert('Erro ao excluir tipo de ajuda, tente novamente mais tarde.')
+            }
+
+            title.innerText = currentTitle;
+        }
+    })
+}
+
 /**
   * @param {HtmlElement} target
 */

@@ -38,6 +38,50 @@ class HelpsService:
         return new_help_kind.serialize
 
     @staticmethod
+    def find_help_kind_by_id(help_kind_id):
+        help_kind = HelpKind.query.filter_by(id=help_kind_id).first()
+        return help_kind
+
+    @staticmethod
+    def uptade_help_kind(current_user_token, help_kind_id, name, description):
+        session = SessionsService.find_session(current_user_token)
+        if session is None:
+            raise Exception('Invalid session')
+
+        help_kind = HelpsService.find_help_kind_by_id(help_kind_id)
+        if help_kind is None:
+            raise Exception('Help kind not found')
+
+        if name is not None:
+            help_kind.name = name
+
+        if description is not None:
+            help_kind.description = description
+
+        try:
+            db.session.commit()
+        except Exception as e:
+            raise e
+
+    @staticmethod
+    def delete_help_kind(current_user_token, help_kind_id):
+        session = SessionsService.find_session(current_user_token)
+        if session is None:
+            raise Exception('Invalid session')
+
+        help_kind = HelpsService.find_help_kind_by_id(help_kind_id)
+        if help_kind is None:
+            raise Exception('Help kind not found')
+
+        try:
+            db.session.delete(help_kind)
+            db.session.commit()
+        except Exception as e:
+            raise e
+
+        return help_kind.serialize
+
+    @staticmethod
     def list_help_kinds(token=None, check_enabled=True, check_session=False):
         if check_session:
             session = SessionsService.find_session(token)

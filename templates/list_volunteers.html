@@ -68,7 +68,12 @@
                             {{ kind.description }}
                         </div>
                     </td>
-                    <td onclick="detailKind" class="action-td">Detalhar</td>
+                    <td class="action-td">
+                        <div>
+                            <a onclick="editVolunteerKind({{ kind }})">Editar</a>
+                            <a onclick="deleteVolunteerKind({{ kind }})">Excluir</a>
+                        </div>
+                    </td>
                 </tr>
                 {% endfor %}
             </tbody>
@@ -85,7 +90,7 @@
         <div class="modal-content">
             <form id="new-kind-modal" autocomplete="off">
                 <span class="close">&times;</span>
-                <h2>Criar tipo de voluntariado</h2>
+                <h2 id="volunteer-modal-title">Criar tipo de voluntariado</h2>
 
                 <label for="name">Nome</label>
                 <input required type="text" id="name" name="name" value="" autocomplete="off"><br>
@@ -139,6 +144,11 @@ kindForm.onsubmit = async function handleKindFormSubmit(event) {
     const name = document.getElementById('name').value;
     const description = document.getElementById('description').value;
     const submitButton = document.getElementById('submit_button');
+
+    if (submitButton.innerText !== 'Enviar') {
+        return;
+    }
+
     submitButton.disabled = true;
     submitButton.innerText = 'Criando...';
 
@@ -211,7 +221,11 @@ section table {
 }
 .action-td {
     cursor: pointer;
-    text-decoration: underline;
+}
+
+.action-td div a {
+    padding-inline: 5px;
+    color: var(--primary-color);
 }
 
 .modal {
@@ -233,6 +247,7 @@ section table {
     padding: 20px;
     border: 1px solid #888;
     width: 40%;
+    color: black !important;
 }
 
 .close {

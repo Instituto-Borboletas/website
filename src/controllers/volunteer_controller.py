@@ -18,22 +18,24 @@ def create_volunteer_kind(token):
     created_kind = VolunteerKindService.create_volunteer_kind(token, name, description)
     return jsonify(created_kind.serialize), 201
 
-@volunteer_bp.route('/tipos/<int:kind_id>', methods=['GET', 'PUT', 'DELETE'])
+@volunteer_bp.route('/tipos/editar', methods=['PUT'])
 @token_required_internal
-def volunteer_rud(token, kind_id):
-    print(token)
+def edit_volunteer_kind(token):
+    request_json = request.get_json()
+    kind_id = request_json.get('id')
+    name = request_json.get('name')
+    description = request_json.get('description')
 
-    if request.method == 'GET':
-        return jsonify({'message': f'Tipo de voluntário {kind_id} encontrado'}), 200
+    updated_kind = VolunteerService.uptade_volunteer_kind(token, kind_id, name, description)
 
-    if request.method == 'PUT':
-        return jsonify({'message': f'Tipo de voluntário {kind_id} atualizado'}), 202
+    return jsonify(updated_kind), 200
 
-    if request.method == 'DELETE':
-        return jsonify({'message': f'Tipo de voluntário {kind_id} deletado'}), 202
+@volunteer_bp.route('/tipos/deletar/<int:kind_id>', methods=['DELETE'])
+@token_required_internal
+def delete_help_kind(token, kind_id):
+    VolunteerService.delete_kind(token, kind_id)
 
-    return jsonify({'error': 'Method not allowed'}), 405
-
+    return jsonify({'message': f'Tipo de voluntariado {kind_id} deletado'}), 202
 
 @volunteer_bp.route('/', methods=['GET'])
 @token_required_internal
