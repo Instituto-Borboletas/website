@@ -7,6 +7,23 @@ from src.database import db
 
 class VolunteerService:
     @staticmethod
+    def find_by_id(volunteer_id):
+        volunteer = Volunteer.query.filter_by(id=volunteer_id).first()
+        return volunteer
+
+    @staticmethod
+    def delete_volunteer_by_id(volunteer_id):
+        volunteer = VolunteerService.find_by_id(volunteer_id)
+        if volunteer is None:
+            raise Exception('Volunteer not found')
+
+        try:
+            db.session.delete(volunteer)
+            db.session.commit()
+        except Exception as e:
+            raise e
+
+    @staticmethod
     def create_volunteer(current_user_token, name, email, phone, kind_id):
         session = SessionsService.find_session(current_user_token)
         if session is None:
@@ -38,3 +55,8 @@ class VolunteerService:
         session = SessionsService.find_session(token)
         if session is None:
             return None
+
+    @staticmethod
+    def list_volunteers_from_user(user_id):
+        volunteers = Volunteer.query.filter_by(registered_by=user_id).all()
+        return [volunteer.serialize_html_full for volunteer in volunteers]

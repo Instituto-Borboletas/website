@@ -1,6 +1,8 @@
 from flask import Blueprint, request, jsonify, render_template, flash, redirect, url_for, make_response
+from src.services.users_service import ExternalUserService
 from src.services.volunteers_service import VolunteerService
 from src.services.volunteers_kind_service import VolunteerKindService
+from src.services.sessions_service import SessionsService
 
 from src.middlewares.auth_middleware import token_required_internal, token_required_external
 
@@ -58,3 +60,24 @@ def register_volunteer(token):
     flash('Voluntário criado com sucesso', 'success')
     return render_template('index.html', has_token=True)
 
+@volunteer_bp.route('/<int:volunteer_id>/deletar', methods=['DELETE'])
+@token_required_internal
+def delete_volunteer(token, volunteer_id):
+    session = SessionsService.find_session(token)
+    if session is None:
+        raise Exception('Invalid session')
+
+    user = ExternalUserService.find_user_by_id(session['user_id'])
+    if user is None:
+        raise Exception('User not found')
+
+    volunteer = VolunteerService.find_by_id(volunteer_id)
+    if volunteer is None:
+        raise Exception('Volunteer not found')
+
+    if volunteer.registered_by != user.id:
+        raise Exception('Unauthorized')
+
+    VolunteerService.delete_volunteer_by_id(volunteer_id)
+
+    return jsonify({'message': f'Voluntário {volunteer_id} deletado'}), 202

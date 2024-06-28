@@ -5,6 +5,23 @@ from src.database import db
 
 class HelpsService:
     @staticmethod
+    def find_by_id(help_id):
+        help = Help.query.filter_by(id=help_id).first()
+        return help
+
+    @staticmethod
+    def delete_from_id(help_id):
+        help = HelpsService.find_by_id(help_id)
+        if help is None:
+            raise Exception('Help not found')
+
+        try:
+            db.session.delete(help)
+            db.session.commit()
+        except Exception as e:
+            raise e
+
+    @staticmethod
     def create_help_kind(current_user_token, name, description):
         session = SessionsService.find_session(current_user_token)
         if session is None:
@@ -57,10 +74,14 @@ class HelpsService:
         if session is None:
             return None
 
-        # list all helps that have a HelpKind with `enabled` as true, return the helps in a list, each help should contain the relationed external user and HelpKind
-        # helps = db.session.query(Help).join(HelpKind).filter(HelpKind.enabled == True).options(joinedload(Help.external_user), joinedload(Help.help_kinds)).all()
         # TODO: validate if helps with help_kind disabled should be listed
         helps = db.session.query(Help).join(HelpKind).options(joinedload(Help.external_user), joinedload(Help.help_kinds)).all()
 
 
         return [help.serialize_html for help in helps]
+
+    @staticmethod
+    def list_helps_from_user(user_id):
+        helps = Help.query.filter_by(requested_by=user_id).all()
+        return [help.serialize_html for help in helps]
+

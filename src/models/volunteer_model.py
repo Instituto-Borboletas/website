@@ -103,7 +103,7 @@ class Volunteer(db.Model):
             'name': self.name,
             'email': self.email,
             'phone': self.phone,
-            'created_at': self.created_at.strftime('%d/%m/%Y %H:%M:%S'),
+            'created_at': self.created_at.strftime('%d/%m/%Y'),
             'kind': {
                 'name': self.volunteer_kind.name,
             },

@@ -12,14 +12,93 @@ Meus dados | Instituto Borboletas
 {% block content %}
 <section>
     <h1>Meus dados</h1>
-    <div>
+    <div class="top-content">
         <h4>{{ user.name }}</h4>
+        <button class="btn btn-primary" onclick="window.location.href='/logout'">Sair</button>
     </div>
+
+    <main>
+        {% if helps %}
+        <section class="helps-container">
+            <h2>Meus pedidos de ajuda</h2>
+            <div class="helps">
+                {% for help in helps %}
+                <div id="{{ help.id }}-help" class="help">
+                    <div class="help-header">
+                        <div>
+                            <h3>{{ help.title }}</h3>
+                            <p>Tipo: {{ help.kind.name }}</p>
+                        </div>
+
+                        <div>
+                            <span>{{ help.created_at }}</span>
+                            <a class="delete" onclick="deleteHelp({{help.id}})">Apagar</a>
+                        </div>
+                    </div>
+                    <div class="help-body">
+                        <p>{{ help.description }}</p>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </section>
+        {% endif %}
+
+        {% if volunteers %}
+        <section class="volunteers">
+            <h2>Minhas ofertas de ajuda</h2>
+            <div class="volunteers">
+                {% for volunteer in volunteers %}
+                <div id="{{ volunteer.id }}-volunteer" class="volunteer">
+                    <div class="volunteer-header">
+                        <div>
+                            <h3>{{ volunteer.name }}</h3>
+                            <p>Tipo: {{ volunteer.kind.name }}</p>
+                        </div>
+
+                        <div>
+                            <span>{{ volunteer.created_at }}</span>
+                            <a class="delete" onclick="deleteVolunteer({{volunteer.id}})">Apagar</a>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </section>
+        {% endif %}
+    </main>
 </section>
 {% endblock %}
 
 {% block extra_script %}
 <script>
+function deleteHelp(id) {
+    const element = document.getElementById(`${id}-help`);
+    const deleteButton = element.querySelector('.delete');
+    deleteButton.innerHTML = 'Apagando...';
+
+    fetch(`/ajudas/${id}/deletar`, {
+        method: 'DELETE'
+    }).then(response => {
+        if (response.ok) {
+            window.location.reload();
+        }
+    });
+}
+
+function deleteVolunteer(id) {
+    const element = document.getElementById(`${id}-volunteer`);
+    const deleteButton = element.querySelector('.delete');
+    deleteButton.innerHTML = 'Apagando...';
+
+    fetch(`/voluntarios/${id}/deletar`, {
+        method: 'DELETE'
+    }).then(response => {
+        if (response.ok) {
+            window.location.reload();
+        }
+    });
+}
 </script>
 {% endblock %}
 

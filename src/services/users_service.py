@@ -1,8 +1,10 @@
 import hashlib
 
 from src.models.users import InternalUser, ExternalUser
+from src.services.helps_service import HelpsService
 from src.services.sessions_service import SessionsService
 from src.database import db
+from src.services.volunteers_service import VolunteerService
 
 def hash_password(password):
     sha256_hash = hashlib.sha256()
@@ -125,3 +127,13 @@ class ExternalUserService:
 
         db.session.commit()
         return ExternalUser.query.get(user_id)
+
+    @staticmethod
+    def list_helps_from_user(user_id):
+        helps = HelpsService.list_helps_from_user(user_id)
+        return helps
+
+    @staticmethod
+    def list_volunteers_from_user(user_id):
+        volunteers = VolunteerService.list_volunteers_from_user(user_id)
+        return volunteers

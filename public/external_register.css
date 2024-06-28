@@ -7,6 +7,15 @@ body {
     height: 100vh;
 }
 
+footer {
+    width: 100%;
+    background-color: var(--primary-color-dark);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+}
+
 h1 {
     font-size: 1.5rem;
 }
@@ -17,7 +26,7 @@ section {
 }
 
 .register-form {
-    margin: 0 auto;
+    margin: 2rem auto;
     width: 90%;
     max-width: 500px;
     padding: 2rem;
@@ -79,4 +88,23 @@ section {
 .register-form .wrapper button:hover {
     background-color: var(--primary-color-dark);
     transform: scale(1.01);
+}
+
+.alert {
+    width: 50% !important;
+    padding: 0.5rem !important;
+    margin: 1rem auto !important;
+    border-radius: 5px;
+    background-color: var(--primary-color-light);
+    color: var(--primary-color-dark) !important;
+    font-weight: bold;
+    text-align: center !important;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.alert p {
+    text-align: center !important;
 }

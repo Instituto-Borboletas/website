@@ -1,5 +1,7 @@
 from flask import Blueprint, request, jsonify, render_template, flash, redirect, url_for, make_response
+from src.services.users_service import ExternalUserService
 from src.services.helps_service import HelpsService
+from src.services.sessions_service import SessionsService
 
 from src.middlewares.auth_middleware import token_required_internal, token_required_external
 
@@ -33,8 +35,30 @@ def create_help_request(token):
 
     created_help = HelpsService.create_help(token, title, description, kind_id)
     if created_help is None:
-        flash('Erro ao criar voluntário tente novamente mais tarde', 'danger')
+        flash('Erro ao criar pedido de ajuda tente novamente mais tarde', 'danger')
         return render_template('index.html', has_token=True)
 
-    flash('Voluntário criado com sucesso', 'success')
+    flash('Pedido de ajuda criado com sucesso', 'success')
     return render_template('index.html', has_token=True)
+
+@helps_bp.route('/<int:help_id>/deletar', methods=['DELETE'])
+@token_required_external
+def delete_help(token, help_id):
+    session = SessionsService.find_session(token)
+    if session is None:
+        raise Exception('Invalid session')
+
+    user = ExternalUserService.find_user_by_id(session['user_id'])
+    if user is None:
+        raise Exception('User not found')
+
+    help = HelpsService.find_by_id(help_id)
+    if help is None:
+        raise Exception('Volunteer not found')
+
+    if help.requested_by != user.id:
+        raise Exception('Unauthorized')
+
+    HelpsService.delete_from_id(help_id)
+
+    return jsonify({'message': f'Ajuda {help_id} deletado'}), 202

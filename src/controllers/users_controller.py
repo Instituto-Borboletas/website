@@ -123,7 +123,26 @@ def detail_session_user(token):
     if user is None:
         raise Exception('User not found')
 
-    return render_template('meus_dados.html', user=user.serialize)
+    helps = ExternalUserService.list_helps_from_user(session['user_id'])
+    volunteers = ExternalUserService.list_volunteers_from_user(session['user_id'])
+
+    print(helps)
+    print(volunteers)
+
+    return render_template('meus_dados.html', user=user.serialize, helps=helps, volunteers=volunteers)
+
+@users_bp.route('/logout', methods=['POST', 'GET'])
+def external_logout():
+    response = make_response(redirect(url_for('index')))
+    response.set_cookie(
+        'token',
+        '',
+        httponly=True,
+        samesite='Strict',
+        max_age=0
+    )
+
+    return response
 
 @users_bp.route('/login', methods=['POST', 'GET'])
 def external_login():

@@ -10,20 +10,17 @@ Cadastro | Instituto borboletas
 
 {% block content %}
 <section>
-    {%- for category, message in get_flashed_messages(with_categories = true) %}
-        <div class = "alert alert-danger">
-            {{ message }}
-        </div>
-    {%- endfor %}
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    <div class="alert">
+        {% for category, message in messages %}
+        <p>{{ message }}</p>
+        {% endfor %}
+    </div>
+    {% endif %}
+    {% endwith %}
 
-    <h1>Instituto Borboletas</h1>
     <h2>Cadastro</h2>
-
-    {%- for category, message in get_flashed_messages(with_categories = true) %}
-        <div class = "alert alert-danger">
-            {{ message }}
-        </div>
-    {%- endfor %}
 
     <form class="register-form" action="/cadastro" method="POST">
         <div class="wrapper">

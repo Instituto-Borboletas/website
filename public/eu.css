@@ -75,21 +75,6 @@ main section div a {
     text-align: center;
 }
 
-main section div:first-child {
-    padding: 40px;
-}
-
-main section div img {
-    margin-inline: auto;
-    width: 300px;
-    border-radius: 5px;
-    object-fit: contain;
-}
-
-main section:nth-child(even) {
-    flex-direction: row-reverse;
-}
-
 section {
     display: flex;
     flex-direction: column;
@@ -99,6 +84,77 @@ section {
     width: 100%;
     max-width: 900px;
     margin-inline: auto;
+}
+
+section main {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    width: 100%;
+}
+section main .helps-container, section main .volunteers-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    border-radius: 5px;
+    width: 100%;
+    max-width: 900px;
+}
+
+.helps, .volunteers {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    border-radius: 5px;
+    width: 100%;
+    max-width: 900px;
+    margin-inline: auto;
+}
+
+.helps .help, .volunteers .volunteer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 10px;
+    border-radius: 5px;
+    width: 80%;
+    max-width: 900px;
+    margin-inline: auto;
+}
+
+.helps .help .help-header, .volunteers .volunteer .volunteer-header {
+    width: 100%;
+    border-radius: 5px;
+    padding: 0;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.helps .help .help-header span, .volunteers .volunteer .volunteer-header span {
+    text-align: right;
+}
+
+.helps .help .help-body, .volunteers .volunteer .volunteer-body {
+    width: 100%;
+    border-radius: 5px;
+}
+
+.delete {
+    color: var(--danger-color);
+    text-decoration: underline;
+    background-color: unset;
+    border: unset;
+    text-align: right;
+    margin-top: 0;
+    padding: 0;
 }
 
 form {
@@ -112,29 +168,24 @@ form {
     background-color: var(--primary-color-light);
 }
 
-.field {
-    padding-top: 10px;
-    width: 50%;
+.top-content {
     display: flex;
-    flex-direction: column;
-    text-align: justify;
-}
-
-.field input {
-    padding: 8px;
-    border-radius: 5px;
-    border: 1px solid var(--primary-color-dark);
-}
-
-.field div {
-    display: flex;
+    align-items: center;
     justify-content: space-between;
+    padding: 20px;
+    width: 100%;
+    max-width: 500px;
+    margin-inline: auto;
 }
 
-.field div p {
-    text-decoration: underline;
-    color: var(--info-color);
-    cursor: pointer;
+.top-content button {
+    color: white;
+    text-decoration: none;
+    padding: 5px 10px;
+    border: 1px solid var(--primary-color-dark);
+    background-color: var(--primary-color);
+    border-radius: 5px;
+    text-align: center;
 }
 
 form button {

@@ -94,7 +94,7 @@ class Help(db.Model):
             'id': self.id,
             'title': self.title,
             'description': self.description,
-            'created_at': self.created_at.strftime('%d/%m/%Y %H:%M:%S'),
+            'created_at': self.created_at.strftime('%d/%m/%Y'),
             'requested_by': {
                 'name': self.external_user.name,
                 'email': self.external_user.email,
