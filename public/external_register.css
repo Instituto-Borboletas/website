@@ -11,7 +11,12 @@ h1 {
     font-size: 1.5rem;
 }
 
-.login-form {
+section {
+    margin-top: 1rem;
+    width: 100%;
+}
+
+.register-form {
     margin: 0 auto;
     width: 90%;
     max-width: 500px;
@@ -25,7 +30,7 @@ h1 {
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
-.login-form .wrapper {
+.register-form .wrapper {
     width: 95%;
     display: flex;
     flex-direction: column;
@@ -35,16 +40,16 @@ h1 {
 }
 
 @media (max-width: 768px) {
-    .login-form {
+    .register-form {
         width: 95%;
     }
 }
 
-.login-form .wrapper label {
+.register-form .wrapper label {
     align-self: start;
 }
 
-.login-form .wrapper input {
+.register-form .wrapper input {
     outline: none;
     width: 100%;
     max-width: 400px;
@@ -53,7 +58,7 @@ h1 {
     border-radius: 5px;
 }
 
-.login-form .wrapper button {
+.register-form .wrapper button {
     width: 100%;
     max-width: 405px;
     padding-block: 0.5rem;
@@ -66,12 +71,12 @@ h1 {
     transition: background-color 0.3s;
 }
 
-.login-form .wrapper a {
+.register-form .wrapper a {
     margin-bottom: 1rem;
     color: var(--primary-color);
 }
 
-.login-form .wrapper button:hover {
+.register-form .wrapper button:hover {
     background-color: var(--primary-color-dark);
     transform: scale(1.01);
 }

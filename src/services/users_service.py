@@ -12,9 +12,9 @@ def hash_password(password):
 class InternalUserService:
     @staticmethod
     def create_user(current_user_token, name, email, password):
-        # session = SessionsService.find_session(current_user_token)
-        # if session is None:
-        #     raise Exception('Invalid session')
+        session = SessionsService.find_session(current_user_token)
+        if session is None:
+            raise Exception('Invalid session')
 
         password_hash = hash_password(password)
         new_user = InternalUser(name=name, email=email, password_hash=password_hash)
@@ -56,14 +56,12 @@ class InternalUserService:
     @staticmethod
     def get_dashboard_data(token):
         session = SessionsService.find_session(token)
-        print(session)
         if session is None:
             return None
 
         user = InternalUser.query.get(session['user_id'])
         if user is None:
             return None
-        print(user)
 
         return {
             'user': user.serialize
@@ -80,8 +78,20 @@ class InternalUserService:
 
 class ExternalUserService:
     @staticmethod
-    def register_user(name, email, phone, city, state):
-        return None
+    def register_user(name, email, password, phone):
+        password_hash = hash_password(password)
+
+        user = ExternalUser(name=name, email=email, password_hash=password_hash, phone=phone)
+
+        try:
+            db.session.add(user)
+            db.session.commit()
+        except Exception as e:
+            if 'Duplicate entry' in str(e) and 'external_users.users_email_index' in str(e):
+                raise Exception('User already exists')
+            raise e
+
+        return user
 
     @staticmethod
     def login(email, password):

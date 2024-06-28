@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Cadastro | Instituto borboletas
+{% endblock %}
+
+{% block extra_head %}
+<link rel="stylesheet" type="text/css" href="/public/external_register.css">
+{% endblock %}
+
+{% block content %}
+<section>
+    {%- for category, message in get_flashed_messages(with_categories = true) %}
+        <div class = "alert alert-danger">
+            {{ message }}
+        </div>
+    {%- endfor %}
+
+    <h1>Instituto Borboletas</h1>
+    <h2>Cadastro</h2>
+
+    {%- for category, message in get_flashed_messages(with_categories = true) %}
+        <div class = "alert alert-danger">
+            {{ message }}
+        </div>
+    {%- endfor %}
+
+    <form class="register-form" action="/cadastro" method="POST">
+        <div class="wrapper">
+            <label for="name">Nome *</label>
+            <input type="text" id="name" name="name" required value="{{ data.name | default('') }}">
+        </div>
+
+        <div class="wrapper">
+            <label for="phone">Telefone *</label>
+            <input type="text" id="phone" name="phone" required value="{{ data.phone | default('') }}" minlength="10" maxlength="11">
+        </div>
+
+        <div class="wrapper">
+            <label for="email">Email *</label>
+            <input type="email" id="email" name="email" required value="{{ data.email | default('') }}" autocomplete="email">
+        </div>
+
+        <div class="wrapper">
+            <label for="password">Senha *</label>
+            <input type="password" id="password" name="password" required value="{{ data.email | default('') }}" autocomplete="new-password">
+        </div>
+
+        <div class="wrapper">
+            <button id="register-button">Cadastrar</button>
+        </div>
+    </form>
+</section>
+{% endblock %}
+
+{% block extra_script %}
+<script defer>
+    const registerForm = document.querySelector('.register-form');
+    const registerButton = document.querySelector('#register-button');
+
+    registerForm.addEventListener('submit', (event) => {
+        registerButton.disabled = true;
+        registerButton.textContent = 'Cadastrando...';
+    });
+</script>
+{% endblock %}

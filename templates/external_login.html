@@ -29,6 +29,7 @@
             </div>
 
             <div class="wrapper">
+                <a href="/cadastro">Fazer cadastro</a>
                 <button>Entrar</button>
             </div>
         </form>
@@ -53,7 +54,16 @@
             }).then(response => {
                 if (response.redirected) {
                     window.location.href = response.url;
+                    return
                 }
+                return response.text();
+            }).then(html => {
+                if (!html) {
+                    return;
+                }
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(html, 'text/html');
+                document.body.innerHTML = doc.body.innerHTML;
             });
         });
     </script>

@@ -107,7 +107,7 @@ async function renderInternalUsers(element) {
             try {
                 event.preventDefault()
 
-                const response = await fetch('/users/internal', {
+                const response = await fetch('/usuarios/interno', {
                     method: 'POST',
                     body: JSON.stringify({
                         name: userForm.name.value,

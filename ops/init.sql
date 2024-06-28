@@ -37,6 +37,7 @@ CREATE TABLE IF NOT EXISTS external_users (
     id CHAR(36) PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
     email VARCHAR(255) NOT NULL,
+    phone CHAR(11) NOT NULL,
     password_hash VARCHAR(255) NOT NULL,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -53,7 +54,6 @@ FOR EACH ROW SET NEW.id = IFNULL(NEW.id, UUID());
 -- TODO: REMOVE ON PROD ENV
 -- TEST DATA
 INSERT INTO internal_users (name, email, password_hash) VALUES ('Gabriel Rocha', 'rocha@gmail.com', '03ac674216f3e15c761ee1a5e255f067953623c8b388b4459e13f978d7c846f4');
-INSERT INTO external_users (name, email, password_hash) VALUES ('Gabriel Rocha', 'rocha@gmail.com', '03ac674216f3e15c761ee1a5e255f067953623c8b388b4459e13f978d7c846f4');
 -- REMOVE UNTIL HERE
 
 -- CREATE TABLE IF NOT EXISTS external_users_extra_data (

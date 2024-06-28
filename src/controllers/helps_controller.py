@@ -22,8 +22,6 @@ def list_helps(token):
     kinds = HelpsService.list_help_kinds(check_enabled=True, check_session=False)
     kinds = [kind.serialize_for_select for kind in kinds or []]
 
-    print(helps)
-
     return render_template('list_helps.html', helps=helps, kinds=kinds)
 
 @helps_bp.route('/', methods=['POST'])

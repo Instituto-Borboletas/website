@@ -9,7 +9,7 @@ class VolunteerKind(db.Model):
     description = db.Column(db.String(255), nullable=False)
     enabled = db.Column(db.Boolean, nullable=True, default=True)
     created_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
-    created_by = db.Column(db.Integer, db.ForeignKey('internal_users.id'), nullable=False)
+    created_by = db.Column(db.String(36), db.ForeignKey('internal_users.id'), nullable=False)
 
     volunteer = db.relationship('Volunteer', backref='volunteer_kinds')
     internal_user = db.relationship('InternalUser', backref='volunteer_kinds')
@@ -58,7 +58,7 @@ class Volunteer(db.Model):
     email = db.Column(db.String(255), nullable=True)
     phone = db.Column(db.String(11), nullable=False)
     kind_id = db.Column(db.Integer, db.ForeignKey('volunteers_kind.id'), nullable=False)
-    registered_by = db.Column(db.Integer, db.ForeignKey('external_users.id'), nullable=False)
+    registered_by = db.Column(db.ForeignKey('external_users.id'), nullable=False)
     created_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
 
     volunteer_kind = db.relationship('VolunteerKind', backref='volunteers')

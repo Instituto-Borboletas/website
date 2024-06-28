@@ -13,7 +13,7 @@ def create_user(token):
     password = request_json.get('password')
 
     try:
-        user = InternalUserService.create_user("shdashdj", name, email, password)
+        user = InternalUserService.create_user(token, name, email, password)
         return jsonify(user.serialize), 201
     except Exception as e:
         if str(e) == 'Invalid session':
@@ -156,3 +156,44 @@ def external_login():
         return response
 
     return render_template('external_login.html', next=next_page)
+
+@users_bp.route('/cadastro', methods=['POST', 'GET'])
+def external_register():
+    next_page = request.args.get('next')
+
+    if request.method == 'POST':
+        name = request.form.get('name')
+        email = request.form.get('email')
+        phone = request.form.get('phone')
+        password = request.form.get('password')
+
+        data = {
+            'name': name,
+            'email': email,
+            'phone': phone,
+            'password': password,
+        }
+
+        if name is None or len(name) < 3:
+            flash('Nome invalido, insira seu nome completo por favor', 'danger')
+            return render_template('external_register.html', next=next_page, data=data)
+
+
+        if phone is None or len(phone) < 10 or len(phone) > 11:
+            flash('Telefone invalido, insira um telefone válido', 'danger')
+            return render_template('external_register.html', next=next_page, data=data)
+
+        try:
+            user = ExternalUserService.register_user(name, email, password, phone)
+            if user is None:
+                flash('Erro ao cadastrar usuário, tente novamente mais tarde', 'danger')
+                return render_template('external_register.html', next=next_page, data=data)
+
+            return redirect(url_for('users_bp.external_login'))
+        except Exception as e:
+            if 'User already exists' in str(e):
+                flash('Um usuário com esse mesmo email já existe', 'danger')
+                return render_template('external_register.html', next=next_page, data=data)
+            raise e
+
+    return render_template('external_register.html', next=next_page, data={})
