@@ -200,6 +200,7 @@ th, td {
     border: 1px solid #ddd;
     padding: 8px;
     text-align: left;
+    max-width: 200px;
 }
 th {
     background-color: #f2f2f2;

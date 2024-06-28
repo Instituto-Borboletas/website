@@ -141,3 +141,7 @@ form button:disabled {
 #message_wrapper {
     color: var(--danger-color);
 }
+
+footer {
+    background-color: unset !important;
+}

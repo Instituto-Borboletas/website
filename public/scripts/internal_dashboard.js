@@ -17,9 +17,9 @@ function renderScript(target) {
 
 const PAGES = {
     'ajudas': renderHelps,
-    'doacoes': renderDonations,
+    // 'doacoes': renderDonations,
     'voluntarios': renderVolunteers,
-    'usuarios_externos': renderExternalUsers,
+    // 'usuarios_externos': renderExternalUsers,
     'usuarios_internos': renderInternalUsers
 }
 let selectedPage = null;

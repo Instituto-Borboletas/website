@@ -10,7 +10,7 @@
                 <tr>
                     <th>Nome</th>
                     <th>Contato</th>
-                    <th>Registrado por</th>
+                    <th>Descrição</th>
                     <th>Tipo</th>
                 </tr>
             </thead>
@@ -28,8 +28,7 @@
                         {% endif %}
                     </td>
                     <td>
-                        {{ help.requested_by.name }}<br>
-                        {{ help.requested_by.email }}
+                        {{ help.description }}
                     </td>
                     <td>{{ help.kind.name }}</td>
                 </tr>
@@ -237,9 +236,9 @@ table tr td:last-child, table tr th:last-child {
 .modal-content {
     background-color: #fefefe;
     margin: 15% auto;
-    padding: 20px;
     border: 1px solid #888;
     width: 40%;
+    color: black;
 }
 
 .close {
