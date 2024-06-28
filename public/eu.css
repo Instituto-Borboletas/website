@@ -47,6 +47,12 @@ main section {
     max-width: 900px;
 }
 
+@media (max-width: 768px) {
+    main section {
+        padding: 0;
+        padding-top: 20px;
+    }
+}
 
 main section.highlight {
     filter: brightness(90%);
@@ -86,6 +92,13 @@ section {
     margin-inline: auto;
 }
 
+@media (max-width: 768px) {
+    section {
+        padding: 0;
+        padding-top: 20px;
+    }
+}
+
 section main {
     display: flex;
     flex-direction: column;
@@ -113,8 +126,15 @@ section main .helps-container, section main .volunteers-container {
     padding: 20px;
     border-radius: 5px;
     width: 100%;
-    max-width: 900px;
+    # max-width: 900px;
     margin-inline: auto;
+}
+
+@media (max-width: 768px) {
+    .helps, .volunteers {
+        padding: 0;
+        padding-top: 10px;
+    }
 }
 
 .helps .help, .volunteers .volunteer {
@@ -127,6 +147,14 @@ section main .helps-container, section main .volunteers-container {
     width: 80%;
     max-width: 900px;
     margin-inline: auto;
+}
+
+@media (max-width: 768px) {
+    .helps .help, .volunteers .volunteer {
+        padding: 0;
+        padding-top: 10px;
+        width: 100%;
+    }
 }
 
 .helps .help .help-header, .volunteers .volunteer .volunteer-header {
