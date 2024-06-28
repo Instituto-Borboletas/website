@@ -33,17 +33,18 @@ Instituto Borboletas
 {% endblock %}
 
 {% block content %}
-<main>
-    {% with messages = get_flashed_messages(with_categories=true) %}
-    {% if messages %}
-    <div class="alert">
-        {% for category, message in messages %}
-        <p>{{ message }}</p>
-        {% endfor %}
-    </div>
-    {% endif %}
-    {% endwith %}
 
+{% with messages = get_flashed_messages(with_categories=true) %}
+{% if messages %}
+<div class="alert">
+    {% for category, message in messages %}
+    <p>{{ message }}</p>
+    {% endfor %}
+</div>
+{% endif %}
+{% endwith %}
+
+<main>
     <section id="quem-somos">
         <div class="about">
             <h1>Sobre Nós</h1>

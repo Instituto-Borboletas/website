@@ -28,14 +28,15 @@ def index():
     has_token_cookie = "token" in request.cookies
     return render_template("index.html", has_token=has_token_cookie)
 
-if __name__ == "__main__":
-    app.register_blueprint(users_bp)
-    app.register_blueprint(volunteer_bp, url_prefix="/voluntarios")
-    app.register_blueprint(helps_bp, url_prefix="/ajudas")
-    app.register_blueprint(pages_bp)
+app.register_blueprint(users_bp)
+app.register_blueprint(volunteer_bp, url_prefix="/voluntarios")
+app.register_blueprint(helps_bp, url_prefix="/ajudas")
+app.register_blueprint(pages_bp)
 
-    @app.errorhandler(404)
-    def not_found(e):
-        return send_from_directory("public", "404.html"), 404
-    app.run(debug=True, host="0.0.0.0")
+@app.errorhandler(404)
+def not_found(e):
+    return send_from_directory("public", "404.html"), 404
+
+if __name__ == "__main__":
+    app.run(debug=False, host="0.0.0.0")
 

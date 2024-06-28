@@ -156,7 +156,7 @@ footer div {
     border-radius: 5px;
     font-weight: bold;
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
     align-items: center;
     color: var(--success-color);
 }
