@@ -1,3 +1,7 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 :root {
     --primary-color: #56B2CF;
     --primary-color-dark: #388EA9;
@@ -11,15 +15,15 @@
     --light-color: #f8f9fa;
     --dark-color: #343a40;
 
-    --background-color: #EEE;
+    --background-color: #FFF;
     --darkier-background-color: #DDD;
 }
 
 * {
-    font-family: Arial, sans-serif;
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+    @apply font-sans;
 }
 
 html, body {
@@ -45,6 +49,7 @@ header {
 header .logo-container {
     display: flex;
     align-items: center;
+    width: 100px;
 }
 
 header .logo-container img {
