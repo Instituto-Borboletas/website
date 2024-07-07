@@ -1,20 +1,22 @@
-version: "3"
+version: '3.9'
 
 services:
-  mysql:
-    image: mysql:8.3.0
+  postgres:
+    image: postgres:14-alpine
     ports:
-      - "3306:3306"
-    command: --default-authentication-plugin=mysql_native_password --init-file /data/application/init.sql
+      - 5432:5432
     volumes:
-      - ./ops/init.sql:/data/application/init.sql
-      - borboletas:/var/lib/mysql
+      # - borboletas:/var/lib/postgresql/data
+      - ./ops/init.sql:/docker-entrypoint-initdb.d/init.sql
     environment:
-      MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: borboletas
-      MYSQL_USER: server
-      MYSQL_PASSWORD: senhaserver
-      # MYSQL_ROOT_HOST: '127.0.0.1'
+      - POSTGRES_PASSWORD=root
+      - POSTGRES_USER=server
+      - POSTGRES_DB=senhaserver
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 2s
+      timeout: 2s
+      retries: 30
 
 volumes:
   borboletas:
