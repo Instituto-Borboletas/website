@@ -1,62 +1,70 @@
 from sqlalchemy.orm import joinedload
-from src.models.help_model import Help, HelpKind
-from src.services.sessions_service import SessionsService
+from src.models.help_model import HelpKindNotFoundException, HelpRequest, HelpKind
+from src.models.session_model import InvalidSessionExeption
+from src.models.users import User, UserType
+from src.services.users_service import UserService
 from src.database import db
+
+internal_user_service = UserService(UserType.INTERNAL)
+external_user_service = UserService(UserType.EXTERNAL)
 
 class HelpsService:
     @staticmethod
-    def find_by_id(help_id):
-        help = Help.query.filter_by(id=help_id).first()
-        return help
+    def find_help_kind_by_id(session_token, help_id):
+        user = internal_user_service.find_user_by_session_token(session_token)
+        if user is None:
+            raise InvalidSessionExeption
 
-    @staticmethod
-    def delete_from_id(help_id):
-        help = HelpsService.find_by_id(help_id)
+        help = HelpKind.query.filter_by(id=help_id).first()
         if help is None:
-            raise Exception('Help not found')
+            raise HelpKindNotFoundException
+
+        return help.serilize
+
+    @staticmethod
+    def deactivate_help_kind_by_id(session_token, help_id):
+        user = internal_user_service.find_user_by_session_token(session_token)
+        if user is None:
+            raise InvalidSessionExeption
+
+        updated = HelpRequest.query.filter_by(id=help_id).update({'enabled': False})
+        if updated == 0:
+            return None
+
+        db.session.commit()
+        return {'success': True}
+
+    @staticmethod
+    def register_help_kind(session_token, name, description):
+        user = internal_user_service.find_user_by_session_token(session_token)
+        if user is None:
+            raise InvalidSessionExeption
+
+        kind = HelpKind(name=name, description=description, created_by=user.id)
 
         try:
-            db.session.delete(help)
+            db.session.add(kind)
             db.session.commit()
         except Exception as e:
             raise e
 
-    @staticmethod
-    def create_help_kind(current_user_token, name, description):
-        session = SessionsService.find_session(current_user_token)
-        if session is None:
-            raise Exception('Invalid session')
-
-        new_help_kind = HelpKind(name=name, description=description, created_by=session['user_id'])
-
-        try:
-            db.session.add(new_help_kind)
-            db.session.commit()
-        except Exception as e:
-            raise e
-
-        return new_help_kind.serialize
+        return kind.serialize
 
     @staticmethod
-    def find_help_kind_by_id(help_kind_id):
-        help_kind = HelpKind.query.filter_by(id=help_kind_id).first()
-        return help_kind
+    def uptade_help_kind(session_token, help_kind_id, name, description):
+        user = internal_user_service.find_user_by_session_token(session_token)
+        if user is None:
+            raise InvalidSessionExeption
 
-    @staticmethod
-    def uptade_help_kind(current_user_token, help_kind_id, name, description):
-        session = SessionsService.find_session(current_user_token)
-        if session is None:
-            raise Exception('Invalid session')
-
-        help_kind = HelpsService.find_help_kind_by_id(help_kind_id)
-        if help_kind is None:
-            raise Exception('Help kind not found')
+        kind = HelpKind.query.filter_by(id=help_kind_id).first()
+        if kind is None:
+            raise HelpKindNotFoundException
 
         if name is not None:
-            help_kind.name = name
+            kind.name = name
 
         if description is not None:
-            help_kind.description = description
+            kind.description = description
 
         try:
             db.session.commit()
@@ -64,68 +72,49 @@ class HelpsService:
             raise e
 
     @staticmethod
-    def delete_help_kind(current_user_token, help_kind_id):
-        session = SessionsService.find_session(current_user_token)
-        if session is None:
-            raise Exception('Invalid session')
-
-        help_kind = HelpsService.find_help_kind_by_id(help_kind_id)
-        if help_kind is None:
-            raise Exception('Help kind not found')
-
-        try:
-            db.session.delete(help_kind)
-            db.session.commit()
-        except Exception as e:
-            raise e
-
-        return help_kind.serialize
-
-    @staticmethod
-    def list_help_kinds(token=None, check_enabled=True, check_session=False):
-        if check_session:
-            session = SessionsService.find_session(token)
-            if session is None:
-                return None
-
+    def list_help_kinds(enabled_only=False):
+        """
+        List all help kinds
+        This method is meant to be used on html mounting and should not be used on API calls.
+        """
         volunteer_kinds = []
-        if check_enabled:
+        if enabled_only:
             volunteer_kinds = HelpKind.query.filter(HelpKind.enabled == True).all()
         else:
             volunteer_kinds = HelpKind.query.all()
 
-        return volunteer_kinds
+        return [kind.serialize for kind in volunteer_kinds]
 
     @staticmethod
-    def create_help(current_user_token, title, description, kind_id):
-        session = SessionsService.find_session(current_user_token)
-        if session is None:
-            raise Exception('Invalid session')
+    def list_helps(session_token):
+        """
+        List all help kinds
+        This method is meant to be used on html mounting and should not be used on API calls.
+        """
+        user = internal_user_service.find_user_by_session_token(session_token)
+        if user is None:
+            raise InvalidSessionExeption
 
-        new_help = Help(title=title, description=description, kind_id=kind_id, requested_by=session['user_id'])
+        helps = db.session.query(HelpRequest).join(HelpKind).options(joinedload(HelpRequest.user), joinedload(HelpRequest.help_kinds)).all()
 
-        try:
-            db.session.add(new_help)
-            db.session.commit()
-        except Exception as e:
-            raise e
+        return [help.serialize for help in helps]
+
+    @staticmethod
+    def register_help_request(session_token, description, kind_id):
+        user = external_user_service.find_user_by_session_token(session_token)
+        if user is None:
+            raise InvalidSessionExeption
+
+        new_help = HelpRequest(description=description, kind_id=kind_id, requested_by=user.id)
+
+        db.session.add(new_help)
+        db.session.commit()
 
         return new_help.serialize
 
     @staticmethod
-    def list_helps(token):
-        session = SessionsService.find_session(token)
-        if session is None:
-            return None
-
-        # TODO: validate if helps with help_kind disabled should be listed
-        helps = db.session.query(Help).join(HelpKind).options(joinedload(Help.external_user), joinedload(Help.help_kinds)).all()
-
-
+    def list_user_requests(user: User):
+        if user.user_type == UserType.INTERNAL:
+            raise Exception('Invalid user type')
+        helps = HelpRequest.query.filter_by(requested_by=user.id).all()
         return [help.serialize_html for help in helps]
-
-    @staticmethod
-    def list_helps_from_user(user_id):
-        helps = Help.query.filter_by(requested_by=user_id).all()
-        return [help.serialize_html for help in helps]
-
