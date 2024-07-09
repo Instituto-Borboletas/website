@@ -1,5 +1,17 @@
+import hashlib
+from enum import Enum
 from datetime import datetime
 from src.database import db
+
+# TODO: change from sha256 hashing to a better one
+def hash_password(password):
+    sha256_hash = hashlib.sha256()
+    sha256_hash.update(password.encode('utf-8'))
+    return sha256_hash.hexdigest()
+
+class UserType(str, Enum):
+    INTERNAL = 'internal'
+    EXTERNAL = 'external'
 
 class User(db.Model):
     __tablename__ = 'users'
@@ -8,22 +20,27 @@ class User(db.Model):
     name = db.Column(db.String(255), nullable=False)
     email = db.Column(db.String(255), nullable=False)
     password_hash = db.Column(db.String(255), nullable=False)
-    user_type = db.Column(db.Enum('internal', 'external'), nullable=False)
+    user_type = db.Column(db.Enum(UserType), nullable=False)
 
     created_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    external_user_data = db.relationship('ExternalUserData', backref='users')
+    volunteers_kind = db.relationship('VolunteerKind', backref='users')
+    volunteers = db.relationship('Volunteer', backref='users')
+    help_kinds = db.relationship('HelpKind', backref='users')
+    help_requests = db.relationship('HelpRequest', backref='users')
 
     __table_args__ = (
         db.Index('users_email_password_hash_index', 'email', 'password_hash'),
         db.UniqueConstraint('email', 'user_type', name='users_email_user_type_index'),
     )
 
-    def __init__(self, name, email, password_hash, user_type):
+    def __init__(self, name, email, password, user_type):
         self.name = name
         self.email = email
-        self.password_hash = password_hash
+        self.password_hash = hash_password(password)
         self.user_type = user_type
-
 
     def __repr__(self):
         return f'<User {self.name}>'

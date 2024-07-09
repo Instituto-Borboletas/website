@@ -3,6 +3,9 @@ import uuid
 from datetime import datetime, timedelta
 from src.database import db
 
+class InvalidSessionExeption(Exception):
+    message = 'Invalid session'
+
 class Sessions(db.Model):
     __tablename__ = 'sessions'
 
