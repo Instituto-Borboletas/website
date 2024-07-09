@@ -30,6 +30,7 @@ class User(db.Model):
     volunteers = db.relationship('Volunteer', backref='users')
     help_kinds = db.relationship('HelpKind', backref='users')
     help_requests = db.relationship('HelpRequest', backref='users')
+    session = db.relationship('Sessions', backref='users')
 
     __table_args__ = (
         db.Index('users_email_password_hash_index', 'email', 'password_hash'),

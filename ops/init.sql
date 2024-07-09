@@ -46,10 +46,10 @@ CREATE TABLE IF NOT EXISTS external_user_data (
 
 CREATE TABLE IF NOT EXISTS sessions (
     id UUID NOT NULL DEFAULT UUID(),
-    user_id CHAR(36) NOT NULL,
+    user_id UUID NOT NULL,
     expires_at TIMESTAMP NOT NULL DEFAULT (CURRENT_TIMESTAMP + INTERVAL 12 HOUR),
 
-    INDEX session_token_index (token)
+    FOREIGN KEY (user_id) REFERENCES users(id)
 );
 
 -- usuarios + session + roles end
