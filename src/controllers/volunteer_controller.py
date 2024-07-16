@@ -1,12 +1,18 @@
 from flask import Blueprint, request, jsonify, render_template, flash, redirect, url_for, make_response
-from src.services.users_service import ExternalUserService
+from src.services.users_service import UserService, UserType
 from src.services.volunteers_service import VolunteerService
 from src.services.volunteers_kind_service import VolunteerKindService
 from src.services.sessions_service import SessionsService
 
-from src.middlewares.auth_middleware import token_required_internal, token_required_external
+from src.middlewares.auth_middleware import (
+    token_required_internal, token_required_external
+)
 
 volunteer_bp = Blueprint('volunteer_bp', __name__)
+
+internal_user_service = UserService(UserType.INTERNAL)
+external_user_service = UserService(UserType.EXTERNAL)
+
 
 @volunteer_bp.route('/tipos', methods=['POST'])
 @token_required_internal
@@ -15,8 +21,13 @@ def create_volunteer_kind(token):
     name = request_json.get('name')
     description = request_json.get('description')
 
-    created_kind = VolunteerKindService.create_volunteer_kind(token, name, description)
+    created_kind = VolunteerKindService.create_volunteer_kind(
+        token,
+        name,
+        description
+    )
     return jsonify(created_kind.serialize), 201
+
 
 @volunteer_bp.route('/tipos/editar', methods=['PUT'])
 @token_required_internal
@@ -26,14 +37,24 @@ def edit_volunteer_kind(token):
     name = request_json.get('name')
     description = request_json.get('description')
 
-    updated_kind = VolunteerService.uptade_volunteer_kind(token, kind_id, name, description)
+    updated_kind = VolunteerService.uptade_volunteer_kind(
+        token,
+        kind_id,
+        name,
+        description
+    )
 
     return jsonify(updated_kind), 200
+
 
 @volunteer_bp.route('/tipos/deletar/<int:kind_id>', methods=['DELETE'])
 @token_required_internal
 def delete_help_kind(token, kind_id):
-    VolunteerService.delete_kind(token, kind_id)
+        user = internal_user_service.find_user_by_session_token(session_token)
+        if user is None:
+            raise InvalidSessionExeption()
+
+    VolunteerService.deactivate_volunteer_kind(token, kind_id)
 
     return jsonify({'message': f'Tipo de voluntariado {kind_id} deletado'}), 202
 

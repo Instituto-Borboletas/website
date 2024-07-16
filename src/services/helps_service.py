@@ -77,13 +77,13 @@ class HelpsService:
         List all help kinds
         This method is meant to be used on html mounting and should not be used on API calls.
         """
-        volunteer_kinds = []
+        help_kinds = []
         if enabled_only:
-            volunteer_kinds = HelpKind.query.filter(HelpKind.enabled == True).all()
+            help_kinds = HelpKind.query.filter(HelpKind.enabled == True).all()
         else:
-            volunteer_kinds = HelpKind.query.all()
+            help_kinds = HelpKind.query.all()
 
-        return [kind.serialize for kind in volunteer_kinds]
+        return help_kinds
 
     @staticmethod
     def list_helps(session_token):
@@ -97,7 +97,7 @@ class HelpsService:
 
         helps = db.session.query(HelpRequest).join(HelpKind).options(joinedload(HelpRequest.user), joinedload(HelpRequest.help_kinds)).all()
 
-        return [help.serialize for help in helps]
+        return helps
 
     @staticmethod
     def register_help_request(session_token, description, kind_id):
@@ -110,11 +110,11 @@ class HelpsService:
         db.session.add(new_help)
         db.session.commit()
 
-        return new_help.serialize
+        return new_help
 
     @staticmethod
     def list_user_requests(user: User):
         if user.user_type == UserType.INTERNAL:
             raise Exception('Invalid user type')
         helps = HelpRequest.query.filter_by(requested_by=user.id).all()
-        return [help.serialize_html for help in helps]
+        return helps

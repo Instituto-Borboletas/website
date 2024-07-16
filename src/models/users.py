@@ -13,6 +13,9 @@ class UserType(str, Enum):
     INTERNAL = 'internal'
     EXTERNAL = 'external'
 
+class UserNotFoundException(Exception):
+    message = 'User not found'
+
 class User(db.Model):
     __tablename__ = 'users'
 

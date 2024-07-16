@@ -20,5 +20,4 @@ class SessionsService:
 
     @staticmethod
     def find_session(session_id):
-        session = Sessions.query.filter_by(id=session_id).first()
-        return session.serialize() if session is not None else None
+        return Sessions.query.filter_by(id=session_id).first()
