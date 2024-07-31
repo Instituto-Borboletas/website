@@ -1,0 +1,19 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  @apply font-sans;
+  @apply bg-gray-200;
+  @apply text-gray-900;
+  @apply antialiased;
+}
+
+#root {
+  @apply flex flex-col h-screen;
+}
+
+main {
+  @apply flex flex-col flex-1;
+  @apply w-5/6 mx-auto;
+}
