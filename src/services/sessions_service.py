@@ -21,3 +21,12 @@ class SessionsService:
     @staticmethod
     def find_session(session_id):
         return Sessions.query.filter_by(id=session_id).first()
+
+    @staticmethod
+    def exists_external(session_token):
+        query = text(f"SELECT users.id FROM users LEFT JOIN sessions ON users.id = sessions.user_id WHERE sessions.id = '{session_token}' AND users.user_type = 'external'")
+        connection = db.session.connection()
+        result = connection.execute(query).fetchone()
+
+        return result is not None
+
