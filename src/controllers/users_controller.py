@@ -1,30 +1,29 @@
 from flask import Blueprint, request, jsonify, render_template, flash, redirect, url_for, make_response
-from src.services.users_service import ExternalUserService, InternalUserService
+from src.models.users import UserType
+from src.services.users_service import UserService
+from src.services.helps_service import HelpsService, HelpRequest
 from src.middlewares.auth_middleware import token_required_external, token_required_internal
 
 users_bp = Blueprint('users_bp', __name__)
 
+internal_user_service = UserService(UserType.internal)
+external_user_service = UserService(UserType.external)
+
 @users_bp.route('/usuarios/interno', methods=['POST'])
 @token_required_internal
-def create_user(token):
+def create_user(session_token):
     request_json = request.get_json()
     name = request_json.get('name')
     email = request_json.get('email')
     password = request_json.get('password')
 
     try:
-        user = InternalUserService.create_user(token, name, email, password)
+        user = internal_user_service.register_user(name, email, password)
         return jsonify(user.serialize), 201
     except Exception as e:
-        if str(e) == 'Invalid session':
-            return jsonify({'error': 'Invalid session'}), 401
-
         if str(e) == 'User already exists':
             return jsonify({'message': 'Já existe um usuário com esse email'}), 409
-
-        print(e)
-        return jsonify({'error': 'Internal server error'}), 500
-
+        raise e
 
 @users_bp.route('/usuarios/interno/login', methods=['POST', 'GET'])
 def internal_login():
@@ -32,7 +31,7 @@ def internal_login():
         email = request.form.get('email')
         password = request.form.get('password')
 
-        session, user = InternalUserService.login(email, password)
+        session, user = internal_user_service.login(email, password)
 
         if user is None:
             flash('Usuário ou senha inválidos', 'danger')
@@ -42,10 +41,12 @@ def internal_login():
             flash('Erro ao criar sessão', 'danger')
             return render_template('internal_login.html')
 
+        print(session.id)
+
         response = make_response(redirect(url_for('users_bp.internal_dashboard')))
         response.set_cookie(
             'token',
-            session.token,
+            str(session.id),
             httponly=True,
             samesite='Strict',
             max_age=60 * 60 * 12
@@ -58,7 +59,7 @@ def internal_login():
 @users_bp.route('/usuarios/interno/logout', methods=['GET'])
 @token_required_internal
 def internal_logout(token):
-    InternalUserService.logout(token)
+    internal_user_service.logout(token)
 
     response = make_response(redirect(url_for('users_bp.internal_login')))
 
@@ -75,17 +76,21 @@ def internal_logout(token):
 @users_bp.route('/interno', methods=['GET'])
 @token_required_internal
 def internal_dashboard(token):
-    data = InternalUserService.get_dashboard_data(token)
+    user = internal_user_service.find_user_by_session_token(token)
 
-    if data is None:
-        return redirect(url_for('users_bp.internal_login'))
+    if user is None:
+        raise Exception('Invalid session')
+
+    data = {
+        'user': user.serialize,
+    }
 
     return render_template('internal_dashboard.html', data=data)
 
 @users_bp.route('/interno/usuarios/internos', methods=['GET'])
 @token_required_internal
 def internal_users_crud(token):
-    data = InternalUserService.list_users(token)
+    data = internal_user_service.list_users()
     if data is None:
         data = []
 
@@ -105,7 +110,7 @@ def internal_users_crud(token):
 @users_bp.route('/eu', methods=['GET', 'POST'])
 @token_required_external
 def detail_session_user(token):
-    session = InternalUserService.session_details(token)
+    session = internal_user_service.find_user_by_session_token(token)
     if session is None:
         raise Exception('Invalid session')
 
@@ -114,22 +119,18 @@ def detail_session_user(token):
     if request.method == 'POST':
         name = request.form.get('name')
         email = request.form.get('email')
-
-        user = ExternalUserService.update_user(session['user_id'], name, email)
-
+        user = external_user_service.update_user(session.user_id, name, email)
     if request.method == 'GET':
-        user = ExternalUserService.find_user_by_id(session['user_id'])
+        user = external_user_service.find_user_by_id(session.phone)
 
     if user is None:
         raise Exception('User not found')
 
-    helps = ExternalUserService.list_helps_from_user(session['user_id'])
-    volunteers = ExternalUserService.list_volunteers_from_user(session['user_id'])
+    helps = HelpsService.list_user_requests(user)
+    helps = [help.serialize for help in helps]
+    # volunteers = external_user_service.list_volunteers_from_user(session['user_id'])
 
-    print(helps)
-    print(volunteers)
-
-    return render_template('meus_dados.html', user=user.serialize, helps=helps, volunteers=volunteers)
+    return render_template('meus_dados.html', user=user.serialize, helps=helps)
 
 @users_bp.route('/logout', methods=['POST', 'GET'])
 def external_logout():
@@ -153,7 +154,7 @@ def external_login():
         email = request_json.get('email')
         password = request_json.get('password')
 
-        session, user = ExternalUserService.login(email, password)
+        session, user = external_user_service.login(email, password)
 
         if user is None:
             flash('Usuário ou senha inválidos', 'danger')
@@ -203,7 +204,7 @@ def external_register():
             return render_template('external_register.html', next=next_page, data=data)
 
         try:
-            user = ExternalUserService.register_user(name, email, password, phone)
+            user = external_user_service.register_user(name, email, password, phone)
             if user is None:
                 flash('Erro ao cadastrar usuário, tente novamente mais tarde', 'danger')
                 return render_template('external_register.html', next=next_page, data=data)

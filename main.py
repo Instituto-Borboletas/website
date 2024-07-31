@@ -14,7 +14,7 @@ print(f"Running offline: {is_offline}")
 app = Flask(__name__, template_folder="templates")
 app.config["SQLALCHEMY_ECHO"] = is_offline
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = is_offline
-app.config["SQLALCHEMY_DATABASE_URI"] = "mysql+mysqlconnector://server:senhaserver@localhost:3306/borboletas"
+app.config["SQLALCHEMY_DATABASE_URI"] = "postgresql+psycopg2://server:senhaserver@localhost:5432/borboletas"
 app.config["SECRET_KEY"] = secrets.token_hex(32)
 app.app_context().push()
 db.init_app(app)
@@ -38,5 +38,5 @@ def not_found(e):
     return send_from_directory("public", "404.html"), 404
 
 if __name__ == "__main__":
-    app.run(debug=False, host="0.0.0.0")
+    app.run(debug=True, host="0.0.0.0")
 

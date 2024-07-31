@@ -1,11 +1,14 @@
 from flask import Blueprint, request, jsonify, render_template, flash, redirect, url_for, make_response
-from src.services.users_service import ExternalUserService
+from src.services.users_service import UserService, UserType
 from src.services.helps_service import HelpsService
 from src.services.sessions_service import SessionsService
 
 from src.middlewares.auth_middleware import token_required_internal, token_required_external
 
 helps_bp = Blueprint('helps_bp', __name__)
+
+internal_user_service = UserService(UserType.internal)
+external_user_service = UserService(UserType.external)
 
 @helps_bp.route('/tipos', methods=['POST'])
 @token_required_internal
@@ -67,7 +70,7 @@ def delete_help(token, help_id):
     if session is None:
         raise Exception('Invalid session')
 
-    user = ExternalUserService.find_user_by_id(session['user_id'])
+    user = external_user_service.find_user_by_id(session['user_id'])
     if user is None:
         raise Exception('User not found')
 

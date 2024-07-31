@@ -13,28 +13,20 @@ class SessionsService:
         return new_session
 
     @staticmethod
-    def delete_session(token):
-        session = Sessions.query.filter_by(token=token).first()
+    def delete_session(session_id):
+        session = Sessions.query.filter_by(id=session_id).first()
         db.session.delete(session)
         db.session.commit()
 
     @staticmethod
-    def find_session(token):
-        session = Sessions.query.filter_by(token=token).first()
-        return session.serialize() if session is not None else None
+    def find_session(session_id):
+        return Sessions.query.filter_by(id=session_id).first()
 
     @staticmethod
-    def exists_external(token):
+    def exists_external(session_token):
+        query = text(f"SELECT users.id FROM users LEFT JOIN sessions ON users.id = sessions.user_id WHERE sessions.id = '{session_token}' AND users.user_type = 'external'")
         connection = db.session.connection()
-        query = text(f"SELECT user_id FROM sessions WHERE token = '{token}'")
         result = connection.execute(query).fetchone()
-        user_id = result[0] if result is not None else None
-        if user_id is None:
-            return False
 
-        query = text(f"SELECT EXISTS(SELECT 1 FROM external_users e WHERE e.id = '{user_id}')")
-        result = connection.execute(query).fetchone()
-        if result is None:
-            return False
+        return result is not None
 
-        return result[0] == 1

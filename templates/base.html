@@ -7,6 +7,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link rel="icon" href="/public/logo.jpg" type="image/x-icon">
         <link rel="stylesheet" href="/public/main.css">
+        <link rel="stylesheet" href="/public/tailwind.css">
         <title>{% block title %}Instituto Borboletas{% endblock %}</title>
     </head>
     <body>
@@ -28,7 +29,6 @@
             </header>
         {% endblock %}
 
-
         <section class="main-content">
             {% block content %}
             {% endblock %}
@@ -44,10 +44,6 @@
                 </div>
 
                 <p>&copy; 2024 Instituto Borboletas. Todos os direitos reservados.</p>
-
-                <small>
-                    Desenvolvido por Gabriel Rocha, André Specht, Nicolas Wajima e Endric Fruhauf.
-                </small>
             </footer>
         {% endblock %}
     </body>
