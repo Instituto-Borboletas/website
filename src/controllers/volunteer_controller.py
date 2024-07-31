@@ -3,6 +3,7 @@ from src.services.users_service import UserService, UserType
 from src.services.volunteers_service import VolunteerService
 from src.services.volunteers_kind_service import VolunteerKindService
 from src.services.sessions_service import SessionsService
+from src.models.session_model import InvalidSessionExeption
 
 from src.middlewares.auth_middleware import (
     token_required_internal, token_required_external
@@ -10,8 +11,8 @@ from src.middlewares.auth_middleware import (
 
 volunteer_bp = Blueprint('volunteer_bp', __name__)
 
-internal_user_service = UserService(UserType.INTERNAL)
-external_user_service = UserService(UserType.EXTERNAL)
+internal_user_service = UserService(UserType.internal)
+external_user_service = UserService(UserType.external)
 
 
 @volunteer_bp.route('/tipos', methods=['POST'])
@@ -49,12 +50,12 @@ def edit_volunteer_kind(token):
 
 @volunteer_bp.route('/tipos/deletar/<int:kind_id>', methods=['DELETE'])
 @token_required_internal
-def delete_help_kind(token, kind_id):
-        user = internal_user_service.find_user_by_session_token(session_token)
-        if user is None:
-            raise InvalidSessionExeption()
+def delete_help_kind(session_token, kind_id):
+    user = internal_user_service.find_user_by_session_token(session_token)
+    if user is None:
+        raise InvalidSessionExeption()
 
-    VolunteerService.deactivate_volunteer_kind(token, kind_id)
+    VolunteerService.deactivate_volunteer_kind(session_token, kind_id)
 
     return jsonify({'message': f'Tipo de voluntariado {kind_id} deletado'}), 202
 
@@ -90,7 +91,7 @@ def delete_volunteer(token, volunteer_id):
     if session is None:
         raise Exception('Invalid session')
 
-    user = ExternalUserService.find_user_by_id(session['user_id'])
+    user = external_user_service.find_user_by_id(session['user_id'])
     if user is None:
         raise Exception('User not found')
 

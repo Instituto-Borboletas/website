@@ -3,15 +3,14 @@ from enum import Enum
 from datetime import datetime
 from src.database import db
 
-# TODO: change from sha256 hashing to a better one
 def hash_password(password):
     sha256_hash = hashlib.sha256()
     sha256_hash.update(password.encode('utf-8'))
     return sha256_hash.hexdigest()
 
 class UserType(str, Enum):
-    INTERNAL = 'internal'
-    EXTERNAL = 'external'
+    internal = 'internal'
+    external = 'external'
 
 class UserNotFoundException(Exception):
     message = 'User not found'
@@ -30,9 +29,9 @@ class User(db.Model):
 
     external_user_data = db.relationship('ExternalUserData', backref='users')
     volunteers_kind = db.relationship('VolunteerKind', backref='users')
-    volunteers = db.relationship('Volunteer', backref='users')
-    help_kinds = db.relationship('HelpKind', backref='users')
-    help_requests = db.relationship('HelpRequest', backref='users')
+    volunteer = db.relationship('Volunteer', backref='users')
+    help_kind = db.relationship('HelpKind', backref='users')
+    help_request = db.relationship('HelpRequest', backref='users')
     session = db.relationship('Sessions', backref='users')
 
     __table_args__ = (
@@ -44,7 +43,7 @@ class User(db.Model):
         self.name = name
         self.email = email
         self.password_hash = hash_password(password)
-        self.user_type = user_type
+        self.user_type = UserType(user_type)
 
     def __repr__(self):
         return f'<User {self.name}>'

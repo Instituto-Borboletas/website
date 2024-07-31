@@ -4,3 +4,4 @@ gunicorn==20.1.0
 Flask-SQLAlchemy==3.1.1
 sqlmodel
 SQLAlchemy==2.0.29
+psycopg2-binary

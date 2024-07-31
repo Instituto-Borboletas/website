@@ -50,12 +50,13 @@ class UserService:
         db.session.commit()
 
     def login(self, email, password):
-        user = User.query.filter_by(email=email, password_hash=hash_password(password)).first()
+        hashed_password = hash_password(password)
+        user = User.query.filter_by(email=email, password_hash=hashed_password, user_type=self.user_type).first()
         if user is None:
             return None, None
 
         session = SessionsService.create_session(user.id)
-        return session
+        return session, user
 
     def logout(self, token):
         SessionsService.delete_session(token)

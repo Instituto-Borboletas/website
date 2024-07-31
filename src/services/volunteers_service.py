@@ -6,8 +6,8 @@ from src.models.exceptions import BadRequestException
 from src.services.users_service import UserService
 from src.database import db
 
-internal_user_service = UserService(UserType.INTERNAL)
-external_user_service = UserService(UserType.EXTERNAL)
+internal_user_service = UserService(UserType.internal)
+external_user_service = UserService(UserType.external)
 
 
 class VolunteerService:

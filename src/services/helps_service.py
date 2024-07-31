@@ -5,8 +5,8 @@ from src.models.users import User, UserType
 from src.services.users_service import UserService
 from src.database import db
 
-internal_user_service = UserService(UserType.INTERNAL)
-external_user_service = UserService(UserType.EXTERNAL)
+internal_user_service = UserService(UserType.internal)
+external_user_service = UserService(UserType.external)
 
 class HelpsService:
     @staticmethod
@@ -114,7 +114,7 @@ class HelpsService:
 
     @staticmethod
     def list_user_requests(user: User):
-        if user.user_type == UserType.INTERNAL:
+        if user.user_type == UserType.internal:
             raise Exception('Invalid user type')
         helps = HelpRequest.query.filter_by(requested_by=user.id).all()
         return helps

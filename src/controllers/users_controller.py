@@ -6,8 +6,8 @@ from src.middlewares.auth_middleware import token_required_external, token_requi
 
 users_bp = Blueprint('users_bp', __name__)
 
-internal_user_service = UserService(UserType.INTERNAL)
-external_user_service = UserService(UserType.EXTERNAL)
+internal_user_service = UserService(UserType.internal)
+external_user_service = UserService(UserType.external)
 
 @users_bp.route('/usuarios/interno', methods=['POST'])
 @token_required_internal
@@ -41,10 +41,12 @@ def internal_login():
             flash('Erro ao criar sessão', 'danger')
             return render_template('internal_login.html')
 
+        print(session.id)
+
         response = make_response(redirect(url_for('users_bp.internal_dashboard')))
         response.set_cookie(
             'token',
-            session.token,
+            str(session.id),
             httponly=True,
             samesite='Strict',
             max_age=60 * 60 * 12
@@ -74,17 +76,21 @@ def internal_logout(token):
 @users_bp.route('/interno', methods=['GET'])
 @token_required_internal
 def internal_dashboard(token):
-    # data = InternalUserService.get_dashboard_data(token)
+    user = internal_user_service.find_user_by_session_token(token)
 
-    # if data is None:
-    #     return redirect(url_for('users_bp.internal_login'))
+    if user is None:
+        raise Exception('Invalid session')
 
-    return render_template('internal_dashboard.html')
+    data = {
+        'user': user.serialize,
+    }
+
+    return render_template('internal_dashboard.html', data=data)
 
 @users_bp.route('/interno/usuarios/internos', methods=['GET'])
 @token_required_internal
 def internal_users_crud(token):
-    data = internal_user_service.list_users(token)
+    data = internal_user_service.list_users()
     if data is None:
         data = []
 

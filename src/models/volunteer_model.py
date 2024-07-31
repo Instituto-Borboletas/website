@@ -15,7 +15,7 @@ class VolunteerKind(db.Model):
     created_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     created_by = db.Column(db.String(36), db.ForeignKey('users.id'), nullable=False)
 
-    user = db.relationship('User', backref='volunteers_kind')
+    user = db.relationship('User', backref='volunteers_kinds')
 
     def __init__(self, name, description, created_by):
         self.name = name
@@ -32,7 +32,7 @@ class VolunteerKind(db.Model):
             'name': self.name,
             'description': self.description,
             'created_at': self.created_at,
-            'created_by': self.created_by.timestamp(),
+            'created_by': self.created_by,
         }
 
 class VolunterNotFound(Exception):
@@ -45,8 +45,8 @@ class Volunteer(db.Model):
     name = db.Column(db.String(255), nullable=False)
     email = db.Column(db.String(255), nullable=True)
     phone = db.Column(db.String(11), nullable=False)
-    kind_id = db.Column(db.ForeignKey('volunteers_kind.id'), nullable=False)
-    registered_by = db.Column(db.ForeignKey('external_users.id'), nullable=False)
+    kind_id = db.Column(db.String(36), db.ForeignKey('volunteers_kind.id'), nullable=False)
+    registered_by = db.Column(db.String(36), db.ForeignKey('users.id'), nullable=False)
     created_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
 
     volunteer_kind = db.relationship('VolunteerKind', backref='volunteers')
