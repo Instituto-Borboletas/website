@@ -6,6 +6,7 @@ import { UserRespository } from "../../src/repositories/user/interface";
 declare global {
   namespace Express {
     interface Request {
+      remoteAddress?: string,
       user?: User,
       userRepository: UserRespository,
       db: knex.Knex
