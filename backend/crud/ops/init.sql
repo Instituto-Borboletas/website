@@ -1,3 +1,4 @@
+
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
 CREATE TABLE IF NOT EXISTS addresses (
@@ -71,11 +72,11 @@ CREATE TABLE IF NOT EXISTS volunteers (
     email VARCHAR(255) NULL,
     phone CHAR(11) NOT NULL,
     kind_id UUID NOT NULL,
-    registered_by UUID NOT NULL,
+    created_by UUID NOT NULL,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     FOREIGN KEY (kind_id) REFERENCES volunteers_kind(id),
-    FOREIGN KEY (registered_by) REFERENCES users(id)
+    FOREIGN KEY (created_by) REFERENCES users(id)
 );
 -- voluntario end
 
@@ -97,12 +98,12 @@ CREATE TABLE IF NOT EXISTS helps (
     description TEXT NOT NULL,
 
     help_kind_id UUID NOT NULL,
-    requested_by UUID NOT NULL,
+    created_by UUID NOT NULL,
 
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     FOREIGN KEY (help_kind_id) REFERENCES helps_kind(id),
-    FOREIGN KEY (requested_by) REFERENCES users(id)
+    FOREIGN KEY (created_by) REFERENCES users(id)
 );
 
 -- TODO: REMOVE ON PROD ENV
