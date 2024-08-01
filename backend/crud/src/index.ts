@@ -24,27 +24,3 @@ app.get("/healthcheck", internalAuthMiddleware, async (req, res) => {
 });
 
 app.listen(PORT, () => { logger.info(`Server running on port ${PORT}`) });
-
-type UserEntityProps = {
-  id: string;
-  name: string;
-  email: string;
-  password: string;
-  user_type: UserType;
-}
-
-type UserType = "internal" | "external"
-
-class UserEntity {
-  name: string;
-  email: string;
-  password: string;
-  user_type: UserType;
-
-  constructor({ name, email, password, user_type }: UserEntityProps) {
-    this.name = name;
-    this.email = email;
-    this.password = password;
-    this.user_type = user_type;
-  }
-}
