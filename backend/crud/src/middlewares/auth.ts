@@ -1,8 +1,6 @@
-import { UserType } from "@/domain/User";
 import type { Request, Response, NextFunction } from "express";
 
-import database from "@/infra/database";
-
+import { UserType } from "../domain/User";
 const API_KEY = process.env.API_KEY;
 
 export async function internalAuthMiddleware(req: Request, res: Response, next: NextFunction) {
@@ -14,11 +12,9 @@ export async function internalAuthMiddleware(req: Request, res: Response, next: 
   next();
 }
 
-export async function authMiddleware(userType: UserType) {
+export function authMiddleware(userType: UserType) {
   return async function(req: Request, res: Response, next: NextFunction) {
-    req.db = database;
-
-    const token = req.cookies.token;
+    const token = req.cookies?.token;
     if (!token)
       return res.status(401).json({ ok: false, message: "Unauthorized" });
 
