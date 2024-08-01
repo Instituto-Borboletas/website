@@ -3,8 +3,8 @@ services:
     image: postgres:14-alpine
     ports:
       - 5432:5432
-    # volumes:
-    #   - ./ops/init.sql:/docker-entrypoint-initdb.d/init.sql
+    volumes:
+      - ./ops/init.sql:/docker-entrypoint-initdb.d/init.sql
     environment:
       - POSTGRES_PASSWORD=crudserverpassword
       - POSTGRES_USER=crudserver
