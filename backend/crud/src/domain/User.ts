@@ -1,4 +1,4 @@
-type UserType = "internal" | "external"
+export type UserType = "internal" | "external"
 
 type UserProps = {
   id: string;
