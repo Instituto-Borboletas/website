@@ -19,10 +19,8 @@ userController.post("/internal/login", async (req, res) => {
   if (!user)
     return res.status(401).json({ ok: false, message: "Invalid credentials" });
 
-  // TODO: change to use session builder and session repository
   const session = new Session(user.id);
   await req.db("sessions").insert({ id: session.id, user_id: user.id });
-  // TODO
 
   res.cookie("token", session.id, { httpOnly: true, maxAge: 1000 * 60 * 60 * 12 });
   res.json({ ok: true });
