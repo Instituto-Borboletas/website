@@ -1,8 +1,9 @@
+import { Request, Response, NextFunction, Router } from "express";
+
 import { UserBuilder } from "../domain/builders/UserBuilder";
 import { Session } from "../domain/Session";
 import { UserType } from "../domain/User";
 import { authMiddleware } from "../middlewares/auth";
-import { Request, Response, NextFunction, Router } from "express";
 
 const userController = Router();
 
