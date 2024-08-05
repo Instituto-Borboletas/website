@@ -1,6 +1,6 @@
 import pino from "pino";
 import knex from "knex";
-import { User } from "../../domain/User";
+import { User, UserType } from "../../domain/User";
 import { UserRespository } from "./interface";
 
 export class PostgresUserRepository implements UserRespository {
@@ -11,6 +11,7 @@ export class PostgresUserRepository implements UserRespository {
     try {
       await this.conn("users").insert({
         id: user.id,
+        name: user.name,
         email: user.email,
         password_hash: user.passwordHash,
         user_type: user.userType,
@@ -24,14 +25,14 @@ export class PostgresUserRepository implements UserRespository {
         }
       }
 
-      this.logger.error("Failed to save user");
+      this.logger.child({ error }).error("Failed to save user");
       throw new Error("Failed to save user");
     }
   }
 
-  async findByEmail(email: string): Promise<User | null> {
+  async findByEmail(email: string, userType: UserType): Promise<User | null> {
     try {
-      const user = await this.conn("users").where({ email }).first();
+      const user = await this.conn("users").where({ email, user_type: userType }).first();
       return user;
     } catch (error) {
       this.logger.child({ error }).error("Failed to find user by email");
@@ -39,9 +40,9 @@ export class PostgresUserRepository implements UserRespository {
     }
   }
 
-  async findByEmailAndPassword(email: string, passwordHash: string): Promise<User | null> {
+  async findByEmailAndPassword(email: string, passwordHash: string, userType: UserType): Promise<User | null> {
     try {
-      const user = await this.conn("users").where({ email, password_hash: passwordHash }).first();
+      const user = await this.conn("users").where({ email, password_hash: passwordHash, user_type: userType }).first();
       return user;
     } catch (error) {
       this.logger.child({ error }).error("Failed to find user by email and password");
