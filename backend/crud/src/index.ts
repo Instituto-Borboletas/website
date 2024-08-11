@@ -6,6 +6,7 @@ import { hashPassword } from "./utils";
 import { internalAuthMiddleware } from "./middlewares/auth";
 
 import { userController } from "./controllers/user.controller";
+import volunteerController from "./controllers/volunteer.controller";
 
 import { PostgresUserRepository } from "./repositories/user/postgres";
 import { PostgresVolunteerKindRespository } from "./repositories/volunteerKind/postgres";
@@ -21,7 +22,7 @@ const postgresVolunteerKindRespository = new PostgresVolunteerKindRespository(da
 app.use(express.json());
 
 // setuping respositories on req object
-app.use((req, res, next) => {
+app.use((req, _, next) => {
   req.userRepository = postgresUserRepository;
   req.volunteerKindRepository = postgresVolunteerKindRespository;
   req.db = database;
@@ -46,5 +47,6 @@ app.get("/healthcheck", internalAuthMiddleware, async (req, res) => {
 });
 
 app.use("/users", userController);
+app.use("/volunteers", volunteerController);
 
 app.listen(PORT, () => { logger.info(`Server running on port ${PORT}`) });

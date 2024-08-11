@@ -63,5 +63,4 @@ volunteerKindController.get("/options", authMiddleware("external"), async (req, 
   res.json({ data: volunteerKinds });
 });
 
-export default volunteerKindController;
-
+export { volunteerKindController };
