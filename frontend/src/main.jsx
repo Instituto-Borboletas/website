@@ -12,6 +12,8 @@ import Helps from './pages/Helps.jsx';
 import User from './pages/User.jsx';
 import Volunteer from './pages/Volunteer.jsx';
 
+import { ChakraProvider } from '@chakra-ui/react'
+
 const router = createBrowserRouter([
   {
     path: "/",
@@ -37,6 +39,8 @@ const router = createBrowserRouter([
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
-    <RouterProvider router={router} />
+    <ChakraProvider>
+      <RouterProvider router={router} />
+    </ChakraProvider>
   </React.StrictMode>,
 )

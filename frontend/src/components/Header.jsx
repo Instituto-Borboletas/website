@@ -44,7 +44,7 @@ export function Header () {
 
   return (
     <header className="bg-primary text-gray-100">
-      <div className="flex justify-between w-5/6 mx-auto py-6">
+      <div className="flex justify-between w-5/6 mx-auto py-8">
         <h1 className="text-2xl font-bold">
           <Link to="/">Intituto Borboletas</Link>
         </h1>

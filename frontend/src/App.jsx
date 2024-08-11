@@ -13,7 +13,7 @@ function App() {
 
           <section id="quem-somos" className="flex flex-col items-center text-center">
             <h1 className="font-bold">Sobre Nós</h1>
-            <p className="w-1/3 text-md">
+            <p className="w-3/5 text-md">
               O Instituto Borboletas é uma organização sem fins lucrativos que tem como objetivo ajudar pessoas vitimas de violência domestica.
             </p>
           </section>
