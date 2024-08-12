@@ -11,6 +11,7 @@ import ErrorPage from './pages/Error.jsx';
 import Helps from './pages/Helps.jsx';
 import User from './pages/User.jsx';
 import Volunteer from './pages/Volunteer.jsx';
+import Internal from './pages/Internal.jsx';
 
 import { ChakraProvider } from '@chakra-ui/react'
 
@@ -33,6 +34,11 @@ const router = createBrowserRouter([
   {
     path: "/meus-dados",
     element: <User />,
+    errorElement: <ErrorPage />,
+  },
+  {
+    path: "/interno",
+    element: <Internal />,
     errorElement: <ErrorPage />,
   },
 ]);
