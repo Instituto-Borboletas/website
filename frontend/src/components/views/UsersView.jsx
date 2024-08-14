@@ -4,6 +4,7 @@ import {
   Icon,
   Input,
   Modal,
+  Select,
   ModalOverlay,
   ModalContent,
   ModalHeader,
@@ -34,8 +35,8 @@ export function UsersView() {
 
   const toast = useToast();
 
-  async function handleSubmit ({ name, email, password, confirmationPassword }) {
-    if (!name || !email || !password || !confirmationPassword) {
+  async function handleSubmit ({ userType, name, email, password, confirmationPassword }) {
+    if (!userType || !name || !email || !password || !confirmationPassword) {
       setErrorMessage("Preencha todos os campos");
       return;
     }
@@ -50,6 +51,7 @@ export function UsersView() {
     try {
       setIsLoading(true);
       // const response = await crudApi.post("/users", {
+      //   userType,
       //   name,
       //   email,
       //   password,
@@ -58,16 +60,14 @@ export function UsersView() {
 
       toast({
         title: "Usuário criado com suscesso!",
-        description: "O novo usuário já pode acessar o sistema.",
+        description: "O novo usuário já pode acessar o sistema e ser visto na listagem de usuários.",
         position: "top",
         status: "success",
         duration: 3000,
         isClosable: true,
       })
     } catch (error) {
-      if (error.response.status === 409) {
-
-      }
+      if (error.response.status === 409) { }
     } finally {
       setIsLoading(false);
       handleClose();
@@ -95,7 +95,7 @@ export function UsersView() {
         </div>
       </header>
 
-      <main className="w-full mt-10 ">
+      <main className="w-full mt-10">
         <div className="overflow-x-auto">
           <table className="min-w-full rounded border border-1 border-zinc-200">
             <thead className="bg-zinc-200 text-primary block w-full">
@@ -106,7 +106,7 @@ export function UsersView() {
                 <th className="border w-1/4 text-lg">Tipo</th>
               </tr>
             </thead>
-            <tbody className="bg-white text-center max-h-[38rem] overflow-y-auto block w-full">
+            <tbody className="bg-white text-center max-h-[36rem] overflow-y-auto block w-full">
               {
                 Array(20).fill().map(() => (
                   <tr key={Math.random()} className="flex w-full">
@@ -129,9 +129,7 @@ export function UsersView() {
           onClick={onOpen}
         >
           <Icon as={BiPlus} />
-          <span className="pl-2">
-            Adicionar usuário interno
-          </span>
+          <span className="pl-2">Adicionar usuário</span>
         </Button>
 
         <CreateUserModal
@@ -148,6 +146,7 @@ export function UsersView() {
 }
 
 function CreateUserModal({ isOpen, onCancel, onSubmit, onChange, errorMessage, isLoading }) {
+  const [userType, setUserType] = useState("");
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -158,6 +157,7 @@ function CreateUserModal({ isOpen, onCancel, onSubmit, onChange, errorMessage, i
   async function submitForm () {
     await onSubmit({ name, email, password, confirmationPassword: passwordConfirmation });
 
+    setUserType("");
     setName("");
     setEmail("");
     setPassword("");
@@ -175,7 +175,7 @@ function CreateUserModal({ isOpen, onCancel, onSubmit, onChange, errorMessage, i
     >
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader>Criar usuário interno</ModalHeader>
+        <ModalHeader>Criar usuário</ModalHeader>
         <ModalCloseButton />
         <ModalBody>
           {
@@ -185,11 +185,25 @@ function CreateUserModal({ isOpen, onCancel, onSubmit, onChange, errorMessage, i
               </div>
             )
           }
+
           <FormControl isRequired>
+            <FormLabel>Tipo de usuário</FormLabel>
+            <Select
+              value={userType}
+              onChange={({ target }) => setUserType(target.value)}
+              placeholder="Selecione um tipo de usuário"
+              required
+            >
+              <option value="intern">Interno</option>
+              <option value="external">Externo</option>
+            </Select>
+          </FormControl>
+
+          <FormControl mt={4} isRequired>
             <FormLabel>Nome completo</FormLabel>
             <Input
               ref={initialRef}
-              placeholder="Seu nome e sobrenome"
+              placeholder="O nome e sobrenome do novo usuário"
               required
               value={name}
               onChange={({ target }) => { setName(target.value); onChange() }}
@@ -200,7 +214,7 @@ function CreateUserModal({ isOpen, onCancel, onSubmit, onChange, errorMessage, i
             <FormLabel>Email</FormLabel>
             <Input
               type="email"
-              placeholder="seuemail@gmail.com"
+              placeholder="email@email.com"
               required
               value={email}
               onChange={({ target }) => { setEmail(target.value); onChange(); }}
