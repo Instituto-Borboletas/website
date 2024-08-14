@@ -16,8 +16,10 @@ import Helps from './pages/Helps.jsx';
 import User from './pages/User.jsx';
 import Volunteer from './pages/Volunteer.jsx';
 import Internal from './pages/Internal.jsx';
+import Login from './pages/Login.jsx';
 
 import { ChakraProvider } from '@chakra-ui/react'
+import { AuthProvider } from './contexts/auth.jsx';
 
 const queryClient = new QueryClient();
 
@@ -47,14 +49,23 @@ const router = createBrowserRouter([
     element: <Internal />,
     errorElement: <ErrorPage />,
   },
+  {
+    path: "/login",
+    element: <Login />,
+    errorElement: <ErrorPage />,
+  },
+  {
+    path: "*",
+    element: <ErrorPage />,
+  }
 ]);
 
-ReactDOM.createRoot(document.getElementById('root')).render(
-  <React.StrictMode>
+ReactDOM.createRoot(document.getElementById("root")).render(
+  <AuthProvider>
     <ChakraProvider>
       <QueryClientProvider client={queryClient}>
         <RouterProvider router={router} />
       </QueryClientProvider>
     </ChakraProvider>
-  </React.StrictMode>,
+  </AuthProvider>
 )

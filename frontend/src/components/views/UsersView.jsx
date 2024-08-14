@@ -24,6 +24,7 @@ import { PasswordInput } from "../PasswordInput";
 export function UsersView() {
   const [errorMessage, setErrorMessage] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+
   const { isOpen, onOpen, onClose } = useDisclosure();
   // const { isPending, error, data, isLoading } = useQuery({
   //   queryKey: ["internalUsersListing"],
@@ -80,6 +81,8 @@ export function UsersView() {
 
   return (
     <section className="flex flex-col p-10 h-full">
+      <h1 className="text-3xl font-bold">Usuários</h1>
+
       <header className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-2 mt-10">
         <div className="bg-white p-5 rounded shadow-md">
           <h2 className="text-lg font-bold">Externos</h2>
@@ -182,7 +185,7 @@ function CreateUserModal({ isOpen, onCancel, onSubmit, onChange, errorMessage, i
               </div>
             )
           }
-          <FormControl>
+          <FormControl isRequired>
             <FormLabel>Nome completo</FormLabel>
             <Input
               ref={initialRef}
@@ -193,7 +196,7 @@ function CreateUserModal({ isOpen, onCancel, onSubmit, onChange, errorMessage, i
             />
           </FormControl>
 
-          <FormControl mt={4}>
+          <FormControl mt={4} isRequired>
             <FormLabel>Email</FormLabel>
             <Input
               type="email"
@@ -204,7 +207,7 @@ function CreateUserModal({ isOpen, onCancel, onSubmit, onChange, errorMessage, i
             />
           </FormControl>
 
-          <FormControl mt={4}>
+          <FormControl mt={4} isRequired>
             <FormLabel>Senha</FormLabel>
             <PasswordInput
               value={password}
@@ -212,7 +215,7 @@ function CreateUserModal({ isOpen, onCancel, onSubmit, onChange, errorMessage, i
             />
           </FormControl>
 
-          <FormControl mt={4}>
+          <FormControl mt={4} isRequired>
             <FormLabel>Repita a senha</FormLabel>
             <PasswordInput
               value={passwordConfirmation}

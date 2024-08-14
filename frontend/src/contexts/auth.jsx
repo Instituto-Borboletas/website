@@ -1,7 +1,7 @@
 import { createContext, useContext, useState } from 'react';
 import { crudApi } from '../utils/api';
 
-const AuthContext = createContext();
+export const AuthContext = createContext();
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);

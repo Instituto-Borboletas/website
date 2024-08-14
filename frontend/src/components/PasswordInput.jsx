@@ -4,13 +4,14 @@ import {
 } from "@chakra-ui/react";
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 
-export function PasswordInput({ value, onChange }) {
+export function PasswordInput({ compRef, value, onChange }) {
   const [show, setShow] = useState(false)
   const handleClick = () => setShow(!show)
 
   return (
     <InputGroup size="md">
       <Input
+        ref={compRef}
         pr="4.5rem"
         type={show ? "text" : "password"}
         placeholder="Digite sua senha"

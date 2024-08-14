@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { Button, Icon } from "@chakra-ui/react";
 import { BiLogOut } from "react-icons/bi";
 
@@ -7,6 +8,8 @@ import { UsersView } from "../components/views/UsersView";
 import { HelpsView } from "../components/views/HelpsView";
 import { VolunteersView } from "../components/views/VolunteersView";
 import { SettingsView } from "../components/views/SettingsView";
+
+import { useAuth } from "../contexts/auth";
 
 const VIEWS = {
   dashboard: DashboardView,
@@ -24,6 +27,15 @@ const VIEWS_LABLES = {
 }
 
 export default function Internal () {
+  const { user, logout } = useAuth();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!user) {
+      navigate("/");
+    }
+  }, [user, navigate]);
+
   const [selectedView, setSelectedView] = useState("dashboard");
 
   function changeSelectedView(view) {
@@ -78,7 +90,7 @@ export default function Internal () {
               </ul>
             </nav>
 
-            <Button colorScheme="red" className="w-2/3">
+            <Button colorScheme="red" className="w-2/3" onClick={logout}>
               <Icon as={BiLogOut} />
               <span className="pl-2">
                 Sair
