@@ -31,9 +31,9 @@ export default function Internal () {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (!user) {
-      navigate("/");
-    }
+    // if (!user) {
+    //   navigate("/");
+    // }
   }, [user, navigate]);
 
   const [selectedView, setSelectedView] = useState("dashboard");
@@ -57,13 +57,13 @@ export default function Internal () {
 
   return (
     <>
-      <main className="flex flex-row">
+      <main className="flex flex-row w-full">
         <aside className="w-1/6 h-screen flex flex-col p-5 pt-10 border-r-zinc-300 border-r-2">
           <nav className="flex-1">
             <ul>
               {
                 Object.keys(VIEWS_LABLES).map(view => (
-                  <li key={view} className="text-xl py-1">
+                  <li key={view} className="text-xl py-1 cursor-pointer mt-2">
                     <a
                       onClick={changeSelectedView(view)}
                       className={view === selectedView ? "text-primary underline bg-zinc-200 p-2 px-4 rounded" : "p-2 px-4 rounded hover:bg-zinc-200 hover:text-primary"}
@@ -81,7 +81,7 @@ export default function Internal () {
               <ul className="underline">
                 <li className="text-lg">
                   <a
-                    onClick={changeSelectedView("settings")}
+                    onClick={changeSelectedView("configuracoes")}
                     className="text-lg"
                   >
                     Configurações
