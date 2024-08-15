@@ -16,6 +16,33 @@ function loginMiddleware(req: Request, res: Response, next: NextFunction) {
   next();
 }
 
+async function meMiddleware(req: Request, res: Response, next: NextFunction) {
+  const token = req.remoteAddress?.includes("127.0.0.1")
+    ? (req.headers?.token ?? req.cookies?.token)
+    : req.cookies?.token;
+
+  if (!token)
+    return res.status(401).json({ ok: false, message: "Unauthorized" });
+
+  const user = await req.db("sessions")
+    .select("users.user_type")
+    .join("users", "sessions.user_id", "users.id")
+    .where("sessions.id", token)
+    .first();
+
+  if (!user)
+    return res.sendStatus(401);
+
+  req.user = user;
+  req.params.userType = user.user_type;
+
+  return authMiddleware(user.user_type)(req, res, next);
+}
+
+userController.get("/me", meMiddleware, async (req, res) => {
+  return res.json({ data: req.user })
+});
+
 userController.post("/:userType/login", loginMiddleware, async (req, res) => {
   const userType = req.params.userType as UserType;
 
@@ -33,7 +60,13 @@ userController.post("/:userType/login", loginMiddleware, async (req, res) => {
   await req.db("sessions").insert({ id: session.id, user_id: user.id });
 
   res.cookie("token", session.id, { httpOnly: true, maxAge: 1000 * 60 * 60 * 12 });
-  res.json({ ok: true });
+  res.json({
+    ok: true,
+    data: {
+      name: user.name,
+      email: user.email,
+    }
+  });
 });
 
 userController.get("/internal/validate", authMiddleware("internal"), async (req, res) => {

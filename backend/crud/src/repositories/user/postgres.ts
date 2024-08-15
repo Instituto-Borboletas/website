@@ -32,7 +32,10 @@ export class PostgresUserRepository implements UserRespository {
 
   async findByEmail(email: string, userType: UserType): Promise<User | null> {
     try {
-      const user = await this.conn("users").where({ email, user_type: userType }).first();
+      const user = await this.conn("users")
+        .where({ email, user_type: userType })
+        .first()
+
       return user;
     } catch (error) {
       this.logger.child({ error }).error("Failed to find user by email");
@@ -43,6 +46,7 @@ export class PostgresUserRepository implements UserRespository {
   async findByEmailAndPassword(email: string, passwordHash: string, userType: UserType): Promise<User | null> {
     try {
       const user = await this.conn("users").where({ email, password_hash: passwordHash, user_type: userType }).first();
+
       return user;
     } catch (error) {
       this.logger.child({ error }).error("Failed to find user by email and password");
