@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import {
   Stack,
@@ -38,7 +38,11 @@ export default function User() {
           {user && !isLoading ? <UserForm user={user} /> : <Spinner />}
         </div>
 
-        <Link to="/interno" className="bg-primary text-white py-2 px-4 mt-4 rounded-lg w-1/3 mx-auto text-center">Acesso interno</Link>
+        {
+          user?.internal && (
+            <Link to="/interno" className="bg-primary text-white py-2 px-4 mt-4 rounded-lg w-1/3 mx-auto text-center">Acesso interno</Link>
+          )
+        }
         <Button onClick={logout} colorScheme="red" className="bg-primary text-white py-2 px-4 mt-4 rounded-lg w-1/3 mx-auto text-center">Sair</Button>
 
       </main>
