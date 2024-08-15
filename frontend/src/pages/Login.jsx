@@ -38,7 +38,7 @@ function isValidPhone(phone) {
 
 export default function LoginPage() {
   const navigate = useNavigate();
-  const { login } = useAuth();
+  const { login, error: loginError } = useAuth();
 
   const [errorMessage, setErrorMessage] = useState(null);
   const [view, setView] = useState("login");
@@ -152,10 +152,11 @@ export default function LoginPage() {
 
       navigate("/");
     } catch (error) {
-      if (error.response?.status === 401) {
-        setErrorMessage("Email ou senha incorretos");
+      if (error.response?.status === 401 || error.message === "Email ou senha inválidos") {
+        setErrorMessage("Email ou senha inválidos");
       }
     }
+
     setIsLoading(false);
   }
 

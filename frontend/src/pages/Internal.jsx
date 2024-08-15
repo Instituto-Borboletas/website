@@ -53,7 +53,12 @@ export default function Internal () {
   useEffect(() => {
     if (!user && !isLoading) {
       navigate("/login");
+      return
     }
+
+    if (!user?.internal)
+      navigate("/");
+
   }, [user, isLoading, navigate]);
 
   if (isLoading) {
