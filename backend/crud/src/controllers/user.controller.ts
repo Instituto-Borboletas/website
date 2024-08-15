@@ -2,19 +2,9 @@ import { Request, Response, NextFunction, Router } from "express";
 
 import { UserBuilder } from "../domain/builders/UserBuilder";
 import { Session } from "../domain/Session";
-import { UserType } from "../domain/User";
 import { authMiddleware } from "../middlewares/auth";
 
 const userController = Router();
-
-function loginMiddleware(req: Request, res: Response, next: NextFunction) {
-  const userType = req.params.userType;
-
-  if (userType !== "internal" && userType !== "external")
-    return res.redirect("/");
-
-  next();
-}
 
 async function meMiddleware(req: Request, res: Response, next: NextFunction) {
   const token = req.remoteAddress?.includes("127.0.0.1")
@@ -43,15 +33,13 @@ userController.get("/me", meMiddleware, async (req, res) => {
   return res.json({ data: req.user })
 });
 
-userController.post("/:userType/login", loginMiddleware, async (req, res) => {
-  const userType = req.params.userType as UserType;
-
+userController.post("/login", async (req, res) => {
   const { email, password } = req.body;
 
   if (!email || !password)
     return res.status(400).json({ ok: false, message: "Missing required fields" });
 
-  const user = await req.userRepository.findByEmailAndPassword(email, password, userType);
+  const user = await req.userRepository.findByEmailAndPassword(email, password);
 
   if (!user)
     return res.status(401).json({ ok: false, message: "Invalid credentials" });
@@ -78,7 +66,6 @@ userController.post("/external", async (req, res) => {
 
   if (!name || !email || !password)
     return res.status(400).json({ ok: false, message: "Missing required fields" });
-
 
   try {
     const user = new UserBuilder({ name, email, passwordHash: password, userType: "external" }).build();

@@ -1,5 +1,6 @@
 import express, { NextFunction, Request, Response } from "express";
 import pino from "pino";
+import cors from "cors";
 
 import database from "./infra/database";
 import { hashPassword } from "./utils";
@@ -21,6 +22,7 @@ const postgresUserRepository = new PostgresUserRepository(database, logger);
 const postgresVolunteerRespository = new PostgresVolunteerRespository(database, logger);
 const postgresVolunteerKindRespository = new PostgresVolunteerKindRespository(database, logger);
 
+app.use(cors());
 app.use(express.json());
 
 // setuping respositories on req object
