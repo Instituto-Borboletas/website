@@ -1,3 +1,4 @@
+import { useNavigate } from "react-router-dom";
 import { useState, useRef } from "react";
 import {
   FormControl,
@@ -10,8 +11,6 @@ import {
   FormHelperText,
   useToast,
 } from "@chakra-ui/react"
-import { MdEmail } from "react-icons/md";
-import { BsFillTelephoneFill } from "react-icons/bs";
 
 import { PasswordInput } from "../components/PasswordInput";
 import { crudApi } from "../utils/api";
@@ -37,6 +36,8 @@ function isValidPhone(phone) {
 }
 
 export default function LoginPage() {
+  const navigate = useNavigate();
+
   const [errorMessage, setErrorMessage] = useState(null);
   const [view, setView] = useState("login");
   const toast = useToast();
@@ -85,15 +86,19 @@ export default function LoginPage() {
       return;
     }
 
+    if (password.length < 6) {
+      setErrorMessage("A senha deve ter no mínimo 6 caracteres");
+      setIsLoading(false);
+      return;
+    }
+
     try {
-      const response = await crudApi.post("/users", {
+      const response = await crudApi.post("/users/external", {
         name,
         email,
         phone,
         password,
       });
-
-      // make something with response?
 
       toast({
         title: "Usuário criado com suscesso!",
@@ -102,6 +107,8 @@ export default function LoginPage() {
         duration: 5000,
         isClosable: true,
       })
+
+      console.log(response);
     } catch (error) {
       if (error.response?.status === 409) {
         setErrorMessage("Esse email já está em uso");
@@ -119,11 +126,47 @@ export default function LoginPage() {
     }
   }
 
+  async function handleLogin(event) {
+    event.preventDefault();
+
+    setErrorMessage(null);
+    setIsLoading(true);
+
+    if (!email || !password) {
+      setErrorMessage("Preencha todos os campos");
+      setIsLoading(false);
+      return;
+    }
+
+    try {
+      await crudApi.post("/users/login", {
+        email,
+        password,
+      });
+
+      toast({
+        title: "Login efetuado com sucesso!",
+        description: "Você será redirecionado para a página inicial...",
+        position: "top",
+        status: "success",
+        duration: 2000,
+        isClosable: true,
+      })
+
+      navigate("/");
+    } catch (error) {
+      if (error.response?.status === 401) {
+        setErrorMessage("Email ou senha incorretos");
+      }
+    }
+    setIsLoading(false);
+  }
+
   if (view === "login") {
     return (
       <main className="flex flex-row w-full">
         <div className="w-1/2 h-screen bg-zinc-100 flex items-center justify-center">
-          <form className="w-3/4 bg-white px-4 py-8 rounded">
+          <form className="w-3/4 bg-white px-4 py-8 rounded" onSubmit={handleLogin}>
             {
               errorMessage && (
                 <div className="bg-red-200 text-red-800 p-2 mb-4 rounded">
@@ -224,7 +267,7 @@ export default function LoginPage() {
                     return
                   }
 
-                  if (isValidPhone(target.value)) {
+                  if (!isValidPhone(target.value)) {
                     setPhoneError("Insira um número válido");
                   }
                 }}
@@ -240,17 +283,17 @@ export default function LoginPage() {
             <FormLabel>Senha</FormLabel>
             <PasswordInput
               value={password}
-              onChange={({ target }) => { setPassword(target.value); }}
+              onChange={({ target }) => { setPassword(target.value); setErrorMessage(null); setPasswordError(null); }}
               isInvalid={passwordError}
             />
-            <FormErrorMessage>As senhas não coincidem</FormErrorMessage>
+            <FormErrorMessage>{passwordError}</FormErrorMessage>
           </FormControl>
 
           <FormControl id="passwordConfirmation" isRequired mt="4" isInvalid={passwordError}>
             <FormLabel>Confirme a senha</FormLabel>
             <PasswordInput
               value={confirmationPassword}
-              onChange={({ target }) => { setConfirmationPassword(target.value); }}
+              onChange={({ target }) => { setConfirmationPassword(target.value); setErrorMessage(null); setPasswordError(null); }}
             />
             <FormErrorMessage>As senhas não coincidem</FormErrorMessage>
           </FormControl>
