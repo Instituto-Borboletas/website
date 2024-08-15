@@ -30,7 +30,10 @@ async function meMiddleware(req: Request, res: Response, next: NextFunction) {
 }
 
 userController.get("/me", meMiddleware, async (req, res) => {
-  return res.json({ data: req.user })
+  // @ts-expect-error
+  delete req.user.password_hash;
+
+  return res.json(req.user)
 });
 
 userController.post("/login", async (req, res) => {

@@ -107,8 +107,6 @@ export default function LoginPage() {
         duration: 5000,
         isClosable: true,
       })
-
-      console.log(response);
     } catch (error) {
       if (error.response?.status === 409) {
         setErrorMessage("Esse email já está em uso");
