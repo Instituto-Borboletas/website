@@ -4,9 +4,9 @@ import {
   Text,
   Spinner,
   InputGroup,
-  Input
+  Input,
+  useToast,
 } from "@chakra-ui/react"
-
 // import { } from "@chakra-ui/icons"
 
 import { crudApi } from "../utils/api";
@@ -17,26 +17,28 @@ export default function User() {
   const [isLoading, setIsLoading] = useState(true);
   const [user, setUser] = useState(null);
 
+  const toast = useToast();
+
   useEffect(() => {
     if (window.user) {
       setUser(window.user)
       setIsLoading(false);
     } else {
       setIsLoading(true);
-      crudApi.get("/me")
+      crudApi.get("/users/me")
         .then((response) => {
           setUser(response.data)
           window.user = response.data
         })
         .catch((error) => {
           console.error(error)
-          // TODO: check if message is present on error
-          setUser({
-            fullname: "Gabriel Rocha",
-            email: "rocha@gmail.com",
-            phone: "1234567890",
-            isInternal: true,
-          })
+          toast({
+            title: "Erro",
+            description: "Ocorreu um erro ao carregar os dados do usuário. Tente novamente mais tarde.",
+            status: "error",
+            duration: 3000,
+            isClosable: true,
+          });
         })
         .finally(() => {
           setIsLoading(false);
@@ -66,7 +68,7 @@ function UserForm({ user }) {
         <Text>Nome completo</Text>
         <InputGroup className="flex flex-col">
           <Input
-            value={user.fullname}
+            value={user.name}
             isDisabled={true}
           />
         </InputGroup>
@@ -86,7 +88,7 @@ function UserForm({ user }) {
         <Text>Numero para contato</Text>
         <InputGroup className="flex flex-col">
           <Input
-            value={user.phone}
+            value={user.phone ?? "Não informado"}
             isDisabled={true}
           />
         </InputGroup>

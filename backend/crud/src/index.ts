@@ -2,6 +2,8 @@ import express, { NextFunction, Request, Response } from "express";
 import pino from "pino";
 import cors from "cors";
 
+import cookieParser from "cookie-parser";
+
 import database from "./infra/database";
 import { hashPassword } from "./utils";
 import { internalAuthMiddleware } from "./middlewares/auth";
@@ -22,7 +24,13 @@ const postgresUserRepository = new PostgresUserRepository(database, logger);
 const postgresVolunteerRespository = new PostgresVolunteerRespository(database, logger);
 const postgresVolunteerKindRespository = new PostgresVolunteerKindRespository(database, logger);
 
-app.use(cors());
+app.use(cors({
+  origin: ["http://localhost:3000", "http://localhost:5173"],
+  methods: ["GET", "POST", "PUT", "DELETE"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+  credentials: true,
+}));
+app.use(cookieParser());
 app.use(express.json());
 
 // setuping respositories on req object
