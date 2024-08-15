@@ -1,59 +1,46 @@
 import { useState, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import {
   Stack,
   Text,
   Spinner,
   InputGroup,
   Input,
-  useToast,
+  Button,
 } from "@chakra-ui/react"
-// import { } from "@chakra-ui/icons"
 
-import { crudApi } from "../utils/api";
 import { Footer } from "../components/Footer";
 import { Header } from "../components/Header";
+import { useAuth } from "../contexts/auth";
 
 export default function User() {
-  const [isLoading, setIsLoading] = useState(true);
-  const [user, setUser] = useState(null);
-
-  const toast = useToast();
+  const navigate = useNavigate();
+  const { user, isLoading, logout } = useAuth();
 
   useEffect(() => {
-    if (window.user) {
-      setUser(window.user)
-      setIsLoading(false);
-    } else {
-      setIsLoading(true);
-      crudApi.get("/users/me")
-        .then((response) => {
-          setUser(response.data)
-          window.user = response.data
-        })
-        .catch((error) => {
-          console.error(error)
-          toast({
-            title: "Erro",
-            description: "Ocorreu um erro ao carregar os dados do usuário. Tente novamente mais tarde.",
-            status: "error",
-            duration: 3000,
-            isClosable: true,
-          });
-        })
-        .finally(() => {
-          setIsLoading(false);
-        });
+    if (!user && !isLoading) {
+      navigate("/login");
     }
-  }, [])
+  }, [user, isLoading, navigate]);
+
+  if (isLoading) {
+    return <main className="flex flex-1 items-center justify-center">
+      <Spinner />
+    </main>
+  }
 
   return (
     <>
       <Header />
 
-      <main className="flex">
+      <main className="flex p-5">
         <div className="flex flex-1 items-center justify-center">
           {user && !isLoading ? <UserForm user={user} /> : <Spinner />}
         </div>
+
+        <Link to="/interno" className="bg-primary text-white py-2 px-4 mt-4 rounded-lg w-1/3 mx-auto text-center">Acesso interno</Link>
+        <Button onClick={logout} colorScheme="red" className="bg-primary text-white py-2 px-4 mt-4 rounded-lg w-1/3 mx-auto text-center">Sair</Button>
+
       </main>
 
       <Footer />

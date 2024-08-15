@@ -50,6 +50,7 @@ app.use((req, _, next) => {
 function remoteAddressMiddleware(req: Request, res: Response, next: NextFunction) {
   const remoteAddress = req.headers["x-forwarded-for"] || req.connection.remoteAddress;
   req.remoteAddress = remoteAddress as string;
+  req.sessionToken = req.cookies?.token;
 
   next();
 }
