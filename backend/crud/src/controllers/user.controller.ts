@@ -7,7 +7,7 @@ import { authMiddleware } from "../middlewares/auth";
 const userController = Router();
 
 async function meMiddleware(req: Request, res: Response, next: NextFunction) {
-  const token = req.remoteAddress?.includes("127.0.0.1")
+  const token = req.remoteAddress?.includes("127.0.0.1") || req.remoteAddress?.includes("::1")
     ? (req.headers?.token ?? req.cookies?.token)
     : req.cookies?.token;
 
