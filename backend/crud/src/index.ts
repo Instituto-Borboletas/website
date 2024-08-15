@@ -1,4 +1,4 @@
-import express from "express";
+import express, { NextFunction, Request, Response } from "express";
 import pino from "pino";
 
 import database from "./infra/database";
@@ -6,9 +6,10 @@ import { hashPassword } from "./utils";
 import { internalAuthMiddleware } from "./middlewares/auth";
 
 import { userController } from "./controllers/user.controller";
-import volunteerController from "./controllers/volunteer.controller";
+import { volunteerController } from "./controllers/volunteer.controller";
 
 import { PostgresUserRepository } from "./repositories/user/postgres";
+import { PostgresVolunteerRespository } from "./repositories/volunteer/postgres";
 import { PostgresVolunteerKindRespository } from "./repositories/volunteerKind/postgres";
 
 const PORT = process.env.PORT ?? 3000;
@@ -17,6 +18,7 @@ const logger = pino({});
 const app = express();
 
 const postgresUserRepository = new PostgresUserRepository(database, logger);
+const postgresVolunteerRespository = new PostgresVolunteerRespository(database, logger);
 const postgresVolunteerKindRespository = new PostgresVolunteerKindRespository(database, logger);
 
 app.use(express.json());
@@ -24,6 +26,7 @@ app.use(express.json());
 // setuping respositories on req object
 app.use((req, _, next) => {
   req.userRepository = postgresUserRepository;
+  req.volunteerRepository = postgresVolunteerRespository;
   req.volunteerKindRepository = postgresVolunteerKindRespository;
   req.db = database;
   req.logger = logger;
@@ -33,6 +36,15 @@ app.use((req, _, next) => {
 
   next();
 });
+
+function remoteAddressMiddleware(req: Request, res: Response, next: NextFunction) {
+  const remoteAddress = req.headers["x-forwarded-for"] || req.connection.remoteAddress;
+  req.remoteAddress = remoteAddress as string;
+
+  next();
+}
+
+app.use(remoteAddressMiddleware);
 
 app.get("/healthcheck", internalAuthMiddleware, async (req, res) => {
   try {

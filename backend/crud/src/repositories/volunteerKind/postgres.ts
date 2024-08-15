@@ -31,7 +31,7 @@ export class PostgresVolunteerKindRespository implements VolunteerKindRepository
 
   async findById(id: string): Promise<VolunteerKind | null> {
     try {
-      const volunteerKind = await this.conn("volunteer_kinds").where({ id }).first();
+      const volunteerKind = await this.conn("volunteers_kind").where({ id }).first();
       return volunteerKind;
     } catch (error) {
       this.logger.child({ error }).error("Failed to find VolunteerKind by id");
@@ -41,20 +41,24 @@ export class PostgresVolunteerKindRespository implements VolunteerKindRepository
 
   async findAll(options: FindAllOptions = { filterEnabled: true }): Promise<VolunteerKind[]> {
     try {
-      const volunteerKinds = await this.conn("volunteer_kinds")
+      const volunteerKinds = await this.conn("volunteers_kind")
         .where(options.filterEnabled ? { enabled: true } : {})
+        .join("users", "volunteers_kind.created_by", "users.id")
+        .select("volunteers_kind.*", "users.name as created_by_name", "users.email as created_by")
+        .orderBy("volunteers_kind.created_at", "desc")
         .select();
 
       return volunteerKinds;
     } catch (error) {
+      console.error(error);
       this.logger.child({ error }).error("Failed to find all VolunteerKinds");
-      throw new Error("Failed to find all Volunteer");
+      throw new Error("Failed to find all Volunteers Kind");
     }
   }
 
   async listAsOptions(): Promise<VolunteerKindOptions[]> {
     try {
-      const volunteerKinds = await this.conn("volunteer_kinds")
+      const volunteerKinds = await this.conn("volunteers_kind")
         .where({ enabled: true })
         .select("name", "id");
 
@@ -70,7 +74,7 @@ export class PostgresVolunteerKindRespository implements VolunteerKindRepository
 
   async updateEnabled(volunteerKind: VolunteerKind): Promise<void> {
     try {
-      await this.conn("volunteer_kinds").where({ id: volunteerKind.id }).update({ enabled: volunteerKind.enabled });
+      await this.conn("volunteers_kind").where({ id: volunteerKind.id }).update({ enabled: volunteerKind.enabled });
     } catch (error) {
       this.logger.child({ error }).error("Failed to update VolunteerKind enabled");
       throw new Error("Failed to update VolunteerKind enabled");
@@ -79,7 +83,7 @@ export class PostgresVolunteerKindRespository implements VolunteerKindRepository
 
   async delete(volunteerKind: VolunteerKind): Promise<void> {
     try {
-      await this.conn("volunteer_kinds").where({ id: volunteerKind.id }).delete();
+      await this.conn("volunteers_kind").where({ id: volunteerKind.id }).delete();
     } catch (error) {
       this.logger.child({ error }).error("Failed to delete VolunteerKind");
       throw new Error("Failed to delete VolunteerKind");

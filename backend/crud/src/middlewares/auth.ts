@@ -14,10 +14,10 @@ export async function internalAuthMiddleware(req: Request, res: Response, next: 
 
 export function authMiddleware(userType: UserType) {
   return async function(req: Request, res: Response, next: NextFunction) {
-    const remoteAddress = req.headers["x-forwarded-for"] || req.connection.remoteAddress;
-    req.remoteAddress = remoteAddress as string;
+    const token = req.remoteAddress?.includes("127.0.0.1")
+      ? (req.headers?.token ?? req.cookies?.token)
+      : req.cookies?.token;
 
-    const token = req.cookies?.token;
     if (!token)
       return res.status(401).json({ ok: false, message: "Unauthorized" });
 
