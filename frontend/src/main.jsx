@@ -61,11 +61,11 @@ const router = createBrowserRouter([
 ]);
 
 ReactDOM.createRoot(document.getElementById("root")).render(
-  <AuthProvider>
-    <ChakraProvider>
-      <QueryClientProvider client={queryClient}>
+  <QueryClientProvider client={queryClient}>
+    <AuthProvider>
+      <ChakraProvider>
         <RouterProvider router={router} />
-      </QueryClientProvider>
-    </ChakraProvider>
-  </AuthProvider>
+      </ChakraProvider>
+    </AuthProvider>
+  </QueryClientProvider>
 )

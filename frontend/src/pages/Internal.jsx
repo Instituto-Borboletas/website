@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { Button, Icon } from "@chakra-ui/react";
+import { Button, Icon, Spinner } from "@chakra-ui/react";
 import { BiLogOut } from "react-icons/bi";
 
 import { DashboardView } from "../components/views/DashboardView";
@@ -27,14 +27,8 @@ const VIEWS_LABLES = {
 }
 
 export default function Internal () {
-  const { user, logout } = useAuth();
   const navigate = useNavigate();
-
-  useEffect(() => {
-    // if (!user) {
-    //   navigate("/");
-    // }
-  }, [user, navigate]);
+  const { user, isLoading, logout } = useAuth();
 
   const [selectedView, setSelectedView] = useState("dashboard");
 
@@ -54,6 +48,19 @@ export default function Internal () {
       setSelectedView(view);
     }
   }, []);
+
+
+  useEffect(() => {
+    if (!user && !isLoading) {
+      navigate("/login");
+    }
+  }, [user, isLoading, navigate]);
+
+  if (isLoading) {
+    return <main className="flex flex-1 items-center justify-center">
+      <Spinner />
+    </main>
+  }
 
   return (
     <>

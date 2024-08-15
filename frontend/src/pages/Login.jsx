@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useState, useRef } from "react";
 import {
   FormControl,
@@ -14,6 +14,7 @@ import {
 
 import { PasswordInput } from "../components/PasswordInput";
 import { crudApi } from "../utils/api";
+import { useAuth } from "../contexts/auth";
 
 function isValidPhone(phone) {
   if (!phone) {
@@ -37,6 +38,7 @@ function isValidPhone(phone) {
 
 export default function LoginPage() {
   const navigate = useNavigate();
+  const { login } = useAuth();
 
   const [errorMessage, setErrorMessage] = useState(null);
   const [view, setView] = useState("login");
@@ -137,10 +139,7 @@ export default function LoginPage() {
     }
 
     try {
-      await crudApi.post("/users/login", {
-        email,
-        password,
-      });
+      await login(email, password);
 
       toast({
         title: "Login efetuado com sucesso!",
@@ -203,6 +202,10 @@ export default function LoginPage() {
                 {isLoading ? "Entrando..." : "Entrar"}
               </Button>
             </div>
+
+            <Link to="/" className="block text-center mt-4 text-sm text-gray-500 hover:text-gray-700">
+              Voltar para a página inicial
+            </Link>
           </form>
         </div>
       </main>

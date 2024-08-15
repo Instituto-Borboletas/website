@@ -30,10 +30,22 @@ async function meMiddleware(req: Request, res: Response, next: NextFunction) {
 }
 
 userController.get("/me", meMiddleware, async (req, res) => {
-  // @ts-expect-error
+  // @ts-expect-error FIX: use a mapper from db
   delete req.user.password_hash;
 
+  // @ts-expect-error FIX: use a mapper from db
+  if (req.user.user_type === "internal")
+    // @ts-expect-error
+    req.user.internal = true;
+
+  // @ts-expect-error FIX: use a mapper from db
+  delete req.user.user_type;
+
   return res.json(req.user)
+});
+userController.post("/logout", async (req, res) => {
+  res.clearCookie("token");
+  res.json({ ok: true });
 });
 
 userController.post("/login", async (req, res) => {
@@ -50,14 +62,18 @@ userController.post("/login", async (req, res) => {
   const session = new Session(user.id);
   await req.db("sessions").insert({ id: session.id, user_id: user.id });
 
+  // @ts-expect-error FIX: use a mapper from db
+  if (user.user_type === "internal")
+    // @ts-expect-error
+    user.internal = true;
+
+  // @ts-expect-error FIX: use a mapper from db
+  delete user.user_type;
+  // @ts-expect-error FIX: use a mapper from db
+  delete user.password_hash;
+
   res.cookie("token", session.id, { httpOnly: true, maxAge: 1000 * 60 * 60 * 12 });
-  res.json({
-    ok: true,
-    data: {
-      name: user.name,
-      email: user.email,
-    }
-  });
+  res.json(user);
 });
 
 userController.get("/internal/validate", authMiddleware("internal"), async (req, res) => {
