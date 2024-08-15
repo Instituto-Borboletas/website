@@ -20,7 +20,7 @@ volunteerKindController.post("/", authMiddleware("internal"), async (req, res) =
 
     await req.volunteerKindRepository.save(volunterKind);
 
-    res.json({ ok: true });
+    res.json({ ok: true, data: volunterKind });
   } catch (err) {
     req.logger.error(err);
     res.status(500).json({ ok: false, message: "Internal server error" });
