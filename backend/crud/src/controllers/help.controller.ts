@@ -1,23 +1,12 @@
 import { Router } from "express";
-
+import { helpKindController } from "./helpKind.controller";
 import { authMiddleware } from "../middlewares/auth";
-import { volunteerKindController } from "./volunteerKind.controller";
 import { VolunteerBuilder } from "../domain/builders/VolunteerBuilder";
 
-const volunteerController = Router();
-volunteerController.use("/kinds", volunteerKindController);
+const helpController = Router();
+helpController.use("/kinds", helpKindController);
 
-volunteerController.get("/", authMiddleware("internal"), async (req, res) => {
-  try {
-    const volunteers = await req.volunteerRepository.findAll();
-    return res.json(volunteers);
-  } catch (error) {
-    req.logger.child({ error }).error("Error fetching volunteers");
-    return res.status(500).json({ ok: false, message: "Internal server error" });
-  }
-});
-
-volunteerController.post("/", authMiddleware("external"), async (req, res) => {
+helpController.post("/", authMiddleware("external"), async (req, res) => {
   const { name, email, phone, kindId } = req.body;
 
   if (!name || !phone || !kindId)
@@ -38,25 +27,21 @@ volunteerController.post("/", authMiddleware("external"), async (req, res) => {
 
   try {
     await req.volunteerRepository.save(volunteer);
-    return res.status(201).json({ ok: true, volunteer });
+    return res.status(201).json(volunteer);
   } catch (error) {
     req.logger.child({ error }).error("Error saving volunteer");
     return res.status(500).json({ ok: false, message: "Internal server error" });
   }
 });
 
-volunteerController.get("/:id", authMiddleware("internal"), async (req, res) => {
-  return res.json({ ok: true, volunteer: req.params.id });
-});
-
-volunteerController.get("/", authMiddleware("internal"), async (req, res) => {
+helpController.get("/", authMiddleware("internal"), async (req, res) => {
   try {
-    const volunteers = await req.volunteerRepository.findAll();
-    return res.json({ ok: true, volunteers });
+    const helps = await req.helpRequestRepository.findAll();
+    return res.json(helps);
   } catch (error) {
     req.logger.child({ error }).error("Error fetching volunteers");
     return res.status(500).json({ ok: false, message: "Internal server error" });
   }
 });
 
-export { volunteerController };
+export { helpController };
