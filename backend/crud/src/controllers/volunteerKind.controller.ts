@@ -60,7 +60,7 @@ volunteerKindController.patch("/:id/toggle", authMiddleware("internal"), async (
 volunteerKindController.get("/options", authMiddleware("external"), async (req, res) => {
   const volunteerKinds = await req.volunteerKindRepository.listAsOptions();
 
-  res.json({ data: volunteerKinds });
+  res.json(volunteerKinds);
 });
 
 export { volunteerKindController };

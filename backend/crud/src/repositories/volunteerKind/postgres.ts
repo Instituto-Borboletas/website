@@ -35,7 +35,7 @@ export class PostgresVolunteerKindRespository implements VolunteerKindRepository
       return volunteerKind;
     } catch (error) {
       this.logger.child({ error }).error("Failed to find VolunteerKind by id");
-      throw new Error("Failed to find VolunteerKind by id");
+      return null;
     }
   }
 
@@ -60,12 +60,9 @@ export class PostgresVolunteerKindRespository implements VolunteerKindRepository
     try {
       const volunteerKinds = await this.conn("volunteers_kind")
         .where({ enabled: true })
-        .select("name", "id");
+        .select("name", "id as value", "description");
 
-      return volunteerKinds.map((volunteerKind) => ({
-        name: volunteerKind.name,
-        value: volunteerKind.id,
-      }));
+      return volunteerKinds
     } catch (error) {
       this.logger.child({ error }).error("Failed to list VolunteerKinds as options");
       throw new Error("Failed to list VolunteerKinds as options");

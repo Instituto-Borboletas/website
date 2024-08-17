@@ -3,6 +3,7 @@ import pino from "pino";
 
 import { FindAllOptions, VolunteerRepository } from "./interface";
 import { Volunteer } from "../../domain/Volunteer";
+import { VolunteerBuilder } from "../../domain/builders/VolunteerBuilder";
 
 export class PostgresVolunteerRespository implements VolunteerRepository {
   constructor(private readonly conn: knex.Knex, private readonly logger: pino.Logger) { }
@@ -37,7 +38,7 @@ export class PostgresVolunteerRespository implements VolunteerRepository {
       return volunteer;
     } catch (error) {
       this.logger.child({ error }).error("Failed to find Volunteer by id");
-      throw new Error("Failed to find Volunteer by id");
+      return null;
     }
   }
 
@@ -45,9 +46,29 @@ export class PostgresVolunteerRespository implements VolunteerRepository {
     try {
       const volunteers = await this.conn("volunteers")
         // .where(options.filterDeleted ? { deleted_at: null } : {})
-        .select();
+        .join("users", "volunteers.created_by", "users.id")
+        .join("volunteers_kind", "volunteers.kind_id", "volunteers_kind.id")
+        .select("volunteers.*", "users.name as created_by_name", "volunteers_kind.name as kind_name")
 
-      return volunteers;
+      return volunteers.map((volunteer: any) => {
+        const result = new VolunteerBuilder({
+          id: volunteer.id,
+          name: volunteer.name,
+          email: volunteer.email,
+          phone: volunteer.phone,
+          volunteerKindId: volunteer.kind_id,
+          createdBy: volunteer.created_by,
+          createdAt: volunteer.created_at,
+          updatedAt: volunteer.updated_at,
+          deletedAt: volunteer.deleted_at,
+        }).build();
+
+        return {
+          ...result,
+          createdByName: volunteer.created_by_name,
+          kindName: volunteer.kind_name
+        }
+      });
     } catch (error) {
       this.logger.child({ error }).error("Failed to find all VolunteerKinds");
       throw new Error("Failed to find all Volunteer");

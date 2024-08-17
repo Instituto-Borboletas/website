@@ -7,21 +7,19 @@ export class VolunteerBuilder {
   name: string;
   phone: string;
   volunteerKindId: string;
-  enabled: boolean;
   createdBy: string;
   createdAt: number;
   updatedAt: number;
 
-  constructor ({ name, email, phone, volunteerKindId, createdBy, createdAt }: { name: string, email: string, phone: string, volunteerKindId: string, createdBy: string, createdAt?: number }) {
-    this.id = generateId();
+  constructor ({ id, name, email, phone, volunteerKindId, createdBy, createdAt, updatedAt, deletedAt }: { id?: string, name: string, email: string, phone: string, volunteerKindId: string, createdBy: string, createdAt?: number, updatedAt?: number, deletedAt?: number }) {
+    this.id = id ?? generateId();
     this.name = name;
     this.email = email;
     this.phone = phone;
     this.volunteerKindId = volunteerKindId;
-    this.enabled = true;
     this.createdBy = createdBy;
     this.createdAt = createdAt ?? Date.now();
-    this.updatedAt = Date.now();
+    this.updatedAt = updatedAt ?? Date.now();
   }
 
   setId (id: string) {
@@ -39,8 +37,8 @@ export class VolunteerBuilder {
     return this;
   }
 
-  setEnabled (enabled: boolean) {
-    this.enabled = enabled;
+  setDeletedAt (deletedAt: number) {
+    this.updatedAt = deletedAt;
     return this;
   }
 

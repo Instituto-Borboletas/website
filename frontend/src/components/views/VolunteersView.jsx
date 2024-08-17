@@ -84,7 +84,7 @@ export function VolunteersView() {
         <div className="overflow-x-auto">
           <Tabs variant="enclosed" colorScheme="blue">
             <TabList>
-              <Tab>Pedidos</Tab>
+              <Tab>Voluntários</Tab>
               <Tab>Tipos</Tab>
             </TabList>
 
@@ -149,7 +149,7 @@ function VolunteersTable({ volunteers }) {
     <table className="min-w-full rounded border border-1 border-zinc-200">
       <thead className="bg-zinc-200 text-primary block w-full">
         <tr className="flex w-full">
-          <th className="border w-1/4 text-lg">Usuário</th>
+          <th className="border w-1/4 text-lg">Nome</th>
           <th className="border w-1/4 text-lg">Contato</th>
           <th className="border w-1/4 text-lg">Tipo de voluntariado</th>
           <th className="border w-1/4 text-lg">Data de registro</th>
@@ -166,7 +166,7 @@ function VolunteersTable({ volunteers }) {
                   <span>{ volunteer.email }</span>
                 </div>
               </td>
-              <td className="border p-2 w-1/3 text-lg flex items-center justify-center">{ volunteer.kind }</td>
+              <td className="border p-2 w-1/3 text-lg flex items-center justify-center">{ volunteer.kindName }</td>
               <td className="border p-2 w-1/3 text-lg flex items-center justify-center">{new Date(volunteer.createdAt).toLocaleDateString('pt-br')}</td>
             </tr>
           ))
