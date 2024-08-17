@@ -1,27 +1,40 @@
 import { useEffect, useState } from "react";
-import { Button, Textarea, InputGroup, InputLeftAddon, Stack, Select, Text } from "@chakra-ui/react";
+import { useQuery } from "@tanstack/react-query"
+import {
+  Button,
+  Textarea,
+  InputGroup,
+  Stack,
+  Select,
+  FormControl,
+  FormLabel,
+  Drawer,
+  DrawerOverlay,
+  DrawerContent,
+  DrawerCloseButton,
+  DrawerHeader,
+  DrawerBody,
+} from "@chakra-ui/react";
 import { Header } from "../components/Header";
 import { Footer } from "../components/Footer";
 
 import { crudApi } from "../utils/api";
+import { useDisclosure } from "../hooks/disclosure";
 
-const optionsMock = [
-  { value: "1", label: "Metamorfose" },
-  { value: "2", label: "Consulta psicologica" },
-  { value: "3", label: "Apoio logístico" },
-  { value: "4", label: "Apoio técnico" },
-  { value: "5", label: "Apoio voluntário" },
-];
+export default function Helps() {
+  const { data: options, isLoading: isLoadingKinds } = useQuery({
+    queryKey: ["helpKindOptions"],
+    queryFn: () => crudApi.get("/helps/kinds/options"),
+  });
 
-export default function Helps () {
+  const { isOpen, onOpen, onClose } = useDisclosure();
+
   const [isLoading, setIsLoading] = useState(false);
 
-  const [description, setDescription] = useState(null);
   const [kind, setKind] = useState(null);
+  const [description, setDescription] = useState(null);
 
-  const [options, setOptions] = useState([]);
-
-  async function registerHelpRequest () {
+  async function registerHelpRequest() {
     setIsLoading(true);
     try {
       await crudApi.post("/helps", {
@@ -36,11 +49,6 @@ export default function Helps () {
     }
   }
 
-
-  useEffect(() => {
-    setOptions(optionsMock);
-  }, [])
-
   return (
     <>
       <Header />
@@ -48,25 +56,32 @@ export default function Helps () {
       <main className="py-10 flex items-center justify-center">
         <h1 className="text-2xl font-bold">Pedir ajuda!</h1>
 
-        <Stack spacing={6} className="mt-12">
-          <Stack>
-            <Text>Tipo ajuda *</Text>
+        <Stack spacing={6} w="50%" className="mt-12">
+          <FormControl isRequired>
+            <FormLabel>Nome</FormLabel>
             <Select
               value={kind}
               onChange={(e) => setKind(e.target.value)}
-              placeholder="Selecione um tipo de voluntariado"
+              placeholder={isLoadingKinds ? "Carregando..." : "Selecione o tipo de ajuda"}
               isRequired={true}
             >
-              {options.map((option) => (
+              {options?.data.map((option) => (
                 <option key={option.value} value={option.value}>
-                  {option.label}
+                  {option.name}
                 </option>
               ))}
             </Select>
-          </Stack>
+            <Button
+              onClick={onOpen}
+              className="text-sm mt-2 text-primary"
+              variant="link"
+            >
+              Entenda os tipos de ajuda
+            </Button>
+          </FormControl>
 
-          <Stack>
-            <Text>Detalhe o seu pedido de ajuda *</Text>
+          <FormControl isRequired>
+            <FormLabel>Detalhe o seu pedido de ajuda</FormLabel>
             <InputGroup className="flex flex-col">
               <Textarea
                 value={description}
@@ -75,10 +90,10 @@ export default function Helps () {
                 isRequired={true}
               />
             </InputGroup>
-          </Stack>
+          </FormControl>
 
           <Button
-            isDisabled={!name || !kind || isLoading}
+            isDisabled={!description || !kind || isLoading}
             isLoading={isLoading}
             loadingText="Registrando..."
             onClick={registerHelpRequest}
@@ -86,6 +101,24 @@ export default function Helps () {
             Registrar
           </Button>
         </Stack>
+
+        <Drawer onClose={onClose} isOpen={isOpen} size="sm">
+          <DrawerOverlay />
+          <DrawerContent>
+            <DrawerCloseButton />
+            <DrawerHeader>Tipos de ajuda</DrawerHeader>
+            <DrawerBody>
+              <ul>
+                {options?.data.map((option) => (
+                  <li key={option.value} className="mt-4">
+                    <strong>{option.name}</strong>
+                    <p>{option.description}</p>
+                  </li>
+                ))}
+              </ul>
+            </DrawerBody>
+          </DrawerContent>
+        </Drawer>
       </main>
 
       <Footer />

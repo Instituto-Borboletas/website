@@ -3,6 +3,8 @@ type HelpRequestProps = {
   description: string;
   helpKindId: string;
   createdBy: string;
+  createdAt: number;
+  deletedAt?: number;
 }
 
 export class HelpRequest {
@@ -11,12 +13,14 @@ export class HelpRequest {
   helpKindId: string;
   createdBy: string;
   createdAt: number;
+  deletedAt?: number;
 
-  constructor({ id, description, helpKindId, createdBy }: HelpRequestProps) {
+  constructor({ id, description, helpKindId, createdBy, createdAt, deletedAt }: HelpRequestProps) {
     this.id = id;
     this.description = description;
     this.helpKindId = helpKindId;
     this.createdBy = createdBy;
-    this.createdAt = Date.now();
+    this.createdAt = createdAt;
+    this.deletedAt = deletedAt;
   }
 }

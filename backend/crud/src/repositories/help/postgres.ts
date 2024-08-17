@@ -3,6 +3,7 @@ import pino from "pino";
 
 import { HelpRequest } from "../../domain/HelpRequest";
 import { FindAllOptions, HelpRequestRepository } from "./interface";
+import { HelpRequestBuilder } from "../../domain/builders/HelpRequestBuilder";
 
 export class PostgresHelpRepository implements HelpRequestRepository {
   constructor(private readonly conn: knex.Knex, private readonly logger: pino.Logger) { }
@@ -34,10 +35,30 @@ export class PostgresHelpRepository implements HelpRequestRepository {
   async findAll(options?: FindAllOptions): Promise<HelpRequest[]> {
     try {
       const helps = await this.conn("helps")
-        .where(options?.filterEnabled ? { enabled: true } : {})
-        .select();
+        .join("users", "helps.created_by", "users.id")
+        .join("helps_kind", "helps.help_kind_id", "helps_kind.id")
+        .where(options?.filterDeleted ? { deleted_at: null } : {})
+        .select("helps.*", "users.name as created_by_name", "helps_kind.name as kind_name")
 
-      return helps;
+      return helps.map((help: any) => {
+        const result = {
+          ...new HelpRequestBuilder({
+            id: help.id,
+            description: help.description,
+            createdBy: help.created_by,
+            kindId: help.help_kind_id,
+            createdAt: help.created_at,
+            deletedAt: help.deleted_at,
+          }).build(),
+          createdByName: help.created_by_name,
+          kind: help.kind_name
+        }
+
+        // @ts-expect-error
+        delete result.helpKindId;
+
+        return result;
+      });
     } catch (error) {
       this.logger.child({ error }).error("Failed to find all helps");
       throw new Error("Failed to find all helps");

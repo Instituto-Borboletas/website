@@ -38,7 +38,7 @@ helpKindController.get("/", authMiddleware("internal"), async (req, res) => {
 
 helpKindController.get("/options", authMiddleware("external"), async (req, res) => {
   try {
-    const helpKinds = await req.helpKindRepository.findAll();
+    const helpKinds = await req.helpKindRepository.listAsOptions()
     return res.json(helpKinds);
   } catch (error) {
     req.logger.child({ error }).error("Error fetching help kinds");

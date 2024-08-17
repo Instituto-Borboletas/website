@@ -160,14 +160,12 @@ function HelpsTable({ helps }) {
       </thead>
       <tbody className="bg-white text-center max-h-[36rem] overflow-y-auto block w-full">
         {
-          helps?.map(() => (
-            <tr key={Math.random()} className="flex w-full">
-              <td className="border p-2 w-1/4 text-lg flex items-center justify-center">Fernanda</td>
-              <td className="border p-2 w-1/4 text-md flex items-center justify-center">
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam nec nisl nec odio ultricies tincidunt.
-              </td>
-              <td className="border p-2 w-1/4 text-lg flex items-center justify-center">Metamorfose</td>
-              <td className="border p-2 w-1/4 text-lg flex items-center justify-center">{new Date().toLocaleDateString('pt-br')}</td>
+          helps?.map((help) => (
+            <tr key={help.id} className="flex w-full">
+              <td className="border p-2 w-1/4 text-lg flex items-center justify-center">{ help.createdByName }</td>
+              <td className="border p-2 w-1/4 text-md flex items-center justify-center">{ help.description }</td>
+              <td className="border p-2 w-1/4 text-lg flex items-center justify-center">{ help.kind }</td>
+              <td className="border p-2 w-1/4 text-lg flex items-center justify-center">{new Date(help.createdAt).toLocaleDateString('pt-br')}</td>
             </tr>
           ))
         }
