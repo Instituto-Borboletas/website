@@ -1,7 +1,7 @@
 import { Volunteer } from '../Volunteer';
 import { generateId } from '../../utils';
 
-export class VolunteerKindBuilder {
+export class VolunteerBuilder {
   id: string;
   email: string;
   name: string;

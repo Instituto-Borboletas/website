@@ -12,15 +12,15 @@ volunteerKindController.post("/", authMiddleware("internal"), async (req, res) =
     return res.status(400).json({ ok: false, message: "Missing required fields" });
 
   try {
-    const volunterKind = new VolunteerKindBuilder({
+    const volunteerKind = new VolunteerKindBuilder({
       name,
       description,
       createdBy: req.user!.id
     }).build()
 
-    await req.volunteerKindRepository.save(volunterKind);
+    await req.volunteerKindRepository.save(volunteerKind);
 
-    res.json({ ok: true, data: volunterKind });
+    res.json(volunteerKind);
   } catch (err) {
     req.logger.error(err);
     res.status(500).json({ ok: false, message: "Internal server error" });
@@ -30,7 +30,7 @@ volunteerKindController.post("/", authMiddleware("internal"), async (req, res) =
 volunteerKindController.get("/", authMiddleware("internal"), async (req, res) => {
   const volunteerKinds = await req.volunteerKindRepository.findAll();
 
-  res.json({ data: volunteerKinds });
+  res.json(volunteerKinds);
 });
 
 volunteerKindController.patch("/:id/toggle", authMiddleware("internal"), async (req, res) => {
