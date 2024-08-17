@@ -14,7 +14,7 @@ export function AuthProvider({ children }) {
     fetchUser();
   }, []);
 
-  async function fetchUser () {
+  async function fetchUser() {
     setIsLoading(true);
     try {
       const response = await crudApi('/users/me');
@@ -32,7 +32,7 @@ export function AuthProvider({ children }) {
     }
   }
 
-  async function login (email, password) {
+  async function login(email, password) {
     setIsLoading(true);
     setError(null);
 
@@ -49,7 +49,7 @@ export function AuthProvider({ children }) {
     }
   }
 
-  async function logout () {
+  async function logout() {
     try {
       await crudApi.post('/users/logout');
       setUser(null);
@@ -74,6 +74,6 @@ export function AuthProvider({ children }) {
   );
 }
 
-export function useAuth () {
+export function useAuth() {
   return useContext(AuthContext);
 }

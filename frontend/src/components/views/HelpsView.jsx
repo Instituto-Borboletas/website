@@ -24,19 +24,11 @@ import {
 
 import { crudApi } from "../../utils/api";
 import { useDisclosure } from "../../hooks/disclosure";
-
-async function fetchHelps() {
-  return crudApi.get("/helps");
-}
-
-async function fetchHelpKinds() {
-  return crudApi.get("/helps/kinds");
-}
+import { useInternalData } from "../../contexts/internal";
 
 export function HelpsView() {
   const queryClient = useQueryClient();
-  const { data: helps, isLoading: isHelpsLoading } = useQuery({ queryKey: ["helps"], queryFn: fetchHelps });
-  const { data: helpKinds, isLoading: isHelpKindsLoading } = useQuery({ queryKey: ["helpKinds"], queryFn: fetchHelpKinds });
+  const { helps, isHelpsLoading, helpKinds, isHelpKindsLoading } = useInternalData()
 
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [isReloadLoading, setIsReloadLoading] = useState(false);
@@ -93,7 +85,7 @@ export function HelpsView() {
                 {
                   isHelpsLoading
                     ? (<p>Carregando...</p>)
-                    : (<HelpsTable helps={helps.data} />)
+                    : (<HelpsTable helps={helps?.data} />)
                 }
               </div>
             </TabPanel>
@@ -103,7 +95,7 @@ export function HelpsView() {
                 {
                   isHelpKindsLoading
                     ? (<p>Carregando...</p>)
-                    : (<HelpKindsTable helpKinds={helpKinds.data} />)
+                    : (<HelpKindsTable helpKinds={helpKinds?.data} />)
                 }
               </div>
             </TabPanel>
