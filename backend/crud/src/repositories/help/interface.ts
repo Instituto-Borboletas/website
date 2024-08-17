@@ -1,7 +1,7 @@
 import { HelpRequest } from '../../domain/HelpRequest'
 
 export interface FindAllOptions {
-  filterEnabled: boolean
+  filterDeleted: boolean
 }
 
 export interface HelpRequestRepository {

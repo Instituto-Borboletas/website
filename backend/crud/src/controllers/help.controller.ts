@@ -1,35 +1,32 @@
 import { Router } from "express";
 import { helpKindController } from "./helpKind.controller";
 import { authMiddleware } from "../middlewares/auth";
-import { VolunteerBuilder } from "../domain/builders/VolunteerBuilder";
+import { HelpRequestBuilder } from "../domain/builders/HelpRequestBuilder";
 
 const helpController = Router();
 helpController.use("/kinds", helpKindController);
 
 helpController.post("/", authMiddleware("external"), async (req, res) => {
-  const { name, email, phone, kindId } = req.body;
+  const { description, kind: kindId } = req.body;
 
-  if (!name || !phone || !kindId)
+  if (!description || !kindId)
     return res.status(400).json({ ok: false, message: "Missing required fields" });
 
-  const volunterKind = await req.volunteerKindRepository.findById(kindId);
+  const kind = await req.helpKindRepository.findById(kindId);
+  if (!kind)
+  return res.status(412).json({ ok: false, message: "Help kind not found" });
 
-  if (!volunterKind)
-    return res.status(412).json({ ok: false, message: "Volunteer kind not found" });
-
-  const volunteer = new VolunteerBuilder({
-    name,
-    email,
-    phone,
-    volunteerKindId: kindId,
+  const helpRequest = new HelpRequestBuilder({
+    description,
+    kindId,
     createdBy: req.user!.id
   }).build();
 
   try {
-    await req.volunteerRepository.save(volunteer);
-    return res.status(201).json(volunteer);
+    await req.helpRequestRepository.save(helpRequest);
+    return res.status(201).json(helpRequest);
   } catch (error) {
-    req.logger.child({ error }).error("Error saving volunteer");
+    req.logger.child({ error }).error("Error saving help request");
     return res.status(500).json({ ok: false, message: "Internal server error" });
   }
 });
