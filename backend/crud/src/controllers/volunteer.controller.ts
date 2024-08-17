@@ -18,7 +18,7 @@ volunteerController.get("/", authMiddleware("internal"), async (req, res) => {
 });
 
 volunteerController.post("/", authMiddleware("external"), async (req, res) => {
-  const { name, email, phone, kindId } = req.body;
+  const { name, email, phone, kind: kindId } = req.body;
 
   if (!name || !phone || !kindId)
     return res.status(400).json({ ok: false, message: "Missing required fields" });
@@ -38,7 +38,7 @@ volunteerController.post("/", authMiddleware("external"), async (req, res) => {
 
   try {
     await req.volunteerRepository.save(volunteer);
-    return res.status(201).json({ ok: true, volunteer });
+    return res.status(201).json(volunteer);
   } catch (error) {
     req.logger.child({ error }).error("Error saving volunteer");
     return res.status(500).json({ ok: false, message: "Internal server error" });
@@ -52,7 +52,7 @@ volunteerController.get("/:id", authMiddleware("internal"), async (req, res) => 
 volunteerController.get("/", authMiddleware("internal"), async (req, res) => {
   try {
     const volunteers = await req.volunteerRepository.findAll();
-    return res.json({ ok: true, volunteers });
+    return res.json(volunteers);
   } catch (error) {
     req.logger.child({ error }).error("Error fetching volunteers");
     return res.status(500).json({ ok: false, message: "Internal server error" });

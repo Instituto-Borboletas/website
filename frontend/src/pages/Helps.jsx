@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query"
 import {
   Button,
@@ -14,6 +15,7 @@ import {
   DrawerCloseButton,
   DrawerHeader,
   DrawerBody,
+  useToast
 } from "@chakra-ui/react";
 import { Header } from "../components/Header";
 import { Footer } from "../components/Footer";
@@ -22,6 +24,9 @@ import { crudApi } from "../utils/api";
 import { useDisclosure } from "../hooks/disclosure";
 
 export default function Helps() {
+  const toast = useToast();
+  const navigate = useNavigate();
+
   const { data: options, isLoading: isLoadingKinds } = useQuery({
     queryKey: ["helpKindOptions"],
     queryFn: () => crudApi.get("/helps/kinds/options"),
@@ -41,6 +46,15 @@ export default function Helps() {
         description,
         kind,
       });
+      toast({
+        title: "Pedido de ajuda registrado",
+        description: "Seu pedido de ajuda foi registrado com sucesso",
+        status: "success",
+        position: "top",
+        duration: 4000,
+        isClosable: true,
+      });
+      navigate("/");
     } catch (err) {
       console.error(err);
       // TODO: handle if message is present on error
