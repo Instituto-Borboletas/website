@@ -70,7 +70,13 @@ export function VolunteersView() {
       <header className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-2 mt-10">
         <div className="bg-white p-5 rounded shadow-md">
           <h2 className="text-lg font-bold">Voluntários registrados</h2>
-          <p className="text-3xl text-primary mt-2">5</p>
+          <p className="text-3xl text-primary mt-2">
+            {
+              isVolunteersLoading
+                ? "Carregando..."
+                : volunteers?.data.length
+            }
+          </p>
         </div>
       </header>
 
