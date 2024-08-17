@@ -10,6 +10,7 @@ import { VolunteersView } from "../components/views/VolunteersView";
 import { SettingsView } from "../components/views/SettingsView";
 
 import { useAuth } from "../contexts/auth";
+import { InternalProvider } from "../contexts/internal.jsx";
 
 const VIEWS = {
   dashboard: DashboardView,
@@ -68,7 +69,7 @@ export default function Internal () {
   }
 
   return (
-    <>
+    <InternalProvider>
       <main className="flex flex-row w-full">
         <aside className="w-1/6 h-screen flex flex-col p-5 pt-10 border-r-zinc-300 border-r-2">
           <nav className="flex-1">
@@ -115,7 +116,7 @@ export default function Internal () {
           <ViewWrapper view={selectedView} />
         </section>
       </main>
-    </>
+    </InternalProvider>
   )
 }
 

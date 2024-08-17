@@ -24,19 +24,11 @@ import { TbReload } from "react-icons/tb";
 
 import { crudApi } from "../../utils/api";
 import { useDisclosure } from "../../hooks/disclosure";
-
-async function fetchHelps() {
-  return crudApi.get("/volunteers");
-}
-
-async function fetchHelpKinds() {
-  return crudApi.get("/volunteers/kinds");
-}
+import { useInternalData } from "../../contexts/internal";
 
 export function VolunteersView() {
   const queryClient = useQueryClient();
-  const { data: volunteers, isLoading: isVolunteersLoading } = useQuery({ queryKey: ["volunteers"], queryFn: fetchHelps });
-  const { data: volunteerKinds, isLoading: isVolunteerKindsLoading } = useQuery({ queryKey: ["volunteerKinds"], queryFn: fetchHelpKinds });
+  const { volunteers, isVolunteersLoading, volunteerKinds, isVolunteerKindsLoading } = useInternalData();
 
   const { onOpen, isOpen, onClose } = useDisclosure();
   const [isReloadLoading, setIsReloadLoading] = useState(false);
