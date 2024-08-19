@@ -54,6 +54,18 @@ export class PostgresUserRepository implements UserRespository {
     }
   }
 
+  async findAll(): Promise<User[]> {
+    try {
+      const users = await this.conn("users")
+        .select("id", "name", "email", "user_type as userType", "created_at as createdAt", "updated_at as updatedAt")
+
+      return users;
+    } catch (error) {
+      this.logger.child({ error }).error("Failed to find all users");
+      throw new Error("Failed to find all users");
+    }
+  }
+
   async delete(user: User): Promise<void> {
     try {
       await this.conn("users").where({ id: user.id }).delete();
