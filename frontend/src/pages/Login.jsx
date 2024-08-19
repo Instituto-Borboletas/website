@@ -1,5 +1,5 @@
-import { Link, useNavigate } from "react-router-dom";
-import { useState, useRef } from "react";
+import { Link, useNavigate, useLocation } from "react-router-dom";
+import { useState, useRef, useEffect } from "react";
 import {
   FormControl,
   FormLabel,
@@ -38,6 +38,7 @@ function isValidPhone(phone) {
 
 export default function LoginPage() {
   const navigate = useNavigate();
+  const location = useLocation();
   const { login, error: loginError } = useAuth();
 
   const [errorMessage, setErrorMessage] = useState(null);
@@ -150,7 +151,7 @@ export default function LoginPage() {
         isClosable: true,
       })
 
-      navigate("/");
+      navigate(location.state.from ?? "/");
     } catch (error) {
       if (error.response?.status === 401 || error.message === "Email ou senha inválidos") {
         setErrorMessage("Email ou senha inválidos");
@@ -159,6 +160,11 @@ export default function LoginPage() {
 
     setIsLoading(false);
   }
+
+  useEffect(() => {
+    if (location?.state?.message)
+      setErrorMessage(location.state.message);
+  }, [location])
 
   if (view === "login") {
     return (

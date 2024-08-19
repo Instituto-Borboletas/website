@@ -19,7 +19,12 @@ export default function User() {
 
   useEffect(() => {
     if (!user && !isLoading) {
-      navigate("/login");
+      navigate("/login", {
+        state: {
+          from: "/meus-dados",
+          message: "Você precisa estar logado para acessar seus dados!"
+        }
+      });
     }
   }, [user, isLoading, navigate]);
 

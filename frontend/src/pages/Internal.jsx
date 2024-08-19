@@ -53,11 +53,16 @@ export default function Internal () {
 
   useEffect(() => {
     if (!user && !isLoading) {
-      navigate("/login");
+      navigate("/login", {
+        state: {
+          from: "/interno",
+          message: "Você precisa estar logado para acessar essa página!"
+        }
+      });
       return
     }
 
-    if (!user?.internal)
+    if (user && !user.internal)
       navigate("/");
 
   }, [user, isLoading, navigate]);
