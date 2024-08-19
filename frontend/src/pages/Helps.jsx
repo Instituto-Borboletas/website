@@ -15,17 +15,21 @@ import {
   DrawerCloseButton,
   DrawerHeader,
   DrawerBody,
+  Spinner,
   useToast
 } from "@chakra-ui/react";
 import { Header } from "../components/Header";
 import { Footer } from "../components/Footer";
 
 import { crudApi } from "../utils/api";
+import { useAuth } from "../contexts/auth";
 import { useDisclosure } from "../hooks/disclosure";
 
 export default function Helps() {
   const toast = useToast();
   const navigate = useNavigate();
+
+  const { user, isLoading: isUserLoading } = useAuth();
 
   const { data: options, isLoading: isLoadingKinds } = useQuery({
     queryKey: ["helpKindOptions"],
@@ -61,6 +65,24 @@ export default function Helps() {
     } finally {
       setIsLoading(false);
     }
+  }
+
+
+  useEffect(() => {
+    if (!user && !isLoading) {
+      navigate("/login", {
+        state: {
+          from: "/pedir-ajuda",
+          message: "Você precisa estar logado para pedir ajuda!"
+        }
+      });
+    }
+  }, [user, isUserLoading, navigate]);
+
+  if (isUserLoading) {
+    return <main className="flex flex-1 items-center justify-center">
+      <Spinner />
+    </main>
   }
 
   return (

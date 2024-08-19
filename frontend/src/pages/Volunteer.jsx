@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import {
@@ -17,17 +17,21 @@ import {
   DrawerCloseButton,
   DrawerHeader,
   DrawerBody,
+  Spinner,
   useToast
 } from "@chakra-ui/react";
 import { Header } from "../components/Header";
 import { Footer } from "../components/Footer";
 
 import { crudApi } from "../utils/api";
+import { useAuth } from "../contexts/auth";
 import { useDisclosure } from "../hooks/disclosure";
 
 export default function Volunteer() {
   const toast = useToast();
   const navigate = useNavigate();
+
+  const { user, isLoading: isUserLoading } = useAuth();
 
   const { data: options, isLoading: isLoadingKinds } = useQuery({
     queryKey: ["volunteerKindOptions"],
@@ -40,9 +44,26 @@ export default function Volunteer() {
   const [email, setEmail] = useState("");
   // TODO: use same validations from user registration
   const [phone, setPhone] = useState("");
-  const [kind, setKind] = useState(null);
+  const [kind, setKind] = useState("");
 
   const { isOpen, onOpen, onClose } = useDisclosure();
+
+  useEffect(() => {
+    if (!user && !isLoading) {
+      navigate("/login", {
+        state: {
+          from: "/seja-voluntario",
+          message: "Você precisa estar logado para acessar essa página!"
+        }
+      });
+    }
+  }, [user, isUserLoading, navigate]);
+
+  if (isUserLoading) {
+    return <main className="flex flex-1 items-center justify-center">
+      <Spinner />
+    </main>
+  }
 
   async function registerVolunteer () {
     setIsLoading(true);
