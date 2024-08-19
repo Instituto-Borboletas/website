@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import {
   Button,
   Icon,
@@ -15,23 +15,24 @@ import {
   FormLabel,
   useToast,
 } from "@chakra-ui/react"
+import { FaInfoCircle } from "react-icons/fa";
 import { BiPlus } from "react-icons/bi"
-import { useQuery } from '@tanstack/react-query'
 
-import { crudApi } from "../../utils/api";
+import { useInternalData } from "../../contexts/internal";
 import { useDisclosure } from "../../hooks/disclosure";
 import { PasswordInput } from "../PasswordInput";
 
 export function UsersView() {
   const [errorMessage, setErrorMessage] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [typeFilter, setTypeFilter] = useState(null);
+  const [userList, setUserList] = useState([]);
+  const [internalCount, setInternalCount] = useState(0);
+  const [externalCount, setExternalCount] = useState(0);
+
 
   const { isOpen, onOpen, onClose } = useDisclosure();
-  // const { isPending, error, data, isLoading } = useQuery({
-  //   queryKey: ["internalUsersListing"],
-  //   queryFn: () =>
-  //     crudApi.get("/users"),
-  // })
+  const { users, isUsersLoading } = useInternalData();
 
   const toast = useToast();
 
@@ -79,46 +80,101 @@ export function UsersView() {
     onClose();
   }
 
+  useEffect(() => {
+    const { internal, external } = users?.data.reduce((acc, user) => {
+      if (user.userType === "internal") {
+        acc.internal += 1;
+      } else {
+        acc.external += 1;
+      }
+
+      return acc;
+    }, { internal: 0, external: 0 }) ?? { internal: 0, external: 0 };
+
+    setInternalCount(internal);
+    setExternalCount(external);
+  }, [users]);
+
+  useEffect(() => {
+    if (!users) return;
+
+    const filteredUsers = users.data.filter(user => {
+      if (typeFilter === "internal") {
+        return user.userType === "internal";
+      }
+
+      if (typeFilter === "external") {
+        return user.userType === "external";
+      }
+
+      return true;
+    });
+
+    setUserList(filteredUsers);
+  }, [typeFilter]);
+
   return (
     <section className="flex flex-col p-10 h-full">
       <h1 className="text-3xl font-bold">Usuários</h1>
 
-      <header className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-2 mt-10">
-        <div className="bg-white p-5 rounded shadow-md">
-          <h2 className="text-lg font-bold">Externos</h2>
-          <p className="text-3xl text-primary mt-2">5</p>
-        </div>
+      <header className="flex flex-col">
+        <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-2 mt-10">
+          <div
+            //  FIX: this is not the right way to render dynamic tailwind. use some lib that fixes it
+            className={`bg-white p-5 rounded shadow-md cursor-pointer ${typeFilter === 'external' ? 'bg-zinc-200' : ''}`}
+            onClick={() => typeFilter === "external" ? setTypeFilter(null) : setTypeFilter("external")}
+          >
+            <h2 className="text-lg font-bold">Externos</h2>
+            <p className="text-3xl text-primary mt-2">{ externalCount }</p>
+          </div>
 
-        <div className="bg-white p-5 rounded shadow-md">
-          <h2 className="text-lg font-bold">Internos</h2>
-          <p className="text-3xl text-primary mt-2">5</p>
+          <div
+            //  FIX: this is not the right way to render dynamic tailwind. use some lib that fixes it
+            className={`bg-white p-5 rounded shadow-md cursor-pointer ${typeFilter === 'internal' ? 'bg-zinc-200' : ''}`}
+            onClick={() => typeFilter === "internal" ? setTypeFilter(null) : setTypeFilter("internal")}
+          >
+            <h2 className="text-lg font-bold">Internos</h2>
+            <p className="text-3xl text-primary mt-2">{ internalCount }</p>
+          </div>
+        </section>
+
+        <div className="mt-2 flex items-center text-zinc-500">
+          <Icon as={FaInfoCircle} />
+          <p className="ml-1">
+            Para filtrar os tipos usuários, clique nos cartões acima. Caso queira remover o filtro, clique novamente no cartão selecionado.
+          </p>
         </div>
       </header>
 
       <main className="w-full mt-10">
         <div className="overflow-x-auto">
-          <table className="min-w-full rounded border border-1 border-zinc-200">
-            <thead className="bg-zinc-200 text-primary block w-full">
-              <tr className="flex w-full">
-                <th className="border w-1/4 text-lg">Nome</th>
-                <th className="border w-1/4 text-lg">Email</th>
-                <th className="border w-1/4 text-lg">Telefone</th>
-                <th className="border w-1/4 text-lg">Tipo</th>
-              </tr>
-            </thead>
-            <tbody className="bg-white text-center max-h-[36rem] overflow-y-auto block w-full">
-              {
-                Array(20).fill().map(() => (
-                  <tr key={Math.random()} className="flex w-full">
-                    <td className="border p-2 w-1/4 text-lg">João</td>
-                    <td className="border p-2 w-1/4 text-lg">joao@email.com</td>
-                    <td className="border p-2 w-1/4 text-lg">(11) 99999-9999</td>
-                    <td className="border p-2 w-1/4 text-lg">Externo</td>
-                  </tr>
-                ))
-              }
-            </tbody>
-          </table>
+          { isUsersLoading
+          ? (<p>Carregando...</p>)
+          : (
+            <table className="min-w-full rounded border border-1 border-zinc-200">
+              <thead className="bg-zinc-200 text-primary block w-full">
+                <tr className="flex w-full">
+                  <th className="border w-1/4 text-lg">Nome</th>
+                  <th className="border w-1/4 text-lg">Email</th>
+                  <th className="border w-1/4 text-lg">Telefone</th>
+                  <th className="border w-1/4 text-lg">Tipo</th>
+                </tr>
+              </thead>
+              <tbody className="bg-white text-center max-h-[36rem] overflow-y-auto block w-full">
+                {
+                  userList.map((user) => (
+                    <tr key={user.id} className="flex w-full">
+                      <td className="border p-2 w-1/4 text-lg">{ user.name }</td>
+                      <td className="border p-2 w-1/4 text-lg">{ user.email }</td>
+                      <td className="border p-2 w-1/4 text-lg">{ user.phone ?? "Não informado" }</td>
+                      <td className="border p-2 w-1/4 text-lg">{ user.userType === "internal" ? "Interno" : "Externo" }</td>
+                    </tr>
+                  ))
+                }
+              </tbody>
+            </table>
+            )
+          }
         </div>
       </main>
 
@@ -154,7 +210,9 @@ function CreateUserModal({ isOpen, onCancel, onSubmit, onChange, errorMessage, i
 
   const initialRef = useRef();
 
-  async function submitForm () {
+  async function submitForm (event) {
+    event.preventDefault();
+
     await onSubmit({ name, email, password, confirmationPassword: passwordConfirmation });
 
     setUserType("");
