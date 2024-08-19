@@ -24,6 +24,11 @@ export function InternalProvider({ children }) {
     queryFn: () => crudApi.get("/volunteers/kinds"),
   });
 
+  const { data: users, isLoading: isUsersLoading } = useQuery({
+    queryKey: ["internalUsersListing"],
+    queryFn: () => crudApi.get("/users/list"),
+  });
+
   const value = {
     helps,
     isHelpsLoading,
@@ -34,6 +39,9 @@ export function InternalProvider({ children }) {
     isVolunteersLoading,
     volunteerKinds,
     isVolunteerKindsLoading,
+
+    users,
+    isUsersLoading,
   };
 
   return (
