@@ -125,4 +125,9 @@ userController.post("/internal", authMiddleware("internal"), async (req, res) =>
   }
 });
 
+userController.get("/list", authMiddleware("internal"), async (req, res) => {
+  const users = await req.userRepository.findAll();
+  res.json(users);
+});
+
 export { userController };
