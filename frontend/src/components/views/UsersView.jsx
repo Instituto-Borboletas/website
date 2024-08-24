@@ -118,7 +118,7 @@ export function UsersView() {
 
     setInternalCount(internal);
     setExternalCount(external);
-  }, [users]);
+  }, [users, isUsersLoading]);
 
   useEffect(() => {
     if (!users) return;
@@ -136,7 +136,7 @@ export function UsersView() {
     });
 
     setUserList(filteredUsers);
-  }, [typeFilter]);
+  }, [typeFilter, users, isUsersLoading]);
 
   return (
     <section className="flex flex-col p-10 h-full">
@@ -173,7 +173,7 @@ export function UsersView() {
 
       <main className="w-full mt-10">
         <div className="overflow-x-auto">
-          { isUsersLoading
+          { isUsersLoading && !users
           ? (<p>Carregando...</p>)
           : (
             <table className="min-w-full rounded border border-1 border-zinc-200">
