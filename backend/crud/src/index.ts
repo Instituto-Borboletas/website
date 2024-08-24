@@ -20,7 +20,7 @@ import { PostgresHelpKindRepository } from "./repositories/helpKind/postgres";
 
 const PORT = process.env.PORT ?? 3000;
 
-const logger = pino({});
+const logger = pino({ });
 const app = express();
 
 const postgresUserRepository = new PostgresUserRepository(database, logger);
@@ -66,6 +66,34 @@ function remoteAddressMiddleware(req: Request, res: Response, next: NextFunction
 }
 
 app.use(remoteAddressMiddleware);
+
+function logginMiddleware(req: Request, res: Response, next: NextFunction) {
+  const start = Date.now();
+
+  const originalEnd = res.end;
+
+  // @ts-expect-error - monkey patching res end method
+  res.end = function (...args) {
+    const duration = Date.now() - start;
+    const statusCode = res.statusCode;
+
+    logger.info({
+      method: req.method,
+      url: req.originalUrl,
+      remoteAddress: req.remoteAddress,
+      body: req.body,
+      statusCode,
+      duration,
+    });
+
+    // @ts-expect-error - monkey patching res end method
+    originalEnd.apply(res, args);
+  };
+
+  next();
+}
+
+app.use(logginMiddleware);
 
 app.get("/healthcheck", internalAuthMiddleware, async (req, res) => {
   try {
