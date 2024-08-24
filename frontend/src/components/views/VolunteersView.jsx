@@ -17,7 +17,8 @@ import {
   ModalOverlay,
   ModalCloseButton,
   FormControl,
-  FormLabel
+  FormLabel,
+  Textarea
 } from "@chakra-ui/react";
 import { BiPlus } from "react-icons/bi";
 import { TbReload } from "react-icons/tb";
@@ -258,11 +259,12 @@ function CreateVolunteerKindModal({ isOpen, onCancel, onSubmit, onChange = () =>
 
           <FormControl mt={4} isRequired>
             <FormLabel>Descrição</FormLabel>
-            <Input
+            <Textarea
               placeholder="Descrição do tipo de voluntariado"
               required
               value={description}
               onChange={({ target }) => { setDescription(target.value); onChange() }}
+              resize="none"
             />
           </FormControl>
         </ModalBody>

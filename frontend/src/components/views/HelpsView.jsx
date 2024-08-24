@@ -19,7 +19,8 @@ import {
   ModalOverlay,
   ModalCloseButton,
   FormControl,
-  FormLabel
+  FormLabel,
+  Textarea
 } from "@chakra-ui/react";
 
 import { crudApi } from "../../utils/api";
@@ -261,11 +262,12 @@ function CreateHelpKindModal({ isOpen, onCancel, onSubmit, onChange = () => {}, 
 
           <FormControl mt={4} isRequired>
             <FormLabel>Descrição</FormLabel>
-            <Input
+            <Textarea
               placeholder="Descrição do tipo de ajuda"
               required
               value={description}
               onChange={({ target }) => { setDescription(target.value); onChange() }}
+              resize="none"
             />
           </FormControl>
         </ModalBody>
