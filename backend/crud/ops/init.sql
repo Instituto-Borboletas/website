@@ -29,7 +29,7 @@ CREATE TABLE IF NOT EXISTS users (
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 
-  CONSTRAINT email_user_type_index UNIQUE (email, user_type)
+  CONSTRAINT email_user_unique_index UNIQUE (email)
 );
 CREATE INDEX users_email_password_hash_index ON users (email, password_hash);
 
