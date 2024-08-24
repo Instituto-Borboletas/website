@@ -4,7 +4,7 @@ import { Button, Icon, Spinner } from "@chakra-ui/react";
 import { BiLogOut } from "react-icons/bi";
 
 import { DashboardView } from "../components/views/DashboardView";
-import { UsersView } from "../components/views/UsersView";
+import { UsersView } from "../components/views/UsersView/";
 import { HelpsView } from "../components/views/HelpsView";
 import { VolunteersView } from "../components/views/VolunteersView";
 import { SettingsView } from "../components/views/SettingsView";
