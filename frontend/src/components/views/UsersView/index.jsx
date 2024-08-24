@@ -1,28 +1,19 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useEffect } from "react";
 import {
   Button,
   Icon,
-  Input,
-  Modal,
-  Select,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalFooter,
-  ModalBody,
-  ModalCloseButton,
-  FormControl,
-  FormLabel,
   useToast,
 } from "@chakra-ui/react"
 import { FaInfoCircle } from "react-icons/fa";
 import { BiPlus } from "react-icons/bi"
 
-import { crudApi } from "../../utils/api";
-import { useInternalData } from "../../contexts/internal";
-import { useDisclosure } from "../../hooks/disclosure";
-import { PasswordInput } from "../PasswordInput";
+import { CreateUserModal } from "./components/CreateUserModal";
+
+import { crudApi } from "../../../utils/api";
+import { useInternalData } from "../../../contexts/internal";
+import { useDisclosure } from "../../../hooks/disclosure";
 import { useQueryClient } from "@tanstack/react-query";
+import { DetailUserModal } from "./components/DetailUserModal";
 
 export function UsersView() {
   const queryClient = useQueryClient();
@@ -33,8 +24,10 @@ export function UsersView() {
   const [userList, setUserList] = useState([]);
   const [internalCount, setInternalCount] = useState(0);
   const [externalCount, setExternalCount] = useState(0);
+  const [selectedUser, setSelectedUser] = useState(null);
 
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const { isOpen: isOpenDetail, onOpen: onOpenDetail, onClose: onCloseDetail } = useDisclosure();
   const { users, isUsersLoading } = useInternalData();
 
   const toast = useToast();
@@ -103,6 +96,11 @@ export function UsersView() {
   function handleClose () {
     setErrorMessage(null);
     onClose();
+  }
+
+  function handleDetailUser(userId) {
+    setSelectedUser(userId);
+    onOpenDetail();
   }
 
   useEffect(() => {
@@ -183,6 +181,7 @@ export function UsersView() {
                   <th className="border w-1/4 text-lg">Email</th>
                   <th className="border w-1/4 text-lg">Telefone</th>
                   <th className="border w-1/4 text-lg">Tipo</th>
+                  <th className="border w-1/5 text-lg">Ações</th>
                 </tr>
               </thead>
               <tbody className="bg-white text-center max-h-[36rem] overflow-y-auto block w-full">
@@ -193,6 +192,16 @@ export function UsersView() {
                       <td className="border p-2 w-1/4 text-lg">{ user.email }</td>
                       <td className="border p-2 w-1/4 text-lg">{ user.phone ?? "Não informado" }</td>
                       <td className="border p-2 w-1/4 text-lg">{ user.userType === "internal" ? "Interno" : "Externo" }</td>
+                      <td className="border p-2 w-1/5 text-lg">
+                        <Button
+                          colorScheme="blue"
+                          size="sm"
+                          onClick={() => handleDetailUser(user.id)}
+                        >
+                          Detalhar
+                        </Button>
+                        <DetailUserModal isOpen={isOpenDetail} onClose={onCloseDetail} userId={selectedUser} />
+                      </td>
                     </tr>
                   ))
                 }
@@ -226,120 +235,3 @@ export function UsersView() {
   )
 }
 
-function CreateUserModal({ isOpen, onCancel, onSubmit, onChange, errorMessage, isLoading }) {
-  const [userType, setUserType] = useState("");
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [passwordConfirmation, setPasswordConfirmation] = useState("");
-
-  const initialRef = useRef();
-
-  async function submitForm (event) {
-    event.preventDefault();
-
-    const success = await onSubmit({ userType, name, email, password, confirmationPassword: passwordConfirmation });
-
-    if (success) {
-      setUserType("");
-      setName("");
-      setEmail("");
-      setPassword("");
-      setPasswordConfirmation("");
-    }
-  }
-
-  return (
-    <Modal
-      initialFocusRef={initialRef}
-      blockScrollOnMount={true}
-      isOpen={isOpen}
-      onClose={onCancel}
-      motionPreset="slideInBottom"
-      isCentered
-    >
-      <ModalOverlay />
-      <ModalContent>
-        <ModalHeader>Criar usuário</ModalHeader>
-        <ModalCloseButton />
-        <ModalBody>
-          {
-            errorMessage && (
-              <div className="bg-red-200 text-red-800 p-2 mb-4 rounded">
-                {errorMessage}
-              </div>
-            )
-          }
-
-          <FormControl isRequired>
-            <FormLabel>Tipo de usuário</FormLabel>
-            <Select
-              value={userType}
-              onChange={({ target }) => setUserType(target.value)}
-              placeholder="Selecione um tipo de usuário"
-              required
-            >
-              <option value="internal">Interno</option>
-              <option value="external">Externo</option>
-            </Select>
-          </FormControl>
-
-          <FormControl mt={4} isRequired>
-            <FormLabel>Nome completo</FormLabel>
-            <Input
-              ref={initialRef}
-              placeholder="O nome e sobrenome do novo usuário"
-              required
-              value={name}
-              onChange={({ target }) => { setName(target.value); onChange() }}
-            />
-          </FormControl>
-
-          <FormControl mt={4} isRequired>
-            <FormLabel>Email</FormLabel>
-            <Input
-              type="email"
-              placeholder="email@email.com"
-              required
-              value={email}
-              onChange={({ target }) => { setEmail(target.value); onChange(); }}
-            />
-          </FormControl>
-
-          <FormControl mt={4} isRequired>
-            <FormLabel>Senha</FormLabel>
-            <PasswordInput
-              value={password}
-              onChange={({ target }) => { setPassword(target.value); onChange(); }}
-            />
-          </FormControl>
-
-          <FormControl mt={4} isRequired>
-            <FormLabel>Repita a senha</FormLabel>
-            <PasswordInput
-              value={passwordConfirmation}
-              onChange={({ target }) => { setPasswordConfirmation(target.value); onChange(); }}
-            />
-          </FormControl>
-        </ModalBody>
-
-        <ModalFooter>
-          <Button
-            variant="ghost"
-            onClick={onCancel}
-          >
-            Cancelar
-          </Button>
-          <Button
-            colorScheme="blue"
-            ml={3}
-            onClick={submitForm}
-            isDisabled={errorMessage || isLoading}
-          >
-            { isLoading ? "Criando..." : "Criar" }
-          </Button>
-        </ModalFooter>
-      </ModalContent>
-    </Modal>
-  )
-}
