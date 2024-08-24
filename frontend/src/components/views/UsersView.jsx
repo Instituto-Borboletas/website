@@ -18,18 +18,21 @@ import {
 import { FaInfoCircle } from "react-icons/fa";
 import { BiPlus } from "react-icons/bi"
 
+import { crudApi } from "../../utils/api";
 import { useInternalData } from "../../contexts/internal";
 import { useDisclosure } from "../../hooks/disclosure";
 import { PasswordInput } from "../PasswordInput";
+import { useQueryClient } from "@tanstack/react-query";
 
 export function UsersView() {
+  const queryClient = useQueryClient();
+
   const [errorMessage, setErrorMessage] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [typeFilter, setTypeFilter] = useState(null);
   const [userList, setUserList] = useState([]);
   const [internalCount, setInternalCount] = useState(0);
   const [externalCount, setExternalCount] = useState(0);
-
 
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { users, isUsersLoading } = useInternalData();
@@ -39,25 +42,35 @@ export function UsersView() {
   async function handleSubmit ({ userType, name, email, password, confirmationPassword }) {
     if (!userType || !name || !email || !password || !confirmationPassword) {
       setErrorMessage("Preencha todos os campos");
-      return;
+      return false;
     }
 
     if (password !== confirmationPassword) {
       setErrorMessage("As senhas não coincidem");
-      return;
+      return false;
     }
 
     setErrorMessage(null);
 
     try {
       setIsLoading(true);
-      // const response = await crudApi.post("/users", {
-      //   userType,
-      //   name,
-      //   email,
-      //   password,
-      //});
-      await new Promise(resolve => setTimeout(resolve, 2000));
+
+      const response = await crudApi.post("/users/create", {
+        userType,
+        name,
+        email,
+        password
+      });
+
+      queryClient.setQueryData(["internalUsersListing"], (oldData) => {
+        return {
+          ...oldData,
+          data: [
+            ...oldData.data,
+            response.data
+          ]
+        }
+      })
 
       toast({
         title: "Usuário criado com suscesso!",
@@ -67,11 +80,23 @@ export function UsersView() {
         duration: 3000,
         isClosable: true,
       })
+
+      handleClose();
+      return true;
     } catch (error) {
-      if (error.response.status === 409) { }
+      if (error.response.status === 409) {
+        console.log(error.response.data)
+        const { key } = error.response.data;
+        if (key === "email") {
+          setErrorMessage("Já existe um usuário com esse email cadastrado.");
+          return false;
+        }
+      }
+
+      setErrorMessage("Ocorreu um erro ao criar o usuário. Tente novamente mais tarde.");
+      return false;
     } finally {
       setIsLoading(false);
-      handleClose();
     }
   }
 
@@ -213,13 +238,15 @@ function CreateUserModal({ isOpen, onCancel, onSubmit, onChange, errorMessage, i
   async function submitForm (event) {
     event.preventDefault();
 
-    await onSubmit({ name, email, password, confirmationPassword: passwordConfirmation });
+    const success = await onSubmit({ userType, name, email, password, confirmationPassword: passwordConfirmation });
 
-    setUserType("");
-    setName("");
-    setEmail("");
-    setPassword("");
-    setPasswordConfirmation("");
+    if (success) {
+      setUserType("");
+      setName("");
+      setEmail("");
+      setPassword("");
+      setPasswordConfirmation("");
+    }
   }
 
   return (
@@ -252,7 +279,7 @@ function CreateUserModal({ isOpen, onCancel, onSubmit, onChange, errorMessage, i
               placeholder="Selecione um tipo de usuário"
               required
             >
-              <option value="intern">Interno</option>
+              <option value="internal">Interno</option>
               <option value="external">Externo</option>
             </Select>
           </FormControl>
