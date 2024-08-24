@@ -17,15 +17,22 @@ export class PostgresUserRepository implements UserRespository {
         user_type: user.userType,
       })
     } catch (error) {
-      // @ts-ignore
+      this.logger.child({ error }).error("Failed to save user");
+
+      // @ts-expect-error incorrect type for error on catch blocks
       if ("code" in error) {
         if (error.code === "23505") {
-          this.logger.child({ error }).error("User already exists");
-          throw new Error("User already exists");
+
+          // @ts-expect-error incorrect type for error on catch blocks
+          if (error.constraint === "email_user_unique_index") {
+            this.logger.child({ email: user.email }).error("User already exists with that email");
+            throw new Error("Email conflict");
+          }
+
+          throw new Error("Some conflict");
         }
       }
 
-      this.logger.child({ error }).error("Failed to save user");
       throw new Error("Failed to save user");
     }
   }

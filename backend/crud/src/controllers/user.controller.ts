@@ -102,26 +102,34 @@ userController.post("/external", async (req, res) => {
   }
 });
 
-userController.post("/internal", authMiddleware("internal"), async (req, res) => {
-  const { name, email, password } = req.body;
+userController.post("/create", authMiddleware("internal"), async (req, res) => {
+  const { name, email, password, userType } = req.body;
 
-  if (!name || !email || !password)
+  if (userType !== "internal" && userType !== "external")
+    return res.redirect(301, "/");
+
+  if (!name || !email || !password || !userType)
     return res.status(400).json({ ok: false, message: "Missing required fields" });
 
-
   try {
-    const user = new UserBuilder({ name, email, passwordHash: password, userType: "external" }).build();
+    const user = new UserBuilder({ name, email, passwordHash: password, userType }).build();
     await req.userRepository.save(user);
 
-    res.setHeader("Location", `/users/${user.id}`);
-    res.json({ ok: true });
+    if (user.passwordHash)
+      // @ts-expect-error let me delete it typescript
+      delete user.passwordHash;
+
+    res.json(user);
   } catch (err) {
     if (err instanceof Error) {
-      if (err.message === "User already exists")
-        return res.status(409).json({ ok: false, message: "User already exists with that email" });
+      if (err.message === "Email conflict")
+        return res.status(409).json({ ok: false, key: "email" });
+
+      if (err.message === "Some conflict")
+        return res.status(409).json({ ok: false, key: null });
     }
 
-    res.status(500).json({ ok: false, message: "Internal server error" });
+    return res.status(500).json({ ok: false, message: "Internal server error" });
   }
 });
 
