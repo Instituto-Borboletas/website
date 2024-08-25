@@ -102,6 +102,95 @@ userController.post("/external", async (req, res) => {
   }
 });
 
+const VALID_WORK_TYPE = ["formally", "unformally", "unemployed"];
+const VALID_HOUSING_TYPE = ["own", "minha_casa_minha_vida", "rent", "given"];
+const VALID_RELATION_TYPE = ["married", "stable_union", "affair", "ex"];
+
+function validateCPF(cpf: string): string | false {
+  return false;
+}
+
+function validatePhone(phone: string): boolean {
+  const size = phone.length;
+
+  if (size > 11 || size < 8)
+    return false;
+
+  if (!/^\d+$/.test(phone))
+    return false;
+
+  if (phone.length === 9 && phone[0] !== "9")
+    return false;
+
+  if (phone.length === 11 && phone[2] !== "9")
+    return false;
+
+  return true;
+}
+
+function extraDataMiddlewareDTO(request: Request, response: Response, next: NextFunction) {
+  const { cpf, phone, housing, relation, work, trustedPhone } = request.body;
+
+  const isValidWork = VALID_WORK_TYPE.some(w => w === work);
+  if (!isValidWork)
+    return response.status(400).json({ ok: false, message: "work" });
+
+  const isValidHousing = VALID_HOUSING_TYPE.some(h => h === housing);
+  if (!isValidHousing)
+    return response.status(400).json({ ok: false, message: "housing" });
+
+  const isValidRelation = VALID_RELATION_TYPE.some(r => r === relation);
+  if (!isValidRelation)
+    return response.status(400).json({ ok: false, key: "relation" });
+
+  const ufOrFalsy = validateCPF(cpf);
+  if (ufOrFalsy === false)
+    return response.status(400).json({ ok: false, key: "cpf" });
+  request.body.cpfUf = ufOrFalsy;
+
+  const isValidPhone = validatePhone(phone);
+  if (!isValidPhone)
+    return response.status(400).json({ ok: false, key: "phone" });
+
+  const isValidTrustedPhone = validatePhone(trustedPhone);
+  if (!isValidTrustedPhone)
+    return response.status(400).json({ ok: false, key: "trustedPhone" });
+
+  next();
+}
+
+userController.post(
+  "/external/extra",
+  authMiddleware("external"),
+  extraDataMiddlewareDTO,
+  async (req, res) => {
+    const {
+      cpf,
+      cpfUf,
+      phone,
+      housing,
+      relation,
+      work,
+      trustedPhone,
+      trustedName,
+      adultChildren,
+      kidChildren,
+      address
+    } = req.body;
+
+    try {
+      // TODO: change this? should return just ok: true ?
+      res.json({ ok: true})
+    } catch (err) {
+      if (err instanceof Error) {
+        req.logger.child({ error: err }).error(err.message)
+      }
+
+      res.status(500).json({ ok: false, message: "Internal server error" });
+    }
+  }
+);
+
 userController.post("/create", authMiddleware("internal"), async (req, res) => {
   const { name, email, password, userType } = req.body;
 
