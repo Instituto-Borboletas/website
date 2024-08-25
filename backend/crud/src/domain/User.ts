@@ -14,7 +14,7 @@ export class User {
   email: string;
   passwordHash: string;
   userType: UserType;
-  createtAt: number
+  createdAt: number
   updatedAt: number
 
   constructor({ id, name, email, passwordHash, userType }: UserProps) {
@@ -23,7 +23,7 @@ export class User {
     this.email = email;
     this.passwordHash = passwordHash;
     this.userType = userType;
-    this.createtAt = Date.now();
+    this.createdAt = Date.now();
     this.updatedAt = Date.now();
   }
 }
@@ -32,6 +32,7 @@ type UserExtraDataProps = {
   id: string;
   userId: string;
   cpf: string;
+  cpfUf: string;
   phone: string;
   birth_date: Date;
 }
@@ -40,18 +41,20 @@ export class UserExtraData {
   id: string;
   userId: string;
   cpf: string;
+  cpfUf: string;
   phone: string;
   birth_date: Date;
-  createtAt: number
+  createdAt: number
   updatedAt: number
 
-  constructor({ id, userId, cpf, phone, birth_date }: UserExtraDataProps) {
+  constructor({ id, userId, cpf, cpfUf, phone, birth_date }: UserExtraDataProps) {
     this.id = id
     this.userId = userId
     this.cpf = cpf;
+    this.cpfUf = cpfUf;
     this.phone = phone;
     this.birth_date = birth_date;
-    this.createtAt = Date.now();
+    this.createdAt = Date.now();
     this.updatedAt = Date.now();
   }
 }

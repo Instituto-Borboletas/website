@@ -7,7 +7,7 @@ export class UserBuilder {
   email: string;
   passwordHash: string;
   userType: UserType;
-  createtAt: number
+  createdAt: number
   updatedAt: number
 
   constructor({ name, email, passwordHash, userType }: { name: string, email: string, passwordHash: string, userType: UserType }) {
@@ -16,7 +16,7 @@ export class UserBuilder {
     this.email = email;
     this.passwordHash = passwordHash;
     this.userType = userType;
-    this.createtAt = Date.now();
+    this.createdAt = Date.now();
     this.updatedAt = Date.now();
   }
 
@@ -26,7 +26,7 @@ export class UserBuilder {
   }
 
   setCreatedAt(createdAt: number) {
-    this.createtAt = createdAt;
+    this.createdAt = createdAt;
     return this;
   }
 
