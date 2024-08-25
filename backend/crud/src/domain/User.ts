@@ -34,7 +34,16 @@ type UserExtraDataProps = {
   cpf: string;
   cpfUf: string;
   phone: string;
-  birth_date: Date;
+  trustedPhone: string;
+  trustedName: string;
+  housing: string;
+  work: string;
+  income: string;
+  adultChildren: number;
+  kidChildren: number;
+  birthDate: Date;
+  addressId: string;
+  createdAt: number;
 }
 
 export class UserExtraData {
@@ -43,18 +52,48 @@ export class UserExtraData {
   cpf: string;
   cpfUf: string;
   phone: string;
-  birth_date: Date;
-  createdAt: number
-  updatedAt: number
+  trustedPhone: string;
+  trustedName: string;
+  housing: string;
+  work: string;
+  income: string;
+  adultChildren: number;
+  kidChildren: number;
+  birthDate: Date;
+  addressId: string;
+  createdAt: number;
 
-  constructor({ id, userId, cpf, cpfUf, phone, birth_date }: UserExtraDataProps) {
+  constructor({
+    id,
+    userId,
+    cpf,
+    cpfUf,
+    phone,
+    trustedPhone,
+    trustedName,
+    housing,
+    work,
+    income,
+    adultChildren,
+    kidChildren,
+    birthDate,
+    createdAt,
+    addressId
+  }: UserExtraDataProps) {
     this.id = id
     this.userId = userId
     this.cpf = cpf;
     this.cpfUf = cpfUf;
     this.phone = phone;
-    this.birth_date = birth_date;
-    this.createdAt = Date.now();
-    this.updatedAt = Date.now();
+    this.trustedPhone = trustedPhone;
+    this.trustedName = trustedName;
+    this.housing = housing;
+    this.work = work;
+    this.income = income;
+    this.adultChildren = adultChildren;
+    this.kidChildren = kidChildren;
+    this.birthDate = birthDate;
+    this.createdAt = createdAt;
+    this.addressId = addressId;
   }
 }

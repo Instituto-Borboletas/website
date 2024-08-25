@@ -11,6 +11,8 @@ CREATE TABLE IF NOT EXISTS addresses (
   city VARCHAR(100) NOT NULL,
   uf CHAR(2) NOT NULL,
 
+  description VARCHAR(1000) NULL,
+
   is_from_location BOOLEAN NOT NULL DEFAULT FALSE,
   created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
@@ -34,11 +36,12 @@ CREATE TABLE IF NOT EXISTS users (
 CREATE INDEX users_email_password_hash_index ON users (email, password_hash);
 
 CREATE TYPE work_type_enum as ENUM ('formally', 'unformally', 'unemployed');
-CREATE TYPE housing_type_enum as ENUM ('own', 'minha_casa_minha_vida', 'rend', 'given');
+CREATE TYPE housing_type_enum as ENUM ('own', 'minha_casa_minha_vida', 'rent', 'given');
 CREATE TYPE relation_type_enum as ENUM ('married', 'stable_union', 'affair', 'ex');
 CREATE TABLE IF NOT EXISTS extra_user_data (
   user_id UUID PRIMARY KEY,
   cpf CHAR(11) NOT NULL,
+  cpf_uf CHAR(2) NOT NULL,
   birth_date DATE NOT NULL,
   phone CHAR(11) NOT NULL,
 
@@ -48,7 +51,8 @@ CREATE TABLE IF NOT EXISTS extra_user_data (
   work work_type_enum NOT NULL,
   adult_children INT NOT NULL,
   kid_children INT NOT NULL,
-  houding housing_type_enum NOT NULL,
+  housing housing_type_enum NOT NULL,
+  income VARCHAR(50) NOT NULL,
 
   address_id UUID NOT NULL,
 
