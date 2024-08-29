@@ -151,7 +151,7 @@ export default function LoginPage() {
         isClosable: true,
       })
 
-      navigate(location.state.from ?? "/");
+      navigate(location.state?.from ?? "/");
     } catch (error) {
       if (error.response?.status === 401 || error.message === "Email ou senha inválidos") {
         setErrorMessage("Email ou senha inválidos");
