@@ -15,13 +15,40 @@ import {
   FormControl,
   FormLabel,
 } from "@chakra-ui/react"
+import InputMask from "react-input-mask"
 
+import { useDebounce } from "../../../hooks/debounce";
+import axios from "axios";
+
+const DEFAULT_DATA_VALUE = { extra: { address: {} } }
+
+// TODO: move this cache to local storage or something like that
+const cepCache = {};
+async function cepFetchWithCache (cep) {
+  const currentCepCache = cepCache[cep]
+  if (currentCepCache)
+    return currentCepCache
+
+  const { data: result } = await axios.get(`https://viacep.com.br/ws/${cep}/json/`);
+  cepCache[cep] = result;
+
+  return result
+}
 export function ExtraDataDrawer({ isEditing = true, currentUserData, isOpen, onClose, onConfirm }) {
-  const [userData, setUserData] = useState({ extra: { address: {} } });
+  const [userData, setUserData] = useState(DEFAULT_DATA_VALUE);
   const [errorMessage, setErrorMessage] = useState(null);
 
   const [hasAdultChildren, setHasAdultChildren] = useState(false)
   const [hasKidChildren, setHasKidChildren] = useState(false)
+
+  async function fetchCep(cep) {
+    const result = cepFetchWithCache(cep)
+    if (result.erro) {
+      // TODO: display error message
+    }
+  }
+
+  const debouncedCepFetch = useDebounce(fetchCep, 500);
 
   async function onSubmit() {
     const error = await onConfirm()
@@ -33,10 +60,18 @@ export function ExtraDataDrawer({ isEditing = true, currentUserData, isOpen, onC
 
   useEffect(() => {
     if (currentUserData)
-      setUserData(currentUserData)
+      setUserData(Object.assign({}, currentUserData, DEFAULT_DATA_VALUE));
 
     // TODO: change values for children selects
   }, [currentUserData]);
+
+  useEffect(() => {
+    const cep = (userData.extra.address.cep ?? "").replace("-", "").replace("_", "")
+    if (!cep || cep.length < 8)
+      return
+
+    debouncedCepFetch(cep)
+  }, [userData.extra.address.cep, debouncedCepFetch])
 
   return (
     <>
@@ -189,7 +224,22 @@ export function ExtraDataDrawer({ isEditing = true, currentUserData, isOpen, onC
                   <FormLabel>CEP</FormLabel>
                   { /* TODO: use cep mask here */}
                   { /* TODO: use debounce here so we can fetch from viacep api */}
-                  <Input
+                  <MaskedInput
+                    mask="99999-999"
+                    value={userData.extra.address.cep}
+                    onChange={
+                      (event) => setUserData(
+                        (current) => ({
+                          ...current, extra: {
+                            ...current.extra,
+                            address: {
+                              ...current.extra.address,
+                              cep: event.target.value,
+                            }
+                          }
+                        })
+                      )
+                    }
                     type="text"
                   />
                 </FormControl>
@@ -276,5 +326,13 @@ export function ExtraDataDrawer({ isEditing = true, currentUserData, isOpen, onC
         </DrawerContent>
       </Drawer>
     </>
+  )
+}
+
+function MaskedInput(props) {
+  return (
+    <InputMask {...props}>
+      {(inputProps) => <Input {...inputProps} />}
+    </InputMask>
   )
 }
