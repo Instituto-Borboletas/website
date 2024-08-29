@@ -159,6 +159,17 @@ function extraDataMiddlewareDTO(request: Request, response: Response, next: Next
   next();
 }
 
+userController.get("/extra/check", meMiddleware, async (req, res) => {
+  // TODO: remove me when mapper is done
+  // @ts-expect-error FIX: use a mapper from db
+  if (req.user.user_type === "internal") {
+    return res.json({ show: false });
+  }
+
+  // TODO: return the user extra data here, with the `show` key
+  return res.json({ show: true });
+});
+
 userController.post(
   "/external/extra",
   authMiddleware("external"),
@@ -178,6 +189,20 @@ userController.post(
       address
     } = req.body;
 
+
+    req.logger.child({
+      cpf,
+      cpfUf,
+      phone,
+      housing,
+      relation,
+      work,
+      trustedPhone,
+      trustedName,
+      adultChildren,
+      kidChildren,
+      address
+    }).info("received this data on extra data register")
     try {
       // TODO: change this? should return just ok: true ?
       res.json({ ok: true})
