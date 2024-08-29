@@ -1,5 +1,5 @@
-import { useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useEffect, useCallback } from "react";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import {
   Stack,
   Text,
@@ -9,13 +9,26 @@ import {
   Button,
 } from "@chakra-ui/react"
 
-import { Footer } from "../components/Footer";
-import { Header } from "../components/Header";
-import { useAuth } from "../contexts/auth";
+import { Footer } from "../../components/Footer";
+import { Header } from "../../components/Header";
+import { useAuth } from "../../contexts/auth";
+import { useDisclosure } from "../../hooks/disclosure";
+
+import { ExtraDataModal } from "./components/ExtraDataModal"
 
 export default function User() {
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
   const { user, isLoading, logout } = useAuth();
+
+  const { isOpen: showExtraDataModal, onOpen: openExtraDataModal, onClose: closeExtraDataModal } = useDisclosure();
+
+  const mountFullUserData = useCallback(() => {
+    return {
+      ...user,
+      extra: {} // TODO: add `extra` on user data on backend fetch
+    }
+  }, [user])
 
   useEffect(() => {
     if (!user && !isLoading) {
@@ -26,7 +39,14 @@ export default function User() {
         }
       });
     }
-  }, [user, isLoading, navigate]);
+
+    if (!isLoading) {
+      const showDisplayExtraDataForm = searchParams.get("preencher-dados-extra")
+      if (showDisplayExtraDataForm === "1")
+        openExtraDataModal()
+    }
+
+  }, [user, isLoading, navigate, searchParams]);
 
   if (isLoading) {
     return <main className="flex flex-1 items-center justify-center">
@@ -51,6 +71,16 @@ export default function User() {
         <Button onClick={logout} colorScheme="red" className="bg-primary text-white py-2 px-4 mt-4 rounded-lg w-1/3 mx-auto text-center">Sair</Button>
 
       </main>
+      {
+        showExtraDataModal && (
+          <ExtraDataModal
+            isOpen={showExtraDataModal}
+            onClose={closeExtraDataModal}
+            isEditing={false}
+            currentUserData={mountFullUserData()}
+          />
+        )
+      }
 
       <Footer />
     </>

@@ -37,7 +37,7 @@ function App() {
                 Você ainda não preencheu todos os seus dados. Preencha para ter acesso a todas as funcionalidades da plataforma.
               </p>
               <p className="text-black">
-                Para preencher, clique <Link to="/meus-dados?preencher-dados=1" className="underline">aqui</Link>
+                Para preencher, clique <Link to="/meus-dados?preencher-dados-extra=1" className="underline">aqui</Link>
               </p>
             </section>
           </>
