@@ -3,21 +3,21 @@ import {
   Button,
   Checkbox,
   Input,
-  Modal,
+  Drawer,
   Select,
   Stack,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalFooter,
-  ModalBody,
-  ModalCloseButton,
+  DrawerOverlay,
+  DrawerContent,
+  DrawerHeader,
+  DrawerFooter,
+  DrawerBody,
+  DrawerCloseButton,
   FormControl,
   FormLabel,
 } from "@chakra-ui/react"
 
-export function ExtraDataModal({ isEditing = true, currentUserData, isOpen, onClose, onConfirm }) {
-  const [userData, setUserData] = useState({ extra: {} });
+export function ExtraDataDrawer({ isEditing = true, currentUserData, isOpen, onClose, onConfirm }) {
+  const [userData, setUserData] = useState({ extra: { address: {} } });
   const [errorMessage, setErrorMessage] = useState(null);
 
   const [hasAdultChildren, setHasAdultChildren] = useState(false)
@@ -40,20 +40,21 @@ export function ExtraDataModal({ isEditing = true, currentUserData, isOpen, onCl
 
   return (
     <>
-      <Modal
+      <Drawer
         blockScrollOnMount={true}
         isOpen={isOpen}
         onClose={onClose}
         motionPreset="slideInBottom"
         isCentered
-        size="2xl"
+        size="md"
+        className="max-h-[50vh]"
       >
 
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>Dados cadastrais</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody>
+        <DrawerOverlay />
+        <DrawerContent>
+          <DrawerHeader>Dados cadastrais</DrawerHeader>
+          <DrawerCloseButton />
+          <DrawerBody>
             {
               errorMessage && (
                 <div className="bg-red-200 text-red-800 p-2 mb-4 rounded">
@@ -66,7 +67,6 @@ export function ExtraDataModal({ isEditing = true, currentUserData, isOpen, onCl
               <FormLabel>Nome completo</FormLabel>
               <Input
                 value={userData.name}
-                disabled
               />
             </FormControl>
 
@@ -74,16 +74,6 @@ export function ExtraDataModal({ isEditing = true, currentUserData, isOpen, onCl
               <FormLabel>Email</FormLabel>
               <Input
                 value={userData.email}
-                disabled
-              />
-            </FormControl>
-
-            <FormControl mt={4}>
-              {/* TODO use mask component for phone input */}
-              <FormLabel>Telefone para contato</FormLabel>
-              <Input
-                value={userData.phone}
-                disabled
               />
             </FormControl>
 
@@ -91,34 +81,33 @@ export function ExtraDataModal({ isEditing = true, currentUserData, isOpen, onCl
               <FormLabel>Telefone para contato</FormLabel>
               <Input
                 value={userData.phone}
-                disabled
               />
             </FormControl>
 
             <FormControl mt={4}>
-              <FormLabel></FormLabel>
+              <FormLabel>CPF</FormLabel>
+              {/* TODO: use input with mask for cpf | move this to top of input list this is important*/}
               <Input
-                value={userData.phone}
+                value={userData.extra.cpf}
                 type="number"
-                disabled
               />
             </FormControl>
 
             <FormControl mt={4}>
-              <FormLabel>Possui filhos:</FormLabel>
+              <FormLabel>Possui filhos</FormLabel>
               <Checkbox
                 isChecked={hasAdultChildren}
                 onChange={(event) => setHasAdultChildren(event.target.checked)}
-
               >
                 Maiores de 18 anos
               </Checkbox>
 
               <Checkbox
+                className="ml-10"
                 isChecked={hasKidChildren}
                 onChange={(event) => setHasKidChildren(event.target.checked)}
               >
-                Menos de 18 anos
+                Menores de 18 anos
               </Checkbox>
             </FormControl>
 
@@ -145,15 +134,6 @@ export function ExtraDataModal({ isEditing = true, currentUserData, isOpen, onCl
                 </FormControl>
               )
             }
-
-            <FormControl mt={4}>
-              <FormLabel>CPF</FormLabel>
-              {/* TODO: use input with mask for cpf | move this to top of input list this is important*/}
-              <Input
-                value={userData.extra.cpf}
-                type="number"
-              />
-            </FormControl>
 
             <FormControl mt={4}>
               <FormLabel>Tipo de trabalho</FormLabel>
@@ -201,38 +181,83 @@ export function ExtraDataModal({ isEditing = true, currentUserData, isOpen, onCl
               </Select>
             </FormControl>
 
-            <Stack mt={4}>
+            <Stack mt={8}>
               <h1>Endereco</h1>
 
-              <FormControl>
-                <FormLabel>Rua</FormLabel>
-                <Input
-                  type="text"
-                />
-              </FormControl>
+              <Stack display="flex" flexDir="row">
+                <FormControl isRequired className="w-1/2">
+                  <FormLabel>CEP</FormLabel>
+                  { /* TODO: use cep mask here */}
+                  { /* TODO: use debounce here so we can fetch from viacep api */}
+                  <Input
+                    type="text"
+                  />
+                </FormControl>
+
+                <FormControl isRequired className="w-1/2">
+                  <FormLabel>Cidade</FormLabel>
+                  <Input
+                    type="text"
+                  />
+                </FormControl>
+              </Stack>
+
+              <Stack display="flex" flexDir="row">
+                <FormControl isRequired className="w-1/2">
+                  <FormLabel>Rua</FormLabel>
+                  <Input
+                    type="text"
+                  />
+                </FormControl>
+
+                <FormControl isRequired className="w-1/2">
+                  <FormLabel>Bairro</FormLabel>
+                  <Input
+                    type="text"
+                  />
+                </FormControl>
+              </Stack>
+
+              <Stack display="flex" flexDir="row">
+                <FormControl w="85%" isRequired>
+                  <FormLabel>Complemento</FormLabel>
+                  <Input
+                    type="text"
+                  />
+                </FormControl>
+
+                <FormControl w="15%" isRequired>
+                  <FormLabel>Nº</FormLabel>
+                  <Input
+                    type="number"
+                  />
+                </FormControl>
+              </Stack>
             </Stack>
 
-            <Stack mt={4}>
+            <Stack mt={8}>
               <h1>Contato de confiaca</h1>
-              <FormControl>
-                <FormLabel>Nome</FormLabel>
-                <Input
-                  value={userData.extra.trustedName}
-                  type="text"
-                />
-              </FormControl>
+              <Stack display="flex" flexDir="row">
+                <FormControl className="w-1/2">
+                  <FormLabel>Nome</FormLabel>
+                  <Input
+                    value={userData.extra.trustedName}
+                    type="text"
+                  />
+                </FormControl>
 
-              <FormControl>
-                <FormLabel>Numero</FormLabel>
-                <Input
-                  value={userData.extra.trustedPhone}
-                  type="number"
-                />
-              </FormControl>
+                <FormControl className="w-1/2">
+                  <FormLabel>Numero</FormLabel>
+                  <Input
+                    value={userData.extra.trustedPhone}
+                    type="number"
+                  />
+                </FormControl>
+              </Stack>
             </Stack>
-          </ModalBody>
+          </DrawerBody>
 
-          <ModalFooter>
+          <DrawerFooter>
             <Button
               variant="ghost"
               onClick={onClose}
@@ -247,9 +272,9 @@ export function ExtraDataModal({ isEditing = true, currentUserData, isOpen, onCl
             >
               Salvar
             </Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
+          </DrawerFooter>
+        </DrawerContent>
+      </Drawer>
     </>
   )
 }

@@ -14,7 +14,7 @@ import { Header } from "../../components/Header";
 import { useAuth } from "../../contexts/auth";
 import { useDisclosure } from "../../hooks/disclosure";
 
-import { ExtraDataModal } from "./components/ExtraDataModal"
+import { ExtraDataDrawer } from "./components/ExtraDataDrawer"
 
 export default function User() {
   const navigate = useNavigate();
@@ -73,7 +73,7 @@ export default function User() {
       </main>
       {
         showExtraDataModal && (
-          <ExtraDataModal
+          <ExtraDataDrawer
             isOpen={showExtraDataModal}
             onClose={closeExtraDataModal}
             isEditing={false}
