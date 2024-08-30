@@ -38,4 +38,16 @@ export class UserBuilder {
   build() {
     return new User(this);
   }
+
+  static fromDB (userFromDB: Record<string, string>) {
+    return new User({
+      id: userFromDB.id,
+      userType: userFromDB.user_type as UserType,
+      email: userFromDB.email,
+      name: userFromDB.name,
+      passwordHash: userFromDB.password_hash,
+      createdAt: Number(userFromDB.created_at),
+      updatedAt: Number(userFromDB.updated_at),
+    })
+  }
 }

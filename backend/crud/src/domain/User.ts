@@ -4,27 +4,29 @@ type UserProps = {
   id: string;
   name: string;
   email: string;
-  passwordHash: string;
+  passwordHash?: string;
   userType: UserType;
+  createdAt?: number
+  updatedAt?: number
 }
 
 export class User {
   id: string;
   name: string;
   email: string;
-  passwordHash: string;
+  passwordHash?: string;
   userType: UserType;
   createdAt: number
   updatedAt: number
 
-  constructor({ id, name, email, passwordHash, userType }: UserProps) {
+  constructor({ id, name, email, passwordHash, userType, createdAt, updatedAt }: UserProps) {
     this.id = id
     this.name = name;
     this.email = email;
     this.passwordHash = passwordHash;
     this.userType = userType;
-    this.createdAt = Date.now();
-    this.updatedAt = Date.now();
+    this.createdAt = createdAt ?? Date.now();
+    this.updatedAt = updatedAt ?? Date.now();
   }
 }
 
