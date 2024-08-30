@@ -15,6 +15,7 @@ import { useAuth } from "../../contexts/auth";
 import { useDisclosure } from "../../hooks/disclosure";
 
 import { ExtraDataDrawer } from "./components/ExtraDataDrawer"
+import { crudApi } from "../../utils/api";
 
 export default function User() {
   const navigate = useNavigate();
@@ -29,6 +30,16 @@ export default function User() {
       extra: {} // TODO: add `extra` on user data on backend fetch
     }
   }, [user])
+
+  async function handleExtraDataEdit (newExtraData) {
+    try {
+      const { data } = await crudApi.post("/users/external/extra", newExtraData.extra)
+      console.info(data)
+      return null
+    } catch (error) {
+      return error.response.data
+    }
+  }
 
   useEffect(() => {
     if (!user && !isLoading) {
@@ -46,7 +57,7 @@ export default function User() {
         openExtraDataModal()
     }
 
-  }, [user, isLoading, navigate, searchParams]);
+  }, [user, isLoading, navigate, searchParams]);user
 
   if (isLoading) {
     return <main className="flex flex-1 items-center justify-center">
@@ -78,6 +89,7 @@ export default function User() {
             onClose={closeExtraDataModal}
             isEditing={false}
             currentUserData={mountFullUserData()}
+            onConfirm={handleExtraDataEdit}
           />
         )
       }

@@ -102,15 +102,20 @@ userController.post("/external", async (req, res) => {
   }
 });
 
-const VALID_WORK_TYPE = ["formally", "unformally", "unemployed"];
+const VALID_WORK_TYPE = ["formal", "unformal", "unemployed"];
 const VALID_HOUSING_TYPE = ["own", "minha_casa_minha_vida", "rent", "given"];
+// TODO: add not_apply (nao se aplica)
 const VALID_RELATION_TYPE = ["married", "stable_union", "affair", "ex"];
 
-function validateCPF(cpf: string): string | false {
-  return false;
+function validateCPF(cpf?: string): string | false {
+  if (!cpf) return false;
+
+  return "SC";
 }
 
-function validatePhone(phone: string): boolean {
+function validatePhone(phone?: string): boolean {
+  if (!phone) return false;
+
   const size = phone.length;
 
   if (size > 11 || size < 8)
@@ -129,7 +134,10 @@ function validatePhone(phone: string): boolean {
 }
 
 function extraDataMiddlewareDTO(request: Request, response: Response, next: NextFunction) {
-  const { cpf, phone, housing, relation, work, trustedPhone } = request.body;
+  let { cpf, phone, housing, relation, work, trustedPhone } = request.body;
+  phone = phone?.replaceAll("(", "").replaceAll(")", "").replaceAll("-", "").replaceAll(" ", "")
+  cpf = cpf?.replaceAll(".", "").replaceAll("-", "").replaceAll(" ", "")
+  trustedPhone = trustedPhone?.replaceAll("(", "").replaceAll(")", "").replaceAll("-", "").replaceAll(" ", "")
 
   const isValidWork = VALID_WORK_TYPE.some(w => w === work);
   if (!isValidWork)
@@ -205,7 +213,8 @@ userController.post(
     }).info("received this data on extra data register")
     try {
       // TODO: change this? should return just ok: true ?
-      res.json({ ok: true})
+      return res.status(412).json({ ok: false, message: "Ainda nao estamos prontos para receber essa chamada de api" });
+      // res.json({ ok: true})
     } catch (err) {
       if (err instanceof Error) {
         req.logger.child({ error: err }).error(err.message)
