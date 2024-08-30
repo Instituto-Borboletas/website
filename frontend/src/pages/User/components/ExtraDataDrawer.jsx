@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from "react";
+import { useForm, Controller } from "react-hook-form";
 import {
   Button,
   Checkbox,
@@ -14,17 +15,19 @@ import {
   DrawerCloseButton,
   FormControl,
   FormLabel,
+  useToast
 } from "@chakra-ui/react"
 import InputMask from "react-input-mask"
 
 import { useDebounce } from "../../../hooks/debounce";
 import axios from "axios";
 
-const DEFAULT_DATA_VALUE = { extra: { address: {} } }
+const PHONE_MASK = "(99) 9 9999-9999"
+const DEFAULT_DATA_VALUE = { extra: { address: { cep: "" } } }
 
 // TODO: move this cache to local storage or something like that
 const cepCache = {};
-async function cepFetchWithCache (cep) {
+async function cepFetchWithCache(cep) {
   const currentCepCache = cepCache[cep]
   if (currentCepCache)
     return currentCepCache
@@ -35,23 +38,50 @@ async function cepFetchWithCache (cep) {
   return result
 }
 export function ExtraDataDrawer({ isEditing = true, currentUserData, isOpen, onClose, onConfirm }) {
-  const [userData, setUserData] = useState(DEFAULT_DATA_VALUE);
-  const [errorMessage, setErrorMessage] = useState(null);
+  const toast = useToast();
 
-  const [hasAdultChildren, setHasAdultChildren] = useState(false)
-  const [hasKidChildren, setHasKidChildren] = useState(false)
+  const { register, handleSubmit, setValue, watch, control, formState: { errors } } = useForm({
+    defaultValues: DEFAULT_DATA_VALUE,
+  });
+  const hasAdultChildren = watch("extra.hasAdultChildren", false);
+  const hasKidChildren = watch("extra.hasKidChildren", false);
+
+  const [errorMessage, setErrorMessage] = useState(null);
+  const [showCityWarn, setShowWarnMessage] = useState(false);
 
   async function fetchCep(cep) {
-    const result = cepFetchWithCache(cep)
+    const result = await cepFetchWithCache(cep)
+
     if (result.erro) {
-      // TODO: display error message
+      toast({
+        title: "Nao indentificamos esse CEP",
+        description: "Nao consiguimos preencher os dados de endereco",
+        status: "warning",
+        position: "top-right",
+        duration: 5000,
+        isClosable: true,
+      });
+
+      return
     }
+
+    setValue("extra.address.city", result.localidade);
+    setValue("extra.address.street", result.logradouro);
+    setValue("extra.address.neighborhood", result.bairro);
+
+    if (result.localidade !== "Jaraguá do Sul") {
+      setShowWarnMessage(true);
+      return
+    }
+
+    setShowWarnMessage(false);
   }
 
   const debouncedCepFetch = useDebounce(fetchCep, 500);
 
-  async function onSubmit() {
-    const error = await onConfirm()
+  async function onSubmit(data) {
+    console.log(data)
+    const error = false /* await onConfirm() */
     if (error) {
       // TODO: handle error
       console.log(error)
@@ -59,19 +89,19 @@ export function ExtraDataDrawer({ isEditing = true, currentUserData, isOpen, onC
   }
 
   useEffect(() => {
-    if (currentUserData)
-      setUserData(Object.assign({}, currentUserData, DEFAULT_DATA_VALUE));
-
-    // TODO: change values for children selects
-  }, [currentUserData]);
+    if (currentUserData) {
+      for (const key in currentUserData) {
+        setValue(key, currentUserData[key]);
+      }
+    }
+  }, [currentUserData, setValue]);
 
   useEffect(() => {
-    const cep = (userData.extra.address.cep ?? "").replace("-", "").replace("_", "")
-    if (!cep || cep.length < 8)
-      return
-
-    debouncedCepFetch(cep)
-  }, [userData.extra.address.cep, debouncedCepFetch])
+    const cep = watch('extra.address.cep', "").replace("-", "").replace("_", "")
+    if (cep.length === 8) {
+      debouncedCepFetch(cep);
+    }
+  }, [watch('extra.address.cep'), debouncedCepFetch, watch]);
 
   return (
     <>
@@ -81,7 +111,7 @@ export function ExtraDataDrawer({ isEditing = true, currentUserData, isOpen, onC
         onClose={onClose}
         motionPreset="slideInBottom"
         isCentered
-        size="md"
+        size="xl"
         className="max-h-[50vh]"
       >
 
@@ -90,249 +120,204 @@ export function ExtraDataDrawer({ isEditing = true, currentUserData, isOpen, onC
           <DrawerHeader>Dados cadastrais</DrawerHeader>
           <DrawerCloseButton />
           <DrawerBody>
-            {
-              errorMessage && (
-                <div className="bg-red-200 text-red-800 p-2 mb-4 rounded">
-                  {errorMessage}
-                </div>
-              )
-            }
+            <form onSubmit={handleSubmit(onSubmit)}>
 
-            <FormControl mt={4}>
-              <FormLabel>Nome completo</FormLabel>
-              <Input
-                value={userData.name}
-              />
-            </FormControl>
+              {
+                errorMessage && (
+                  <div className="bg-red-200 text-red-800 p-2 mb-4 rounded">
+                    {errorMessage}
+                  </div>
+                )
+              }
+              <FormControl mt={4}>
+                <FormLabel>Nome completo</FormLabel>
+                <Input {...register('name')} />
+              </FormControl>
 
-            <FormControl mt={4}>
-              <FormLabel>Email</FormLabel>
-              <Input
-                value={userData.email}
-              />
-            </FormControl>
+              <FormControl mt={4}>
+                <FormLabel>Email</FormLabel>
+                <Input {...register('email')} />
+              </FormControl>
 
-            <FormControl mt={4}>
-              <FormLabel>Telefone para contato</FormLabel>
-              <Input
-                value={userData.phone}
-              />
-            </FormControl>
+              <FormControl mt={4}>
+                <FormLabel>Telefone para contato</FormLabel>
+                <InputMask
+                  mask={PHONE_MASK}
+                  {...register('phone')}
+                >
+                  {(inputProps) => <Input {...inputProps} type="text" />}
+                </InputMask>
+              </FormControl>
 
-            <FormControl mt={4}>
-              <FormLabel>CPF</FormLabel>
-              {/* TODO: use input with mask for cpf | move this to top of input list this is important*/}
-              <Input
-                value={userData.extra.cpf}
-                type="number"
-              />
-            </FormControl>
+              <FormControl mt={4}>
+                <FormLabel>CPF</FormLabel>
+                <InputMask
+                  mask="999.999.999-99"
+                  {...register('extra.cpf')}
+                >
+                  {(inputProps) => <Input {...inputProps} type="text" />}
+                </InputMask>
+              </FormControl>
 
-            <FormControl mt={4}>
-              <FormLabel>Possui filhos</FormLabel>
-              <Checkbox
-                isChecked={hasAdultChildren}
-                onChange={(event) => setHasAdultChildren(event.target.checked)}
-              >
-                Maiores de 18 anos
-              </Checkbox>
+              <FormControl mt={4}>
+                <FormLabel>Possui filhos</FormLabel>
+                <Checkbox {...register('extra.hasAdultChildren')}>Maiores de 18 anos</Checkbox>
+                <Checkbox {...register('extra.hasKidChildren')} className="ml-10">Menores de 18 anos</Checkbox>
+              </FormControl>
 
-              <Checkbox
-                className="ml-10"
-                isChecked={hasKidChildren}
-                onChange={(event) => setHasKidChildren(event.target.checked)}
-              >
-                Menores de 18 anos
-              </Checkbox>
-            </FormControl>
-
-            {
-              hasAdultChildren && (
+              {hasAdultChildren && (
                 <FormControl mt={4}>
                   <FormLabel>Quantidade de filhos maiores de 18 anos</FormLabel>
-                  <Input
-                    value={userData.extra.adultChildren}
-                    type="number"
-                  />
+                  <Input {...register('extra.adultChildren')} type="number" />
                 </FormControl>
-              )
-            }
+              )}
 
-            {
-              hasKidChildren && (
+              {hasKidChildren && (
                 <FormControl mt={4}>
                   <FormLabel>Quantidade de filhos menores de 18 anos</FormLabel>
-                  <Input
-                    value={userData.extra.kidChildren}
-                    type="number"
-                  />
+                  <Input {...register('extra.kidChildren')} type="number" />
                 </FormControl>
-              )
-            }
+              )}
 
-            <FormControl mt={4}>
-              <FormLabel>Tipo de trabalho</FormLabel>
-              <Select
-                placeholder="Selecione um tipo"
-              >
-                <option value="formal">Formal</option>
-                <option value="informal">Informal</option>
-              </Select>
-            </FormControl>
+              <FormControl mt={4}>
+                <FormLabel>Tipo de trabalho</FormLabel>
+                <Select {...register('extra.jobType')} placeholder="Selecione um tipo">
+                  <option value="formal">Formal</option>
+                  <option value="informal">Informal</option>
+                </Select>
+              </FormControl>
 
-            <FormControl mt={4}>
-              <FormLabel>Renda</FormLabel>
-              <Select
-                placeholder="Selecione um tipo"
-              >
-                <option value="-1000">Até R$ 1000</option>
-                <option value="1001-2000">De R$ 1001 até R$ 2000</option>
-                <option value="2001-3000">De R$ 2001 até R$ 5000</option>
-                <option value="5000-">De R$ 2001 até R$ 5000</option>
-              </Select>
-            </FormControl>
+              <FormControl mt={4}>
+                <FormLabel>Renda</FormLabel>
+                <Select {...register('extra.income')} placeholder="Selecione um tipo">
+                  <option value="-1000">Até R$ 1000</option>
+                  <option value="1001-2000">De R$ 1001 até R$ 2000</option>
+                  <option value="2001-3000">De R$ 2001 até R$ 5000</option>
+                  <option value="5000-">De R$ 2001 até R$ 5000</option>
+                </Select>
+              </FormControl>
 
-            <FormControl mt={4}>
-              <FormLabel>Tipo de moradia</FormLabel>
-              <Select
-                placeholder="Selecione um tipo"
-              >
-                <option value="rent">Aluguel</option>
-                <option value="own">Própria</option>
-                <option value="minhacasaminhavida">Própria pelo Minha casa minha vida</option>
-                <option value="given">Cedida</option>
-              </Select>
-            </FormControl>
+              <FormControl mt={4}>
+                <FormLabel>Tipo de moradia</FormLabel>
+                <Select {...register('extra.housingType')} placeholder="Selecione um tipo">
+                  <option value="rent">Aluguel</option>
+                  <option value="own">Própria</option>
+                  <option value="minhacasaminhavida">Própria pelo Minha casa minha vida</option>
+                  <option value="given">Cedida</option>
+                </Select>
+              </FormControl>
 
-            <FormControl mt={4}>
-              <FormLabel>Tipo de relacionamento</FormLabel>
-              <Select
-                placeholder="Selecione um tipo"
-              >
-                <option value="stable">União estável</option>
-                <option value="maried">Casamento</option>
-                <option value="namoro">Namoro</option>
-                <option value="ex">Ex namorado/companheiro</option>
-              </Select>
-            </FormControl>
+              <FormControl mt={4}>
+                <FormLabel>Tipo de relacionamento</FormLabel>
+                <Select {...register('extra.relationshipStatus')} placeholder="Selecione um tipo">
+                  <option value="stable">União estável</option>
+                  <option value="maried">Casamento</option>
+                  <option value="namoro">Namoro</option>
+                  <option value="ex">Ex namorado/companheiro</option>
+                </Select>
+              </FormControl>
 
-            <Stack mt={8}>
-              <h1>Endereco</h1>
+              <Stack mt={8}>
+                <h1>Endereco</h1>
 
-              <Stack display="flex" flexDir="row">
-                <FormControl isRequired className="w-1/2">
-                  <FormLabel>CEP</FormLabel>
-                  { /* TODO: use cep mask here */}
-                  { /* TODO: use debounce here so we can fetch from viacep api */}
-                  <MaskedInput
-                    mask="99999-999"
-                    value={userData.extra.address.cep}
-                    onChange={
-                      (event) => setUserData(
-                        (current) => ({
-                          ...current, extra: {
-                            ...current.extra,
-                            address: {
-                              ...current.extra.address,
-                              cep: event.target.value,
-                            }
-                          }
-                        })
-                      )
-                    }
-                    type="text"
-                  />
-                </FormControl>
+                {
+                  showCityWarn && (
+                    <div className="bg-red-200 text-red-800 p-2 mb-4 rounded">
+                      <h2>
+                        Infelizmente nao atendemos sua cidade. Mas faremos o possivel para lhe ajudar!
+                      </h2>
+                    </div>
+                  )
+                }
 
-                <FormControl isRequired className="w-1/2">
-                  <FormLabel>Cidade</FormLabel>
-                  <Input
-                    type="text"
-                  />
-                </FormControl>
+                <Stack display="flex" flexDir="row">
+                  <FormControl isRequired className="w-1/2">
+                    <FormLabel>CEP</FormLabel>
+                    <Controller
+                      name="extra.address.cep"
+                      control={control}
+                      render={({ field }) => (
+                        <InputMask
+                          mask="99999-999"
+                          {...field}
+                          type="text"
+                        >
+                          {(inputProps) => <Input {...inputProps} />}
+                        </InputMask>
+                      )}
+                    />
+                  </FormControl>
+                  <FormControl isRequired className="w-1/2">
+                    <FormLabel>Cidade</FormLabel>
+                    <Input {...register('extra.address.city')} type="text" />
+                  </FormControl>
+                </Stack>
+
+                <Stack display="flex" flexDir="row">
+                  <FormControl isRequired className="w-1/2">
+                    <FormLabel>Rua</FormLabel>
+                    <Input {...register('extra.address.street')} type="text" />
+                  </FormControl>
+
+                  <FormControl isRequired className="w-1/2">
+                    <FormLabel>Bairro</FormLabel>
+                    <Input {...register('extra.address.neighborhood')} type="text" />
+                  </FormControl>
+                </Stack>
+
+                <Stack display="flex" flexDir="row">
+                  <FormControl w="85%" isRequired>
+                    <FormLabel>Complemento</FormLabel>
+                    <Input {...register('extra.address.complement')} type="text" />
+                  </FormControl>
+
+                  <FormControl w="15%" isRequired>
+                    <FormLabel>Nº</FormLabel>
+                    <Input {...register('extra.address.number')} type="number" />
+                  </FormControl>
+                </Stack>
               </Stack>
 
-              <Stack display="flex" flexDir="row">
-                <FormControl isRequired className="w-1/2">
-                  <FormLabel>Rua</FormLabel>
-                  <Input
-                    type="text"
-                  />
-                </FormControl>
+              <Stack mt={8}>
+                <h1>Contato de confiaca</h1>
+                <Stack display="flex" flexDir="row">
+                  <FormControl className="w-1/2">
+                    <FormLabel>Nome</FormLabel>
+                    <Input {...register('extra.trustedName')} type="text" />
+                  </FormControl>
 
-                <FormControl isRequired className="w-1/2">
-                  <FormLabel>Bairro</FormLabel>
-                  <Input
-                    type="text"
-                  />
-                </FormControl>
+                  <FormControl className="w-1/2">
+                    <FormLabel>Numero</FormLabel>
+                    <InputMask
+                      mask={PHONE_MASK}
+                      {...register('extra.trustedPhone')}
+                    >
+                      {(inputProps) => <Input {...inputProps} type="text" />}
+                    </InputMask>
+                  </FormControl>
+                </Stack>
               </Stack>
 
-              <Stack display="flex" flexDir="row">
-                <FormControl w="85%" isRequired>
-                  <FormLabel>Complemento</FormLabel>
-                  <Input
-                    type="text"
-                  />
-                </FormControl>
+              <Stack mt={4} display="flex" flexDir="row" justifyContent="flex-end" pt={10}>
+                <Button
+                  variant="ghost"
+                  onClick={onClose}
+                >
+                  Cancelar
+                </Button>
 
-                <FormControl w="15%" isRequired>
-                  <FormLabel>Nº</FormLabel>
-                  <Input
-                    type="number"
-                  />
-                </FormControl>
+                <Button
+                  colorScheme="blue"
+                  variant="solid"
+                  type="submit"
+                >
+                  Salvar
+                </Button>
               </Stack>
-            </Stack>
-
-            <Stack mt={8}>
-              <h1>Contato de confiaca</h1>
-              <Stack display="flex" flexDir="row">
-                <FormControl className="w-1/2">
-                  <FormLabel>Nome</FormLabel>
-                  <Input
-                    value={userData.extra.trustedName}
-                    type="text"
-                  />
-                </FormControl>
-
-                <FormControl className="w-1/2">
-                  <FormLabel>Numero</FormLabel>
-                  <Input
-                    value={userData.extra.trustedPhone}
-                    type="number"
-                  />
-                </FormControl>
-              </Stack>
-            </Stack>
+            </form>
           </DrawerBody>
-
-          <DrawerFooter>
-            <Button
-              variant="ghost"
-              onClick={onClose}
-            >
-              Cancelar
-            </Button>
-
-            <Button
-              colorScheme="blue"
-              variant="solid"
-              onClick={onSubmit}
-            >
-              Salvar
-            </Button>
-          </DrawerFooter>
         </DrawerContent>
       </Drawer>
     </>
-  )
-}
-
-function MaskedInput(props) {
-  return (
-    <InputMask {...props}>
-      {(inputProps) => <Input {...inputProps} />}
-    </InputMask>
   )
 }
