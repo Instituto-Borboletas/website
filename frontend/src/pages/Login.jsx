@@ -16,26 +16,6 @@ import { PasswordInput } from "../components/PasswordInput";
 import { crudApi } from "../utils/api";
 import { useAuth } from "../contexts/auth";
 
-function isValidPhone(phone) {
-  if (!phone) {
-    return false;
-  }
-
-  if (!/^\d+$/.test(phone)) {
-    return false;
-  }
-
-  if (phone.length === 9 && phone[0] !== "9") {
-    return false;
-  }
-
-  if (phone.length === 11 && phone[2] !== "9") {
-    return false;
-  }
-
-  return true;
-}
-
 export default function LoginPage() {
   const navigate = useNavigate();
   const location = useLocation();
@@ -48,8 +28,6 @@ export default function LoginPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [name, setName] = useState("")
   const [email, setEmail] = useState("")
-  const [phone, setPhone] = useState("")
-  const [phoneError, setPhoneError] = useState(null);
   const [password, setPassword] = useState("");
   const [passwordError, setPasswordError] = useState(null);
   const [confirmationPassword, setConfirmationPassword] = useState("");
@@ -76,13 +54,6 @@ export default function LoginPage() {
       return;
     }
 
-    if (phone && !isValidPhone(phone)) {
-      setErrorMessage("Insira um número válido");
-      setPhoneError("Insira um número válido");
-      setIsLoading(false);
-      return;
-    }
-
     if (password !== confirmationPassword) {
       setErrorMessage("As senhas não coincidem");
       setIsLoading(false);
@@ -99,7 +70,6 @@ export default function LoginPage() {
       const response = await crudApi.post("/users/external", {
         name,
         email,
-        phone,
         password,
       });
 
@@ -251,40 +221,6 @@ export default function LoginPage() {
               onChange={({ target }) => { setEmail(target.value); }}
             />
             <FormErrorMessage>O campo email é obrigatório</FormErrorMessage>
-          </FormControl>
-
-          <FormControl id="phone" mt="4" isInvalid={phoneError}>
-            <FormLabel>Número para contato (opcional)</FormLabel>
-            <InputGroup>
-              <InputLeftAddon>+55</InputLeftAddon>
-              <Input
-                type="tel"
-                placeholder="Digite seu número"
-                value={phone}
-                minLength={8}
-                maxLength={11}
-                onChange={({ target }) => {
-                  setPhone(target.value);
-
-                  if (phoneError) {
-                    setPhoneError(null);
-                  }
-
-                  if (!target.value) {
-                    setPhoneError(null);
-                    return
-                  }
-
-                  if (!isValidPhone(target.value)) {
-                    setPhoneError("Insira um número válido");
-                  }
-                }}
-              />
-            </InputGroup>
-            { phoneError
-              ? <FormErrorMessage>Insira um número válido</FormErrorMessage>
-              : <FormHelperText>Insira seu DDD junto ao número. Ignore o 0 antes do DDD</FormHelperText>
-            }
           </FormControl>
 
           <FormControl id="password" isRequired mt="4" isInvalid={passwordError}>
