@@ -41,7 +41,7 @@ CREATE TYPE relation_type_enum as ENUM ('married', 'stable_union', 'affair', 'ex
 CREATE TABLE IF NOT EXISTS extra_user_data (
   user_id UUID PRIMARY KEY,
   cpf CHAR(11) NOT NULL,
-  cpf_uf CHAR(2) NOT NULL,
+  cpf_uf VARCHAR(30) NOT NULL,
   birth_date DATE NOT NULL,
   phone CHAR(11) NOT NULL,
 
