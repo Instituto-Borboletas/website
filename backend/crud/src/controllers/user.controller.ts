@@ -180,6 +180,18 @@ userController.put(
     try {
       const addressRegister = new AddressBuilder(address).build()
 
+      try {
+        // FIX: something is wrong here, not working
+        await req.addressRepository.save(addressRegister);
+      } catch (error) {
+        const err = error as object;
+        req.logger
+          .child({ error, info: 'Error on store address on extra data request' })
+          .error("message" in err ? err.message : 'Fail')
+
+        return res.status(412).json({ ok: false, key: "address", fail: true });
+      }
+
       const extraData = new ExtraDataBuilder({
         cpf: cpf as string,
         cpfUf,
@@ -197,13 +209,18 @@ userController.put(
         userId: req.user!.id,
       }).build()
 
-      console.log(addressRegister)
+      try {
+        await req.extraDataRepository.save(extraData)
+      } catch (error) {
+        const err = error as object;
+        req.logger
+          .child({ error, info: 'Error on store extra data' })
+          .error("message" in err ? err.message : 'Fail')
 
-      console.log(extraData)
+        return res.status(412).json({ ok: false, key: "extraData", fail: true });
+      }
 
-      return res.status(412).json({ ok: false, message: "Ainda nao estamos prontos para receber essa chamada de api" });
-      // TODO: change this? should return just ok: true ?
-      // res.json({ ok: true})
+      return res.json({ ok: true})
     } catch (err) {
       if (err instanceof Error) {
         req.logger.child({ error: err }).error(err.message)
