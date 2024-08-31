@@ -20,7 +20,7 @@ import { crudApi } from "../../utils/api";
 export default function User() {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
-  const { user, isLoading, logout } = useAuth();
+  const { user, isLoading, logout: logUserOut } = useAuth();
 
   const { isOpen: showExtraDataModal, onOpen: openExtraDataModal, onClose: closeExtraDataModal } = useDisclosure();
 
@@ -31,14 +31,23 @@ export default function User() {
     }
   }, [user])
 
-  async function handleExtraDataEdit (newExtraData) {
+  async function handleExtraDataEdit(newExtraData) {
     try {
-      const { data } = await crudApi.post("/users/external/extra", newExtraData.extra)
+      const { data } = await crudApi.put("/users/external/extra", newExtraData.extra)
       console.info(data)
       return null
     } catch (error) {
       return error.response.data
     }
+  }
+
+  async function logout () {
+    await logUserOut()
+    navigate("/login", {
+      state: {
+        from: "/meus-dados",
+      }
+    });
   }
 
   useEffect(() => {
@@ -53,11 +62,13 @@ export default function User() {
 
     if (!isLoading) {
       const showDisplayExtraDataForm = searchParams.get("preencher-dados-extra")
-      if (showDisplayExtraDataForm === "1")
+      if (showDisplayExtraDataForm === "1") {
         openExtraDataModal()
+        setSearchParams({})
+      }
     }
 
-  }, [user, isLoading, navigate, searchParams]);user
+  }, [user, isLoading, navigate, searchParams]); user
 
   if (isLoading) {
     return <main className="flex flex-1 items-center justify-center">
@@ -69,73 +80,58 @@ export default function User() {
     <>
       <Header />
 
-      <main className="flex p-5">
-        <div className="flex flex-1 items-center justify-center">
-          {user && !isLoading ? <UserForm user={user} /> : <Spinner />}
+      <main className="flex p-5 w-5/6">
+        <header className="flex items-center justify-between">
+          <h1 className="font-bold text-xl">
+            Olá, {user?.name}!
+          </h1>
+
+          <nav className="flex space-x-2">
+            {
+              user?.internal && (
+              <Button>
+                <Link to="/interno">
+                  Acesso interno
+                </Link>
+              </Button>
+              )
+            }
+            <Button onClick={openExtraDataModal}>
+              Dados cadastrais
+            </Button>
+
+            <Button
+              onClick={logout}
+              colorScheme="red" className="bg-primary text-white py-2 px-4 rounded-lg text-center"
+            >
+              Sair
+            </Button>
+          </nav>
+        </header>
+        <div className="flex flex-col flex-1 items-center justify-center">
+          <section>
+            <h1>Pedidos de ajuda</h1>
+          </section>
+
+          <section>
+            <h1>Voluntariados</h1>
+          </section>
         </div>
 
         {
-          user?.internal && (
-            <Link to="/interno" className="bg-primary text-white py-2 px-4 mt-4 rounded-lg w-1/3 mx-auto text-center">Acesso interno</Link>
+          showExtraDataModal && (
+            <ExtraDataDrawer
+              isOpen={showExtraDataModal}
+              onClose={closeExtraDataModal}
+              isEditing={false}
+              currentUserData={mountFullUserData()}
+              onConfirm={handleExtraDataEdit}
+            />
           )
         }
-        <Button onClick={logout} colorScheme="red" className="bg-primary text-white py-2 px-4 mt-4 rounded-lg w-1/3 mx-auto text-center">Sair</Button>
 
       </main>
-      {
-        showExtraDataModal && (
-          <ExtraDataDrawer
-            isOpen={showExtraDataModal}
-            onClose={closeExtraDataModal}
-            isEditing={false}
-            currentUserData={mountFullUserData()}
-            onConfirm={handleExtraDataEdit}
-          />
-        )
-      }
-
       <Footer />
     </>
-  )
-}
-
-function UserForm({ user }) {
-  return (
-    <Stack spacing={6} w="full" maxW="md">
-      <Stack>
-        <Text>Nome completo</Text>
-        <InputGroup className="flex flex-col">
-          <Input
-            value={user.name}
-            isDisabled={true}
-          />
-        </InputGroup>
-      </Stack>
-
-      <Stack>
-        <Text>Email</Text>
-        <InputGroup className="flex flex-col">
-          <Input
-            value={user.email}
-            isDisabled={true}
-          />
-        </InputGroup>
-      </Stack>
-
-      <Stack>
-        <Text>Numero para contato</Text>
-        <InputGroup className="flex flex-col">
-          <Input
-            value={user.phone ?? "Não informado"}
-            isDisabled={true}
-          />
-        </InputGroup>
-      </Stack>
-
-      {/*
-        TODO: add here a check for user extra data
-        if it is not present, show a button to add it, so user can register extra data
-      */}
-    </Stack>
   )
 }
