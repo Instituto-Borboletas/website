@@ -38,3 +38,13 @@ main {
   @apply flex flex-col flex-1;
   @apply w-5/6 mx-auto;
 }
+
+@layer base {
+  :root {
+    --radius: 0.5rem;
+  }
+}
+
+select {
+  padding-top: 0;
+}
