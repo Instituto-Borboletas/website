@@ -143,7 +143,7 @@ export default function LoginPage() {
           <form className="w-3/4 bg-white px-4 py-8 rounded" onSubmit={handleLogin}>
             {
               errorMessage && (
-                <div className="bg-red-200 text-red-800 p-2 mb-4 rounded">
+                <div className="bg-orange-200 text-red-800 p-2 mb-4 rounded">
                   {errorMessage}
                 </div>
               )

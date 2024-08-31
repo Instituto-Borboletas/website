@@ -61,8 +61,7 @@ function App() {
       }
 
       <main className="py-6">
-
-        <section className="container w-2/3 mx-auto">
+        <section className="container w-5/6 mx-auto">
           <section id="quem-somos" className="flex flex-col items-center text-center">
             <h1 className="font-bold">Sobre Nós</h1>
             <p className="w-3/5 text-md">
