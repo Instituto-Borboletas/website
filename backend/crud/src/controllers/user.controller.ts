@@ -7,6 +7,7 @@ import { clearString } from "../utils";
 import { User } from "../domain/User";
 import { validateCPF, validatePhone } from "./validators/users/extraData";
 import { ExtraDataBuilder } from "../domain/builders/ExtraDataBuilder";
+import { AddressBuilder } from "../domain/builders/AddressBuilder";
 
 const userController = Router();
 
@@ -18,36 +19,43 @@ async function meMiddleware(req: Request, res: Response, next: NextFunction) {
   if (!token)
     return res.status(401).json({ ok: false, message: "Unauthorized" });
 
-  const user = await req.db("sessions")
+  const userDb = await req.db("sessions")
     .select("users.user_type")
     .join("users", "sessions.user_id", "users.id")
     .where("sessions.id", token)
     .first();
 
-  if (!user)
+  if (!userDb)
     return res.sendStatus(401);
 
-  req.user = user;
-  req.params.userType = user.user_type;
+  const user = new User({
+    id: userDb.id,
+    userType: userDb.user_type,
+    email: userDb.email,
+    name: userDb.name,
+  })
 
-  return authMiddleware(user.user_type)(req, res, next);
+  req.user = user;
+  req.params.userType = user.userType;
+
+  // WARNING: this causes two times db call for session validation.
+  return authMiddleware(user.userType)(req, res, next);
 }
 
 userController.get("/me", meMiddleware, async (req, res) => {
-  // @ts-expect-error FIX: use a mapper from db
-  delete req.user.password_hash;
+  delete req.user?.passwordHash;
 
-  // @ts-expect-error FIX: use a mapper from db
-  if (req.user.user_type === "internal")
-    // @ts-expect-error
+  if (req.user?.userType === "internal")
+    // @ts-expect-error TODO: change frontend check for a permission ms? IDK
     req.user.internal = true;
 
-  // @ts-expect-error FIX: use a mapper from db
-  delete req.user.user_type;
+  // @ts-expect-error NOTE: we dont want userType to be sent to frontend
+  delete req.user.userType;
 
   return res.json(req.user)
 });
-userController.post("/logout", async (req, res) => {
+
+userController.post("/logout", async (_, res) => {
   res.clearCookie("token");
   res.json({ ok: true });
 });
@@ -66,15 +74,13 @@ userController.post("/login", async (req, res) => {
   const session = new Session(user.id);
   await req.db("sessions").insert({ id: session.id, user_id: user.id });
 
-  // @ts-expect-error FIX: use a mapper from db
-  if (user.user_type === "internal")
-    // @ts-expect-error
+  if (user.userType === "internal")
+    // @ts-expect-error TODO: change frontend check for a permission ms? IDK
     user.internal = true;
 
-  // @ts-expect-error FIX: use a mapper from db
-  delete user.user_type;
-  // @ts-expect-error FIX: use a mapper from db
-  delete user.password_hash;
+  // @ts-expect-error TODO: change frontend check for a permission ms? IDK
+  delete user.userType;
+  delete user.passwordHash;
 
   res.cookie("token", session.id, { httpOnly: true, maxAge: 1000 * 60 * 60 * 12 });
   res.json(user);
@@ -114,11 +120,11 @@ function extraDataMiddlewareDTO(request: Request, response: Response, next: Next
   let { cpf, phone, trustedPhone } = request.body;
   const { birthDate, housing, relation, work, } = request.body;
 
-  phone = clearString(phone ?? "");
-  cpf = clearString(cpf ?? "");
-  trustedPhone = clearString(trustedPhone ?? "");
+  request.body.phone = phone = clearString(phone ?? "");
+  request.body.cpf = cpf = clearString(cpf ?? "");
+  request.body.trustedPhone = trustedPhone = clearString(trustedPhone ?? "");
 
-  const isValidBirthDate = Number.isNaN(Date.parse(birthDate))
+  const isValidBirthDate = !Number.isNaN(Date.parse(birthDate))
   if (!isValidBirthDate)
     return response.status(400).json({ ok: false, key: "birthDate" });
 
@@ -144,13 +150,13 @@ function extraDataMiddlewareDTO(request: Request, response: Response, next: Next
     return response.status(400).json({ ok: false, key: "phone" });
 
   const isValidTrustedPhone = validatePhone(trustedPhone);
-  if (!isValidTrustedPhone)
+  if (trustedPhone && !isValidTrustedPhone)
     return response.status(400).json({ ok: false, key: "trustedPhone" });
 
   next();
 }
 
-userController.post(
+userController.put(
   "/external/extra",
   authMiddleware("external"),
   extraDataMiddlewareDTO,
@@ -158,6 +164,7 @@ userController.post(
     const {
       cpf,
       cpfUf,
+      birthDate,
       phone,
       housing,
       relation,
@@ -166,25 +173,36 @@ userController.post(
       trustedName,
       adultChildren,
       kidChildren,
-      address
+      address,
+      income
     } = req.body;
 
-    req.logger.child({
-      cpf,
-      cpfUf,
-      phone,
-      housing,
-      relation,
-      work,
-      trustedPhone,
-      trustedName,
-      adultChildren,
-      kidChildren,
-      address
-    }).info("received this data on extra data register")
     try {
-      // TODO: change this? should return just ok: true ?
+      const addressRegister = new AddressBuilder(address).build()
+
+      const extraData = new ExtraDataBuilder({
+        cpf: cpf as string,
+        cpfUf,
+        birthDate,
+        phone,
+        housing,
+        relation,
+        work,
+        trustedPhone,
+        trustedName,
+        adultChildren,
+        kidChildren,
+        income,
+        addressId: addressRegister.id,
+        userId: req.user!.id,
+      }).build()
+
+      console.log(addressRegister)
+
+      console.log(extraData)
+
       return res.status(412).json({ ok: false, message: "Ainda nao estamos prontos para receber essa chamada de api" });
+      // TODO: change this? should return just ok: true ?
       // res.json({ ok: true})
     } catch (err) {
       if (err instanceof Error) {
@@ -209,10 +227,7 @@ userController.post("/create", authMiddleware("internal"), async (req, res) => {
     const user = new UserBuilder({ name, email, passwordHash: password, userType }).build();
     await req.userRepository.save(user);
 
-    if (user.passwordHash)
-      // @ts-expect-error let me delete it typescript
-      delete user.passwordHash;
-
+    delete user.passwordHash;
     res.json(user);
   } catch (err) {
     if (err instanceof Error) {

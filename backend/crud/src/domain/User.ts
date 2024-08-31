@@ -1,3 +1,5 @@
+import { generateId } from "../utils";
+
 export type UserType = "internal" | "external"
 
 type UserProps = {
@@ -31,7 +33,7 @@ export class User {
 }
 
 type UserExtraDataProps = {
-  id: string;
+  id?: string;
   userId: string;
   cpf: string;
   cpfUf: string;
@@ -82,8 +84,8 @@ export class UserExtraData {
     createdAt,
     addressId
   }: UserExtraDataProps) {
-    this.id = id
-    this.userId = userId
+    this.id = id ?? generateId();
+    this.userId = userId;
     this.cpf = cpf;
     this.cpfUf = cpfUf;
     this.phone = phone;

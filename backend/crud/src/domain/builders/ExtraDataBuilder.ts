@@ -1,14 +1,14 @@
 import { UserExtraData } from "../User";
-import { generateId } from "../../utils";
 
 type ExtraDataBuilderProps = {
-  id: string | null;
+  id?: string;
   userId: string;
   cpf: string;
   cpfUf: string;
   phone: string;
   trustedPhone: string;
   trustedName: string;
+  relation: string;
   housing: string;
   work: string;
   income: string;
@@ -16,11 +16,11 @@ type ExtraDataBuilderProps = {
   kidChildren: number;
   birthDate: Date;
   addressId: string;
-  createdAt: number | null;
+  createdAt?: number;
 }
 
 export class ExtraDataBuilder {
-  id: string;
+  id?: string;
   userId: string;
   cpf: string;
   cpfUf: string;
@@ -28,6 +28,7 @@ export class ExtraDataBuilder {
   trustedPhone: string;
   trustedName: string;
   housing: string;
+  relation: string;
   work: string;
   income: string;
   adultChildren: number;
@@ -46,6 +47,7 @@ export class ExtraDataBuilder {
     trustedName,
     housing,
     work,
+    relation,
     income,
     adultChildren,
     kidChildren,
@@ -53,7 +55,7 @@ export class ExtraDataBuilder {
     createdAt,
     addressId
   }: ExtraDataBuilderProps) {
-    this.id = id ?? generateId();
+    this.id = id;
     this.userId = userId;
     this.cpf = cpf;
     this.cpfUf = cpfUf;
@@ -62,6 +64,7 @@ export class ExtraDataBuilder {
     this.trustedName = trustedName;
     this.housing = housing;
     this.work = work;
+    this.relation = relation;
     this.income = income;
     this.adultChildren = adultChildren;
     this.kidChildren = kidChildren;
@@ -87,6 +90,11 @@ export class ExtraDataBuilder {
 
   setWork(work: string) {
     this.work = work;
+    return this;
+  }
+
+  setRelation(relation: string) {
+    this.relation = relation;
     return this;
   }
 
