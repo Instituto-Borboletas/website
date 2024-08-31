@@ -8,6 +8,8 @@ type AddressProps = {
   createdBy: string;
   createdAt: number;
   description: string | null;
+  complement: string;
+  number: number;
 }
 
 export class Address {
@@ -20,6 +22,8 @@ export class Address {
   createdBy: string;
   createdAt: number;
   description: string | null;
+  complement: string
+  number: number
 
   constructor({
     id,
@@ -30,7 +34,9 @@ export class Address {
     zip,
     createdBy,
     createdAt,
-    description
+    description,
+    number,
+    complement
   }: AddressProps) {
     this.id = id;
     this.street = street;
@@ -41,5 +47,7 @@ export class Address {
     this.createdBy = createdBy;
     this.createdAt = createdAt;
     this.description = description ?? null;
+    this.complement = complement;
+    this.number = number;
   }
 }

@@ -11,6 +11,8 @@ type AddressBuilderProps = {
   createdBy?: string;
   createdAt?: number;
   description?: string;
+  complement?: string;
+  number?: number;
 }
 export class AddressBuilder {
   id: string;
@@ -22,8 +24,10 @@ export class AddressBuilder {
   createdBy: string;
   createdAt: number;
   description: string | null;
+  complement: string;
+  number: number;
 
-  constructor({ id, street, neighborhood, city, state, zip, createdBy, createdAt, description }: AddressBuilderProps) {
+  constructor({ id, street, neighborhood, city, state, zip, createdBy, createdAt, description, number, complement }: AddressBuilderProps) {
     this.id = id ?? generateId();
     this.street = street ?? "";
     this.neighborhood = neighborhood ?? "";
@@ -33,9 +37,11 @@ export class AddressBuilder {
     this.createdBy = createdBy ?? "";
     this.createdAt = createdAt ?? Date.now();
     this.description = description ?? null;
+    this.complement = complement ?? "";
+    this.number = number ?? 0;
   }
 
-  setStreeet(street: string) {
+  setStreet(street: string) {
     this.street = street;
     return this;
   }
@@ -50,7 +56,19 @@ export class AddressBuilder {
     return this;
   }
 
+  setComplement(comp: string) {
+    this.complement = comp;
+  }
+
+  setNumber(num: number) {
+    this.number = num;
+  }
+
   build() {
     return new Address(this)
+  }
+
+  static fromDB (data: Record<string, string>): Address {
+    throw new Error('not implemented')
   }
 }

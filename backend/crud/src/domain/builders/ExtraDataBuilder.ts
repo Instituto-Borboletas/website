@@ -126,4 +126,8 @@ export class ExtraDataBuilder {
   build() {
     return new UserExtraData(this)
   }
+
+  static fromDB(data: Record<string, string>): UserExtraData {
+    throw new Error('not implemented', data);
+  }
 }
