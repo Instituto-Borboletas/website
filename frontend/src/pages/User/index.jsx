@@ -24,13 +24,6 @@ export default function User() {
 
   const { isOpen: showExtraDataModal, onOpen: openExtraDataModal, onClose: closeExtraDataModal } = useDisclosure();
 
-  const mountFullUserData = useCallback(() => {
-    return {
-      ...user,
-      extra: {} // TODO: add `extra` on user data on backend fetch
-    }
-  }, [user])
-
   async function handleExtraDataEdit(newExtraData) {
     try {
       const { data } = await crudApi.put("/users/external/extra", newExtraData.extra)
@@ -124,7 +117,7 @@ export default function User() {
               isOpen={showExtraDataModal}
               onClose={closeExtraDataModal}
               isEditing={false}
-              currentUserData={mountFullUserData()}
+              currentUserData={user}
               onConfirm={handleExtraDataEdit}
             />
           )

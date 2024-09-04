@@ -19,7 +19,6 @@ import {
   useToast
 } from "@chakra-ui/react"
 import InputMask from "react-input-mask"
-import { Datepicker } from "flowbite-react";
 
 import { useDebounce } from "../../../hooks/debounce";
 import axios from "axios";
@@ -51,6 +50,17 @@ export function ExtraDataDrawer({ isEditing = true, currentUserData, isOpen, onC
   // TODO: use alert modal to display error message on this call
   const [errorMessage, setErrorMessage] = useState(null);
   const [showCityWarn, setShowWarnMessage] = useState(false);
+
+  function handleHasAdultChildrenChange(event) {
+    const { checked: value } = event.target
+    setValue("extra.hasAdultChildren", value)
+    setValue("extra.adultChildren", value ? value : 0)
+  }
+  function handleHasKidChildrenChange(event) {
+    const { checked: value } = event.target
+    setValue("extra.hasKidChildren", value)
+    setValue("extra.kidChildren", value ? value : 0)
+  }
 
   async function fetchCep(cep) {
     const result = await cepFetchWithCache(cep)
@@ -106,10 +116,25 @@ export function ExtraDataDrawer({ isEditing = true, currentUserData, isOpen, onC
   }
 
   useEffect(() => {
-    if (currentUserData) {
-      for (const key in currentUserData) {
-        setValue(key, currentUserData[key]);
+    for (const key in currentUserData) {
+      if (typeof currentUserData[key] === 'object') {
+        for (const nestedKey in currentUserData[key]) {
+          setValue(`${key}.${nestedKey}`, currentUserData[key][nestedKey]);
+          if (nestedKey === 'birthDate')
+            setValue(`${key}.${nestedKey}`, new Date(currentUserData[key][nestedKey]).toISOString().split('T')[0]);
+
+          if (nestedKey === 'adultChildren' || nestedKey === 'kidChildren') {
+            setValue(
+              `${key}.${nestedKey === 'adultChildren' ? 'hasAdultChildren' : 'hasKidChildren'}`,
+              Boolean(currentUserData[key][nestedKey])
+            );
+          }
+        }
+
+        continue
       }
+
+      setValue(key, currentUserData[key]);
     }
   }, [currentUserData, setValue]);
 
@@ -156,42 +181,73 @@ export function ExtraDataDrawer({ isEditing = true, currentUserData, isOpen, onC
 
             <FormControl mt={4} isRequired>
               <FormLabel>Telefone para contato</FormLabel>
-              <InputMask
-                mask={PHONE_MASK}
-                {...register('extra.phone')}
-              >
-                {(inputProps) => <Input {...inputProps} type="text" />}
-              </InputMask>
+              <Controller
+                name="extra.phone"
+                control={control}
+                render={({ field }) => (
+                  <InputMask
+                    mask={PHONE_MASK}
+                    {...field}
+                    value={field.value || ""}
+                  >
+                    {(inputProps) => <Input {...inputProps} type="text" />}
+                  </InputMask>
+                )}
+              />
             </FormControl>
 
             <Stack mt={4} display="flex" flexDir="row">
               <FormControl isRequired>
                 <FormLabel>CPF</FormLabel>
-                <InputMask
-                  mask="999.999.999-99"
-                  {...register('extra.cpf')}
-                >
-                  {(inputProps) => <Input {...inputProps} type="text" />}
-                </InputMask>
+
+                <Controller
+                  name="extra.cpf"
+                  control={control}
+                  render={({ field }) => (
+                    <InputMask
+                      mask="999.999.999-99"
+                      {...field}
+                      value={field.value || ""}
+                    >
+                      {(inputProps) => <Input {...inputProps} type="text" />}
+                    </InputMask>
+                  )}
+                />
               </FormControl>
 
               <FormControl isRequired>
                 <FormLabel>Data de nascimento</FormLabel>
-                <Datepicker
-                  language="pt-BR"
-                  labelTodayButton="Hoje"
-                  labelClearButton="Limpar"
-                  {...register('extra.birthDate')}
-                  onSelectedDateChanged={(newVal) => setValue('extra.birthDate', newVal)}
+                <Controller
+                  name="extra.birthDate"
+                  control={control}
+                  render={({ field }) => (
+                    <Input
+                      type="date"
+                      {...field}
+                      value={field.value || ""}
+                    />
+                  )}
                 />
               </FormControl>
             </Stack>
 
             <FormControl mt={4}>
               <FormLabel>Possui filhos</FormLabel>
-              { /* FIX: on false select, change values of kidChildren and adultChildren to undefined */ }
-              <Checkbox {...register('extra.hasAdultChildren')}>Maiores de 18 anos</Checkbox>
-              <Checkbox {...register('extra.hasKidChildren')} className="ml-10">Menores de 18 anos</Checkbox>
+              { /* FIX: on false select, change values of kidChildren and adultChildren to undefined */}
+              <Checkbox
+                {...register('extra.hasAdultChildren')}
+                onChange={handleHasAdultChildrenChange}
+              >
+                Maiores de 18 anos
+              </Checkbox>
+
+              <Checkbox
+                {...register('extra.hasKidChildren')}
+                onChange={handleHasKidChildrenChange}
+                className="ml-10"
+              >
+                Menores de 18 anos
+              </Checkbox>
             </FormControl>
 
             {hasAdultChildren && (
@@ -271,6 +327,7 @@ export function ExtraDataDrawer({ isEditing = true, currentUserData, isOpen, onC
                       <InputMask
                         mask="99999-999"
                         {...field}
+                        value={field.value || ""}
                         type="text"
                       >
                         {(inputProps) => <Input {...inputProps} />}
