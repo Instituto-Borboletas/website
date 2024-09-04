@@ -41,6 +41,7 @@ type UserExtraDataProps = {
   trustedPhone: string;
   trustedName: string;
   housing: string;
+  relation: string;
   work: string;
   income: string;
   adultChildren: number;
@@ -59,6 +60,7 @@ export class UserExtraData {
   trustedPhone: string;
   trustedName: string;
   housing: string;
+  relation: string;
   work: string;
   income: string;
   adultChildren: number;
@@ -77,6 +79,7 @@ export class UserExtraData {
     trustedName,
     housing,
     work,
+    relation,
     income,
     adultChildren,
     kidChildren,
@@ -93,6 +96,7 @@ export class UserExtraData {
     this.trustedName = trustedName;
     this.housing = housing;
     this.work = work;
+    this.relation = relation;
     this.income = income;
     this.adultChildren = adultChildren;
     this.kidChildren = kidChildren;

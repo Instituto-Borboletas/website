@@ -5,11 +5,13 @@ import { AddressRepository } from './interface';
 import { AddressBuilder } from '../../domain/builders/AddressBuilder';
 
 export class PostgresAddressRepository implements AddressRepository {
+  private tableName = "addresses";
+
   constructor(private readonly conn: knex.Knex, private readonly logger: pino.Logger) { }
 
   async save(data: Address): Promise<void> {
     try {
-      await this.conn("address").insert({
+      await this.conn(this.tableName).insert({
           id: data.id,
           cep:data.zip,
           uf: data.state,
@@ -21,7 +23,6 @@ export class PostgresAddressRepository implements AddressRepository {
           description: data.description,
           json: null,
           is_from_location: false,
-          created_at: data.createdAt,
           created_by: data.createdBy,
       })
     } catch (error) {
@@ -32,7 +33,7 @@ export class PostgresAddressRepository implements AddressRepository {
 
   async get(id: string): Promise<Address | null> {
     try {
-      const addressDb = await this.conn("address")
+      const addressDb = await this.conn(this.tableName)
         .where({ id })
         .first()
 

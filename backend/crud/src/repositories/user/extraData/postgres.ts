@@ -12,7 +12,7 @@ export class PostgresExtraDataRepository implements ExtraDataRepository {
       await this.conn("extra_user_data").insert({
         user_id: data.userId,
         cpf: data.cpf,
-        cpfUf: data.cpfUf,
+        cpf_uf: data.cpfUf,
         birth_date: data.birthDate,
         phone: data.phone,
         trusted_contact_name: data.trustedName,
@@ -21,6 +21,7 @@ export class PostgresExtraDataRepository implements ExtraDataRepository {
         kid_children: data.kidChildren,
         housing: data.housing,
         income: data.income,
+        relation: data.relation,
         work: data.work,
         address_id: data.addressId
       })
@@ -36,7 +37,7 @@ export class PostgresExtraDataRepository implements ExtraDataRepository {
         .where({ user_id: userId })
         .first()
 
-      if (!extraDataDb)
+      if (!Object.keys(extraDataDb).length)
         return null;
 
       return ExtraDataBuilder.fromDB(extraDataDb);

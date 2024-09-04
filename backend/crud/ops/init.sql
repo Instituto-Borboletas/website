@@ -33,13 +33,13 @@ CREATE TABLE IF NOT EXISTS addresses (
   json JSONB NULL,
 
   is_from_location BOOLEAN NULL DEFAULT FALSE,
-  created_at TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
-  created_by UUID NULL -- the user id
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  created_by UUID NULL
 );
 
 CREATE TYPE work_type_enum as ENUM ('formal', 'unformal', 'unemployed');
 CREATE TYPE housing_type_enum as ENUM ('own', 'minha_casa_minha_vida', 'rent', 'given');
-CREATE TYPE relation_type_enum as ENUM ('married', 'stable_union', 'affair', 'ex');
+CREATE TYPE relation_type_enum as ENUM ('married', 'stable_union', 'affair', 'ex', 'not_apply');
 CREATE TABLE IF NOT EXISTS extra_user_data (
   user_id UUID PRIMARY KEY,
   cpf CHAR(11) NOT NULL,
@@ -53,10 +53,12 @@ CREATE TABLE IF NOT EXISTS extra_user_data (
   adult_children INT NULL DEFAULT 0,
   kid_children INT NULL DEFAULT 0,
   housing housing_type_enum NOT NULL,
+  relation relation_type_enum NOT NULL,
   work work_type_enum NOT NULL,
   income VARCHAR(50) NOT NULL,
 
   address_id UUID NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 
   FOREIGN KEY (user_id) REFERENCES users(id),
   FOREIGN KEY (address_id) REFERENCES addresses(id)

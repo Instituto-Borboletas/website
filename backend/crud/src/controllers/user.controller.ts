@@ -52,7 +52,9 @@ userController.get("/me", meMiddleware, async (req, res) => {
   // @ts-expect-error NOTE: we dont want userType to be sent to frontend
   delete req.user.userType;
 
-  return res.json(req.user)
+  const extraData = await req.extraDataRepository.get(req.user!.id)
+
+  return res.json({ ...req.user, extra: extraData })
 });
 
 userController.post("/logout", async (_, res) => {
@@ -123,6 +125,7 @@ function extraDataMiddlewareDTO(request: Request, response: Response, next: Next
   request.body.phone = phone = clearString(phone ?? "");
   request.body.cpf = cpf = clearString(cpf ?? "");
   request.body.trustedPhone = trustedPhone = clearString(trustedPhone ?? "");
+  request.body.address.zip = clearString(request.body.address.zip);
 
   const isValidBirthDate = !Number.isNaN(Date.parse(birthDate))
   if (!isValidBirthDate)
@@ -178,7 +181,9 @@ userController.put(
     } = req.body;
 
     try {
-      const addressRegister = new AddressBuilder(address).build()
+      const addressRegister = new AddressBuilder(address)
+        .setCreatedBy(req.user!.id)
+        .build()
 
       try {
         // FIX: something is wrong here, not working

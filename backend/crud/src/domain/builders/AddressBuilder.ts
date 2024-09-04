@@ -51,6 +51,11 @@ export class AddressBuilder {
     return this;
   }
 
+  setCreatedBy(createdBy: string) {
+    this.createdBy = createdBy;
+    return this;
+  }
+
   setDescription(description: string) {
     this.description = description;
     return this;

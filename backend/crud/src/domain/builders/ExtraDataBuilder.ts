@@ -128,6 +128,22 @@ export class ExtraDataBuilder {
   }
 
   static fromDB(data: Record<string, string>): UserExtraData {
-    throw new Error('not implemented', data);
+    return new UserExtraData({
+      userId: data.user_id,
+      cpf: data.cpf,
+      cpfUf: data.cpf_uf,
+      birthDate: new Date(data.birth_date),
+      phone: data.phone,
+      trustedName: data.trusted_contact_name,
+      trustedPhone: data.trusted_contact_phone,
+      adultChildren: Number(data.adult_children),
+      kidChildren: Number(data.kid_children),
+      housing: data.housing,
+      relation: data.relation,
+      work: data.work,
+      income: data.income,
+      addressId: data.address_id,
+      createdAt: Number(data.created_at)
+    })
   }
 }
