@@ -1,3 +1,6 @@
+// TODO: avoid multiples toasts on cep error (maybe increase debouce timeout)
+// TODO: load current address
+
 import { useState, useEffect } from "react";
 import { useForm, Controller } from "react-hook-form";
 import {
