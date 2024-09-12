@@ -94,7 +94,7 @@ export function ExtraDataDrawer({ isEditing = true, currentUserData, isOpen, onC
     setShowWarnMessage(false);
   }
 
-  const debouncedCepFetch = useDebounce(fetchCep, 500);
+  const debouncedCepFetch = useDebounce(fetchCep, 700);
 
   async function onSubmit(data) {
     // TODO: validate required fields

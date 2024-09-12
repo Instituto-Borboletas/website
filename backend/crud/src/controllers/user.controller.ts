@@ -63,29 +63,36 @@ userController.post("/logout", async (_, res) => {
 });
 
 userController.post("/login", async (req, res) => {
-  const { email, password } = req.body;
+  try {
 
-  if (!email || !password)
-    return res.status(400).json({ ok: false, message: "Missing required fields" });
+    const { email, password } = req.body;
 
-  const user = await req.userRepository.findByEmailAndPassword(email, password);
+    if (!email || !password)
+      return res.status(400).json({ ok: false, message: "Missing required fields" });
 
-  if (!user)
-    return res.status(401).json({ ok: false, message: "Invalid credentials" });
+    const user = await req.userRepository.findByEmailAndPassword(email, password);
 
-  const session = new Session(user.id);
-  await req.db("sessions").insert({ id: session.id, user_id: user.id });
+    if (!user)
+      return res.status(401).json({ ok: false, message: "Invalid credentials" });
 
-  if (user.userType === "internal")
+    const session = new Session(user.id);
+    await req.db("sessions").insert({ id: session.id, user_id: user.id });
+
+    if (user.userType === "internal")
+      // @ts-expect-error TODO: change frontend check for a permission ms? IDK
+      user.internal = true;
+
     // @ts-expect-error TODO: change frontend check for a permission ms? IDK
-    user.internal = true;
+    delete user.userType;
+    delete user.passwordHash;
 
-  // @ts-expect-error TODO: change frontend check for a permission ms? IDK
-  delete user.userType;
-  delete user.passwordHash;
+    res.cookie("token", session.id, { httpOnly: true, maxAge: 1000 * 60 * 60 * 12 });
 
-  res.cookie("token", session.id, { httpOnly: true, maxAge: 1000 * 60 * 60 * 12 });
-  res.json(user);
+    return res.json(user);
+  } catch (error) {
+    req.logger.child({ error }).error("Error on user login")
+    res.status(500).json({ ok: false, message: "Internal server error" })
+  }
 });
 
 userController.get("/internal/validate", authMiddleware("internal"), async (req, res) => {
@@ -225,7 +232,7 @@ userController.put(
         return res.status(412).json({ ok: false, key: "extraData", fail: true });
       }
 
-      return res.json({ ok: true})
+      return res.json({ ok: true })
     } catch (err) {
       if (err instanceof Error) {
         req.logger.child({ error: err }).error(err.message)
