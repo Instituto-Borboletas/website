@@ -1,57 +1,107 @@
+import { generateId } from "../utils";
+
 export type UserType = "internal" | "external"
 
 type UserProps = {
   id: string;
   name: string;
   email: string;
-  passwordHash: string;
+  passwordHash?: string;
   userType: UserType;
+  createdAt?: number
+  updatedAt?: number
 }
 
 export class User {
   id: string;
   name: string;
   email: string;
-  passwordHash: string;
+  passwordHash?: string;
   userType: UserType;
-  createtAt: number
+  createdAt: number
   updatedAt: number
 
-  constructor({ id, name, email, passwordHash, userType }: UserProps) {
+  constructor({ id, name, email, passwordHash, userType, createdAt, updatedAt }: UserProps) {
     this.id = id
     this.name = name;
     this.email = email;
     this.passwordHash = passwordHash;
     this.userType = userType;
-    this.createtAt = Date.now();
-    this.updatedAt = Date.now();
+    this.createdAt = createdAt ?? Date.now();
+    this.updatedAt = updatedAt ?? Date.now();
   }
 }
 
 type UserExtraDataProps = {
-  id: string;
+  id?: string;
   userId: string;
   cpf: string;
+  cpfUf: string;
   phone: string;
-  birth_date: Date;
+  trustedPhone: string;
+  trustedName: string;
+  housing: string;
+  relation: string;
+  work: string;
+  income: string;
+  adultChildren: number;
+  kidChildren: number;
+  birthDate: Date;
+  addressId: string;
+  createdAt: number;
 }
 
 export class UserExtraData {
   id: string;
   userId: string;
   cpf: string;
+  cpfUf: string;
   phone: string;
-  birth_date: Date;
-  createtAt: number
-  updatedAt: number
+  trustedPhone: string;
+  trustedName: string;
+  housing: string;
+  relation: string;
+  work: string;
+  income: string;
+  adultChildren: number;
+  kidChildren: number;
+  birthDate: Date;
+  addressId: string;
+  createdAt: number;
 
-  constructor({ id, userId, cpf, phone, birth_date }: UserExtraDataProps) {
-    this.id = id
-    this.userId = userId
+  constructor({
+    id,
+    userId,
+    cpf,
+    cpfUf,
+    phone,
+    trustedPhone,
+    trustedName,
+    housing,
+    work,
+    relation,
+    income,
+    adultChildren,
+    kidChildren,
+    birthDate,
+    createdAt,
+    addressId
+  }: UserExtraDataProps) {
+    this.id = id ?? generateId();
+    this.userId = userId;
     this.cpf = cpf;
+    this.cpfUf = cpfUf;
     this.phone = phone;
-    this.birth_date = birth_date;
-    this.createtAt = Date.now();
-    this.updatedAt = Date.now();
+    this.trustedPhone = trustedPhone;
+    this.trustedName = trustedName;
+    this.housing = housing;
+    this.work = work;
+    this.relation = relation;
+    this.income = income;
+    this.adultChildren = adultChildren;
+    this.kidChildren = kidChildren;
+    this.birthDate = birthDate;
+    this.createdAt = createdAt;
+    this.addressId = addressId;
   }
 }

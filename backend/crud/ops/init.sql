@@ -1,20 +1,6 @@
 
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
-CREATE TABLE IF NOT EXISTS addresses (
-  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-  cep CHAR(8) NOT NULL,
-  street VARCHAR(255) NOT NULL,
-  number INT NOT NULL,
-  complement VARCHAR(255) NULL,
-  neighborhood VARCHAR(255) NOT NULL,
-  city VARCHAR(255) NOT NULL,
-  state CHAR(2) NOT NULL,
-
-  is_from_location BOOLEAN NOT NULL DEFAULT FALSE,
-  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
-);
-
 -- usuarios + session
 CREATE TYPE user_type_enum as ENUM ('internal', 'external');
 CREATE TABLE IF NOT EXISTS users (
@@ -33,12 +19,46 @@ CREATE TABLE IF NOT EXISTS users (
 );
 CREATE INDEX users_email_password_hash_index ON users (email, password_hash);
 
-CREATE TABLE IF NOT EXISTS external_user_data (
+CREATE TABLE IF NOT EXISTS addresses (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  cep CHAR(8) NOT NULL,
+  street VARCHAR(100) NOT NULL,
+  number INT NOT NULL,
+  complement VARCHAR(100) NULL,
+  neighborhood VARCHAR(100) NOT NULL,
+  city VARCHAR(100) NOT NULL,
+  uf CHAR(2) NOT NULL,
+
+  description VARCHAR(1000) NULL,
+  json JSONB NULL,
+
+  is_from_location BOOLEAN NULL DEFAULT FALSE,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  created_by UUID NULL
+);
+
+CREATE TYPE work_type_enum as ENUM ('formal', 'unformal', 'unemployed');
+CREATE TYPE housing_type_enum as ENUM ('own', 'minha_casa_minha_vida', 'rent', 'given');
+CREATE TYPE relation_type_enum as ENUM ('married', 'stable_union', 'affair', 'ex', 'not_apply');
+CREATE TABLE IF NOT EXISTS extra_user_data (
   user_id UUID PRIMARY KEY,
   cpf CHAR(11) NOT NULL,
-  phone CHAR(11) NOT NULL,
+  cpf_uf VARCHAR(30) NOT NULL,
   birth_date DATE NOT NULL,
+  phone CHAR(11) NOT NULL,
+
+  trusted_contact_name VARCHAR(255) NULL,
+  trusted_contact_phone CHAR(11) NULL,
+
+  adult_children INT NULL DEFAULT 0,
+  kid_children INT NULL DEFAULT 0,
+  housing housing_type_enum NOT NULL,
+  relation relation_type_enum NOT NULL,
+  work work_type_enum NOT NULL,
+  income VARCHAR(50) NOT NULL,
+
   address_id UUID NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 
   FOREIGN KEY (user_id) REFERENCES users(id),
   FOREIGN KEY (address_id) REFERENCES addresses(id)

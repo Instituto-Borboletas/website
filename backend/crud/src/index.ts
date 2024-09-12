@@ -17,6 +17,8 @@ import { PostgresVolunteerRespository } from "./repositories/volunteer/postgres"
 import { PostgresVolunteerKindRespository } from "./repositories/volunteerKind/postgres";
 import { PostgresHelpRepository } from "./repositories/help/postgres";
 import { PostgresHelpKindRepository } from "./repositories/helpKind/postgres";
+import { PostgresAddressRepository } from "./repositories/address/postgres";
+import { PostgresExtraDataRepository } from "./repositories/user/extraData/postgres";
 
 const PORT = process.env.PORT ?? 3000;
 
@@ -28,6 +30,8 @@ const postgresVolunteerRespository = new PostgresVolunteerRespository(database, 
 const postgresVolunteerKindRespository = new PostgresVolunteerKindRespository(database, logger);
 const postgresHelpRequestRepository = new PostgresHelpRepository(database, logger);
 const postgresHelpKindRepository = new PostgresHelpKindRepository(database, logger);
+const postgresAddressRepository = new PostgresAddressRepository(database, logger);
+const postgressExtraDataRepository = new PostgresExtraDataRepository(database, logger);
 
 app.use(cors({
   origin: ["http://localhost:3000", "http://localhost:5173"],
@@ -47,6 +51,9 @@ app.use((req, _, next) => {
 
   req.helpRequestRepository = postgresHelpRequestRepository;
   req.helpKindRepository = postgresHelpKindRepository;
+
+  req.addressRepository = postgresAddressRepository;
+  req.extraDataRepository = postgressExtraDataRepository;
 
   req.db = database;
   req.logger = logger;

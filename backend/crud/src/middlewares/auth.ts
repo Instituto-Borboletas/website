@@ -1,6 +1,6 @@
 import type { Request, Response, NextFunction } from "express";
 
-import { UserType } from "../domain/User";
+import { User, UserType } from "../domain/User";
 const API_KEY = process.env.API_KEY;
 
 export async function internalAuthMiddleware(req: Request, res: Response, next: NextFunction) {
@@ -14,22 +14,30 @@ export async function internalAuthMiddleware(req: Request, res: Response, next: 
 
 export function authMiddleware(userType: UserType) {
   return async function(req: Request, res: Response, next: NextFunction) {
-    const token = req.remoteAddress?.includes("127.0.0.1")
-      ? (req.headers?.token ?? req.cookies?.token)
-      : req.cookies?.token;
+    let token = req.cookies?.token;
+
+    if (req.remoteAddress?.includes("127.0.0.1"))
+      token = req.headers?.token ?? req.cookies?.token;
 
     if (!token)
       return res.status(401).json({ ok: false, message: "Unauthorized" });
 
-    const user = await req.db("sessions")
+    const userDb = await req.db("sessions")
       .select("users.*")
       .join("users", "sessions.user_id", "users.id")
       .where("sessions.id", token)
       .where("users.user_type", userType)
       .first();
 
-    if (!user)
+    if (!userDb)
       return res.sendStatus(401);
+
+    const user = new User({
+      id: userDb.id,
+      userType: userDb.user_type,
+      email: userDb.email,
+      name: userDb.name,
+    })
 
     req.user = user;
 

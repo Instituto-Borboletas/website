@@ -1,4 +1,3 @@
-import React from 'react'
 import ReactDOM from 'react-dom/client'
 import {
   createBrowserRouter,
@@ -13,7 +12,7 @@ import './index.css'
 import App from './App.jsx'
 import ErrorPage from './pages/Error.jsx';
 import Helps from './pages/Helps.jsx';
-import User from './pages/User.jsx';
+import User from './pages/User';
 import Volunteer from './pages/Volunteer.jsx';
 import Internal from './pages/Internal.jsx';
 import Login from './pages/Login.jsx';

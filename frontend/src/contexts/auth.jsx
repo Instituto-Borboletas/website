@@ -22,7 +22,7 @@ export function AuthProvider({ children }) {
     } catch (err) {
       setUser(null);
 
-      if (err.response.status === 401) {
+      if (err.response?.status === 401) {
         return;
       }
 

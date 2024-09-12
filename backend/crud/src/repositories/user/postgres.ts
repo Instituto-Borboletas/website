@@ -2,6 +2,7 @@ import pino from "pino";
 import knex from "knex";
 import { User, UserType } from "../../domain/User";
 import { UserRespository } from "./interface";
+import { UserBuilder } from "../../domain/builders/UserBuilder";
 
 export class PostgresUserRepository implements UserRespository {
   // TODO: remove this depency of logger in here
@@ -39,11 +40,11 @@ export class PostgresUserRepository implements UserRespository {
 
   async findByEmail(email: string, userType: UserType): Promise<User | null> {
     try {
-      const user = await this.conn("users")
+      const userDb = await this.conn("users")
         .where({ email, user_type: userType })
         .first()
 
-      return user;
+      return UserBuilder.fromDB(userDb);
     } catch (error) {
       this.logger.child({ error }).error("Failed to find user by email");
       throw new Error("Failed to find user by findByEmailAndPassword");
@@ -52,9 +53,8 @@ export class PostgresUserRepository implements UserRespository {
 
   async findByEmailAndPassword(email: string, passwordHash: string): Promise<User | null> {
     try {
-      const user = await this.conn("users").where({ email, password_hash: passwordHash }).first();
-
-      return user;
+      const userDb = await this.conn("users").where({ email, password_hash: passwordHash }).first();
+      return UserBuilder.fromDB(userDb);
     } catch (error) {
       this.logger.child({ error }).error("Failed to find user by email and password");
       throw new Error("Failed to find user by findByEmailAndPassword");
@@ -64,9 +64,9 @@ export class PostgresUserRepository implements UserRespository {
   async findAll(): Promise<User[]> {
     try {
       const users = await this.conn("users")
-        .select("id", "name", "email", "user_type as userType", "created_at as createdAt", "updated_at as updatedAt")
+        .select("id", "name", "email", "user_type", "created_at", "updated_at")
 
-      return users;
+      return users.map(UserBuilder.fromDB)
     } catch (error) {
       this.logger.child({ error }).error("Failed to find all users");
       throw new Error("Failed to find all users");

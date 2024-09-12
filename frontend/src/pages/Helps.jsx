@@ -94,11 +94,11 @@ export default function Helps() {
 
         <Stack spacing={6} w="50%" className="mt-12">
           <FormControl isRequired>
-            <FormLabel>Nome</FormLabel>
+            <FormLabel>Tipo de ajuda</FormLabel>
             <Select
               value={kind}
               onChange={(e) => setKind(e.target.value)}
-              placeholder={isLoadingKinds ? "Carregando..." : "Selecione o tipo de ajuda"}
+              placeholder={isLoadingKinds ? "Carregando..." : "Selecione o tipo"}
               isRequired={true}
             >
               {options?.data.map((option) => (
