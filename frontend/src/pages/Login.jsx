@@ -19,7 +19,7 @@ import { useAuth } from "../contexts/auth";
 export default function LoginPage() {
   const navigate = useNavigate();
   const location = useLocation();
-  const { login, error: loginError } = useAuth();
+  const { login } = useAuth();
 
   const [errorMessage, setErrorMessage] = useState(null);
   const [view, setView] = useState("login");
@@ -67,7 +67,7 @@ export default function LoginPage() {
     }
 
     try {
-      const response = await crudApi.post("/users/external", {
+      await crudApi.post("/users/external", {
         name,
         email,
         password,
@@ -88,7 +88,6 @@ export default function LoginPage() {
       setIsLoading(false);
       setView("login");
       setName("");
-      setPhone("");
       setPassword("");
       setConfirmationPassword("");
 

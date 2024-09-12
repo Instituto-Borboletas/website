@@ -42,7 +42,7 @@ export default function Volunteer() {
 
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
-  // TODO: use same validations from user registration
+  // TODO: add phone validation
   const [phone, setPhone] = useState("");
   const [kind, setKind] = useState("");
 
@@ -65,7 +65,7 @@ export default function Volunteer() {
     </main>
   }
 
-  async function registerVolunteer () {
+  async function registerVolunteer() {
     setIsLoading(true);
     try {
       await crudApi.post("/volunteers", {
@@ -74,6 +74,7 @@ export default function Volunteer() {
         phone,
         kind,
       });
+
       toast({
         title: "Voluntariado registrado",
         description: "Seu voluntariado foi registrado com sucesso",
@@ -82,10 +83,18 @@ export default function Volunteer() {
         duration: 4000,
         isClosable: true,
       });
+
       navigate("/");
     } catch (err) {
       console.error(err);
-      // TODO: handle if message is present on error
+      toast({
+        title: "Erro ao registrar voluntariado",
+        description: "Ocorreu um erro ao registrar seu voluntariado, tente novamente mais tarde",
+        status: "error",
+        position: "top",
+        duration: 4000,
+        isClosable: true,
+      });
     } finally {
       setIsLoading(false);
     }
@@ -171,23 +180,23 @@ export default function Volunteer() {
             Registrar
           </Button>
 
-        <Drawer onClose={onClose} isOpen={isOpen} size="sm">
-          <DrawerOverlay />
-          <DrawerContent>
-            <DrawerCloseButton />
-            <DrawerHeader>Tipos de ajuda</DrawerHeader>
-            <DrawerBody>
-              <ul>
-                {options?.data.map((option) => (
-                  <li key={option.value} className="mt-4">
-                    <strong>{option.name}</strong>
-                    <p>{option.description}</p>
-                  </li>
-                ))}
-              </ul>
-            </DrawerBody>
-          </DrawerContent>
-        </Drawer>
+          <Drawer onClose={onClose} isOpen={isOpen} size="sm">
+            <DrawerOverlay />
+            <DrawerContent>
+              <DrawerCloseButton />
+              <DrawerHeader>Tipos de ajuda</DrawerHeader>
+              <DrawerBody>
+                <ul>
+                  {options?.data.map((option) => (
+                    <li key={option.value} className="mt-4">
+                      <strong>{option.name}</strong>
+                      <p>{option.description}</p>
+                    </li>
+                  ))}
+                </ul>
+              </DrawerBody>
+            </DrawerContent>
+          </Drawer>
         </Stack>
       </main>
 

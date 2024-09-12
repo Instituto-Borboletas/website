@@ -61,7 +61,14 @@ export default function Helps() {
       navigate("/");
     } catch (err) {
       console.error(err);
-      // TODO: handle if message is present on error
+      toast({
+        title: "Erro ao registrar pedido de ajuda",
+        description: "Ocorreu um erro ao registrar seu pedido de ajuda, tente novamente mais tarde",
+        status: "error",
+        position: "top",
+        duration: 4000,
+        isClosable: true,
+      });
     } finally {
       setIsLoading(false);
     }
