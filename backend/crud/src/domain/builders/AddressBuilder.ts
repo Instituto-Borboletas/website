@@ -74,6 +74,18 @@ export class AddressBuilder {
   }
 
   static fromDB (data: Record<string, string>): Address {
-    throw new Error('not implemented')
+    return new Address({
+      id: data.id,
+      street: data.street,
+      neighborhood: data.neighborhood,
+      city: data.city,
+      state: data.state,
+      zip: data.cep,
+      createdBy: data.created_by,
+      createdAt: Number(data.created_at),
+      description: data.description,
+      number: Number(data.number),
+      complement: data.complement,
+    });
   }
 }

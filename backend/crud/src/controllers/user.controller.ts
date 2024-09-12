@@ -53,8 +53,12 @@ userController.get("/me", meMiddleware, async (req, res) => {
   delete req.user.userType;
 
   const extraData = await req.extraDataRepository.get(req.user!.id)
+  if (!extraData)
+    return res.json(req.user);
 
-  return res.json({ ...req.user, extra: extraData })
+  const { extra, address } = extraData;
+
+  return res.json({ ...req.user, extra: { ...extra, address } })
 });
 
 userController.post("/logout", async (_, res) => {

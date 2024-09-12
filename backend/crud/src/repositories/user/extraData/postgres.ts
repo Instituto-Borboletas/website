@@ -3,6 +3,8 @@ import pino from 'pino';
 import { ExtraDataBuilder } from '../../../domain/builders/ExtraDataBuilder';
 import { UserExtraData } from '../../../domain/User';
 import { ExtraDataRepository } from './interface'
+import { Address } from '../../../domain/Address';
+import { AddressBuilder } from '../../../domain/builders/AddressBuilder';
 
 export class PostgresExtraDataRepository implements ExtraDataRepository {
   constructor(private readonly conn: knex.Knex, private readonly logger: pino.Logger) { }
@@ -31,16 +33,23 @@ export class PostgresExtraDataRepository implements ExtraDataRepository {
     }
   }
 
-  async get(userId: string): Promise<UserExtraData | null> {
+  async get(userId: string): Promise<{ extra: UserExtraData, address: Address } | null> {
     try {
       const extraDataDb = await this.conn("extra_user_data")
         .where({ user_id: userId })
         .first();
 
-      if (!Object.keys(extraDataDb ?? {}).length)
+      if (!(Object.keys(extraDataDb ?? {}).length))
         return null;
 
-      return ExtraDataBuilder.fromDB(extraDataDb);
+      const addressFromDb = await this.conn("addresses")
+        .where({ id: extraDataDb.address_id })
+        .first();
+
+      return {
+        extra: ExtraDataBuilder.fromDB(extraDataDb),
+        address: AddressBuilder.fromDB(addressFromDb)
+      }
     } catch (error) {
       this.logger.child({ error, userId }).error("Failed to retrieve user extra data");
       throw new Error("Failed to retrieve user extra data");
