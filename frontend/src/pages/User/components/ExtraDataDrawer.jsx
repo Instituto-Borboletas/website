@@ -1,6 +1,3 @@
-// TODO: avoid multiples toasts on cep error (maybe increase debouce timeout)
-// TODO: load current address
-
 import { useState, useEffect } from "react";
 import { useForm, Controller } from "react-hook-form";
 import {
@@ -69,11 +66,15 @@ export function ExtraDataDrawer({ isEditing = true, currentUserData, isOpen, onC
     const result = await cepFetchWithCache(cep)
 
     if (result.erro) {
+      if (toast.isActive("cep-error")) {
+        toast.close("cep-error")
+      }
+
       toast({
-        title: "Nao indentificamos esse CEP",
-        description: "Nao consiguimos preencher os dados de endereco",
-        status: "warning",
-        position: "top-right",
+        id: "cep-error",
+        title: "CEP inválido",
+        description: "O CEP informado não é válido, por favor, verifique o CEP informado",
+        status: "error",
         duration: 5000,
         isClosable: true,
       });
