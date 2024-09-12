@@ -19,27 +19,17 @@ import {
   useToast
 } from "@chakra-ui/react"
 import InputMask from "react-input-mask"
+import axios from "axios";
 
 import { useDebounce } from "../../../hooks/debounce";
-import axios from "axios";
+import { LocalStorageCache } from "../../../utils/local-storage-cache";
 
 const PHONE_MASK = "(99) 9 9999-9999"
 const DEFAULT_DATA_VALUE = { extra: { address: { zip: "" } } }
 
-// TODO: move this cache to local storage or something like that
-const cepCache = {};
-async function cepFetchWithCache(cep) {
-  const currentCepCache = cepCache[cep]
-  if (currentCepCache)
-    return currentCepCache
-
-  const { data: result } = await axios.get(`https://viacep.com.br/ws/${cep}/json/`);
-  cepCache[cep] = result;
-
-  return result
-}
 export function ExtraDataDrawer({ isEditing = true, currentUserData, isOpen, onClose, onConfirm }) {
   const toast = useToast();
+  const cepCache = new LocalStorageCache("cepCache");
 
   const { register, handleSubmit, setValue, watch, control, formState: { errors } } = useForm({
     defaultValues: DEFAULT_DATA_VALUE,
@@ -56,6 +46,7 @@ export function ExtraDataDrawer({ isEditing = true, currentUserData, isOpen, onC
     setValue("extra.hasAdultChildren", value)
     setValue("extra.adultChildren", value ? value : 0)
   }
+
   function handleHasKidChildrenChange(event) {
     const { checked: value } = event.target
     setValue("extra.hasKidChildren", value)
@@ -63,31 +54,38 @@ export function ExtraDataDrawer({ isEditing = true, currentUserData, isOpen, onC
   }
 
   async function fetchCep(cep) {
-    const result = await cepFetchWithCache(cep)
+    let existingCache = cepCache.get(cep)
 
-    if (result.erro) {
-      if (toast.isActive("cep-error")) {
-        toast.close("cep-error")
+    if (!existingCache) {
+      const { data: result } = await axios.get(`https://viacep.com.br/ws/${cep}/json/`);
+
+      if (result.erro) {
+        if (toast.isActive("cep-error")) {
+          toast.close("cep-error")
+        }
+
+        toast({
+          id: "cep-error",
+          title: "CEP inválido",
+          description: "O CEP informado não é válido, por favor, verifique o CEP informado",
+          status: "error",
+          duration: 5000,
+          isClosable: true,
+        });
+
+        return
       }
 
-      toast({
-        id: "cep-error",
-        title: "CEP inválido",
-        description: "O CEP informado não é válido, por favor, verifique o CEP informado",
-        status: "error",
-        duration: 5000,
-        isClosable: true,
-      });
-
-      return
+      existingCache = result;
+      cepCache.set(cep, existingCache);
     }
 
-    setValue("extra.address.city", result.localidade);
-    setValue("extra.address.street", result.logradouro);
-    setValue("extra.address.neighborhood", result.bairro);
-    setValue("extra.address.state", result.uf);
+    setValue("extra.address.city", existingCache.localidade);
+    setValue("extra.address.street", existingCache.logradouro);
+    setValue("extra.address.neighborhood", existingCache.bairro);
+    setValue("extra.address.state", existingCache.uf);
 
-    if (result.localidade !== "Jaraguá do Sul") {
+    if (existingCache.localidade !== "Jaraguá do Sul") {
       setShowWarnMessage(true);
       return
     }
@@ -100,16 +98,18 @@ export function ExtraDataDrawer({ isEditing = true, currentUserData, isOpen, onC
   async function onSubmit(data) {
     // TODO: validate required fields
 
-    console.log('data', data)
     const error = await onConfirm(data);
     if (error) {
       if ("key" in error) {
         const { key } = error
-        // TODO handle key error
+        if (key in errors) {
+          errors[key].message = error.message
+        } else {
+          setErrorMessage(error.message)
+        }
       } else if ("message" in error) {
-        setErrorMessage(error.messagek)
+        setErrorMessage(error.message)
       } else {
-        // TODO: generic message here
         setErrorMessage("Ocorreu um erro ao tentar cadastrar seus novos dados cadastrais, tente novamente mais tarde");
       }
 
@@ -148,6 +148,14 @@ export function ExtraDataDrawer({ isEditing = true, currentUserData, isOpen, onC
       debouncedCepFetch(cep);
     }
   }, [watch('extra.address.zip'), debouncedCepFetch, watch]);
+
+  useEffect(() => {
+    cepCache.load();
+
+    return () => {
+      cepCache.store();
+    }
+  }, [cepCache]);
 
   return (
     <>
