@@ -35,9 +35,9 @@ export class PostgresExtraDataRepository implements ExtraDataRepository {
     try {
       const extraDataDb = await this.conn("extra_user_data")
         .where({ user_id: userId })
-        .first()
+        .first();
 
-      if (!Object.keys(extraDataDb).length)
+      if (!Object.keys(extraDataDb ?? {}).length)
         return null;
 
       return ExtraDataBuilder.fromDB(extraDataDb);
