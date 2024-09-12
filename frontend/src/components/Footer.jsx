@@ -5,9 +5,10 @@ export function Footer () {
         <h2 className="text-2xl font-bold">Contatos</h2>
 
         <ul className="flex space-x-4 py-4">
-          <li> <a href="mailto:" className="underline">Email</a> </li>
-          <li> <a href="tel:" className="underline">Telefone</a> </li>
-          <li> <a href="TODO: add insta aq" className="underline">Instagram</a> </li>
+          { /* TODO: adicionar email e telefone de contato */}
+          <li> <a target="_blank" href="mailto:" className="underline">Email</a> </li>
+          <li> <a target="_blank" href="tel:" className="underline">Telefone</a> </li>
+          <li> <a target="_blank" href="https://www.instagram.com/instituto.borboleta/" className="underline">Instagram</a> </li>
         </ul>
 
         <p>&copy; 2024 Instituto Borboletas. Todos os direitos reservados.</p>
