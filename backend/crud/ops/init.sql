@@ -128,6 +128,30 @@ CREATE TABLE IF NOT EXISTS helps (
   FOREIGN KEY (created_by) REFERENCES users(id)
 );
 
+CREATE TABLE IF NOT EXISTS occurrences (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  description TEXT NOT NULL,
+
+  help_id UUID NOT NULL,
+  created_by UUID NOT NULL,
+
+  FOREIGN KEY (created_by) REFERENCES users(id),
+  FOREIGN KEY (help_id) REFERENCES helps(id)
+);
+
+CREATE TYPE media_type_enum as ENUM ('image', 'video', 'document');
+CREATE TABLE IF NOT EXISTS occurrences_attachment (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  media_name TEXT NOT NULL,
+  media_url TEXT NOT NULL,
+  media_type media_type_enum NOT NULL,
+  occurrence_id UUID NOT NULL,
+  created_by UUID NOT NULL,
+
+  FOREIGN KEY (created_by) REFERENCES users(id),
+  FOREIGN KEY (occurrence_id) REFERENCES occurrences(id)
+);
+
 -- TODO: REMOVE ON PROD ENV
 -- TEST DATA
 INSERT INTO users (name, email, user_type, password_hash)
