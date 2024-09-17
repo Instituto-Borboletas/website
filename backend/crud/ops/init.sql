@@ -128,6 +128,23 @@ CREATE TABLE IF NOT EXISTS helps (
   FOREIGN KEY (created_by) REFERENCES users(id)
 );
 
+CREATE TABLE IF NOT EXISTS events (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  description TEXT NOT NULL,
+  image_url TEXT NULL,
+  location TEXT NOT NULL,
+
+  init TIMESTAMP NOT NULL,
+  end TIMESTAMP NOT NULL,
+
+  json JSONB NULL,
+
+  created_by UUID NOT NULL,
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+  FOREIGN KEY (created_by) REFERENCES users(id)
+);
+
 -- TODO: REMOVE ON PROD ENV
 -- TEST DATA
 INSERT INTO users (name, email, user_type, password_hash)
