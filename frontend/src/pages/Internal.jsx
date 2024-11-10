@@ -90,23 +90,10 @@ export default function Internal () {
           </nav>
 
           <div className="w-full mt-auto p-5">
-            <nav className="pb-2">
-              <ul className="underline">
-                <li className="text-lg">
-                  <a
-                    onClick={changeSelectedView("configuracoes")}
-                    className="text-lg"
-                  >
-                    Configurações
-                  </a>
-                </li>
-              </ul>
-            </nav>
-
-            <Button colorScheme="red" className="w-2/3" onClick={logout}>
+            <Button colorScheme="blue" className="w-auto" onClick={logout}>
               <Icon as={BiLogOut} />
               <span className="pl-2">
-                Sair
+                Voltar
               </span>
             </Button>
           </div>
