@@ -1,55 +1,69 @@
 import { Link, useLocation } from "react-router-dom"
 
-function NavBar ({ isHomeLocation }) {
-  if (isHomeLocation) {
-    return (
-      <nav className="font-bold">
-        <ul className="flex space-x-4">
-          <li> <a href="#quem-somos">Quem somos</a> </li>
+import {
+  Menu,
+  MenuButton,
+  MenuList,
+  MenuItem,
+  Button,
+  Portal
+} from '@chakra-ui/react'
+import { FaBars } from "react-icons/fa"
 
-          <li> <a href="#preciso-de-ajuda">Preciso de ajuda</a> </li>
+export function Header() {
+  const { pathname } = useLocation()
 
-          <li> <a href="#seja-voluntario">Seja voluntário</a> </li>
+  function goToTop() { window.scrollTo({ top: 0, behavior: "smooth" }) }
 
-          <li>
-            <Link to="/meus-dados">Meus dados</Link>
-          </li>
+  return (
+    <header className="bg-primary flex flex-row items-center justify-between p-4 md:py-6 relative md:sticky md:top-0 md:z-50">
+      {
+        pathname === "/"
+        ? (
+          <a onClick={goToTop} className="text-2xl font-bold text-white">
+            <span className="block md:hidden">Borboletas</span>
+            <span className="hidden md:block">Instituto Borboletas</span>
+          </a>
+        )
+        : (
+          <Link to="/" className="text-2xl font-bold text-white">
+            <span className="block md:hidden">Borboletas</span>
+            <span className="hidden md:block">Instituto Borboletas</span>
+          </Link>
+        )
+      }
+
+      <div className="lg:hidden">
+        <Menu
+          closeOnSelect={true}
+          autoSelect={false}
+          placement="bottom-end"
+          popperProps={{ strategy: "fixed" }}
+        >
+          <MenuButton
+            color="white"
+            variant="transparent"
+            as={Button}
+          >
+            <FaBars />
+          </MenuButton>
+          <Portal>
+            <MenuList>
+              <MenuItem><Link to="/pedir-ajuda">Pedir ajuda</Link></MenuItem>
+              <MenuItem><Link to="/seja-voluntario">Seja voluntário</Link></MenuItem>
+              <MenuItem><Link to="/meus-dados">Meus dados</Link></MenuItem>
+            </MenuList>
+          </Portal>
+        </Menu>
+      </div>
+
+      <nav className="hidden lg:block md:w-1/5 text-white font-bold text-md">
+        <ul className="list-none flex flex-row justify-around gap-4 text-center">
+          <li><Link to="/pedir-ajuda">Pedir ajuda</Link></li>
+          <li><Link to="/seja-voluntario">Seja voluntário</Link></li>
+          <li><Link to="/meus-dados">Meus dados</Link></li>
         </ul>
       </nav>
-    )
-  }
-
-  return (
-    <nav className="font-bold">
-      <ul className="flex space-x-4">
-        <li>
-          <Link to="/pedir-ajuda">Preciso de ajuda</Link>
-        </li>
-
-        <li>
-          <Link to="/seja-voluntario">Seja voluntário</Link>
-        </li>
-
-        <li>
-          <Link to="/meus-dados">Meus dados</Link>
-        </li>
-      </ul>
-    </nav>
-  )
-}
-
-
-export function Header () {
-  const { pathname } = useLocation();
-
-  return (
-    <header className="bg-primary text-gray-100">
-      <div className="flex justify-between w-5/6 mx-auto py-8">
-        <h1 className="text-2xl font-bold">
-          <Link to="/">Intituto Borboletas</Link>
-        </h1>
-        <NavBar isHomeLocation={pathname === "/"} />
-      </div>
     </header>
   )
 }
