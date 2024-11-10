@@ -60,40 +60,38 @@ function App() {
         )
       }
 
-      <main className="py-6">
-        <section className="container w-5/6 mx-auto">
+      <main className="py-20">
+        <section className="container w-full sm:w-5/6 mx-auto">
           <section id="quem-somos" className="flex flex-col items-center text-center">
-            <h1 className="font-bold">Sobre Nós</h1>
-            <p className="w-3/5 text-md">
+            <h1 className="font-bold text-md lg:text-xl xl:text-2xl">Sobre Nós</h1>
+            <p className="w-full sm:w-3/5 text-sm sm:text-md lg:text-lg xl:text-xl">
               O Instituto Borboletas é uma organização sem fins lucrativos que tem como objetivo ajudar pessoas vitimas de violência domestica.
             </p>
           </section>
 
-          <section id="preciso-de-ajuda" className="flex w-4/5 mx-auto py-10">
+          <section id="preciso-de-ajuda" className="flex sm:w-4/5 mx-auto py-10 xl:py-4">
             <div className="w-1/2 flex justify-center">
-              <img src="https://via.placeholder.com/250" alt="Imagem de uma pessoa pedindo ajuda" />
+              <img src="/public/volunteer.svg" alt="Imagem de uma pessoa pedindo ajuda" className="w-[250px] h-[200px] xl:h-[350px] xl:w-[320px]" />
             </div>
 
-            <div className="w-1/2 flex flex-col text-center justify-center">
-              <h2 className="font-bold">Preciso de ajuda</h2>
+            <div className="w-1/2 xl:w-2/5 flex flex-col text-center justify-center">
+              <h2 className="font-bold text-md lg:text-xl xl:text-2xl">Preciso de ajuda</h2>
+              <p className="text-sm sm:text-md lg:text-lg xl:text-xl">Se você é uma vitima de violência domestica, entre em contato conosco para que possamos te ajudar.</p>
 
-              <p>Se você é uma vitima de violência domestica, entre em contato conosco para que possamos te ajudar.</p>
-
-              <Link to="/pedir-ajuda" className="bg-primary text-white py-2 px-4 mt-4 rounded-lg w-1/3 mx-auto">Saiba mais</Link>
+              <Link to="/pedir-ajuda" className="bg-primary text-white py-2 px-4 mt-4 rounded-lg xl:w-1/3 xl:text-xl mx-auto">Saiba mais</Link>
             </div>
           </section>
 
-          <section id="seja-voluntario" className="flex flex-row-reverse w-4/5 mx-auto py-10">
+          <section id="seja-voluntario" className="flex flex-row-reverse sm:w-4/5 mx-auto py-10 xl:py-4">
             <div className="w-1/2 flex justify-center">
-              <img src="https://via.placeholder.com/250" alt="Imagem de uma pessoa pedindo ajuda" />
+              <img src="/public/help.svg" alt="Imagem de uma pessoa pedindo ajuda" className="w-[250px] h-[200px] xl:h-[350px] xl:w-[320px]" />
             </div>
 
-            <div className="w-1/2 flex flex-col text-center justify-center">
-              <h2 className="font-bold">Seja voluntário</h2>
+            <div className="w-1/2 xl:w-2/5 flex flex-col text-center justify-center">
+              <h2 className="font-bold text-md lg:text-xl xl:text-2xl">Seja voluntário</h2>
+              <p className="text-sm sm:text-md lg:text-lg xl:text-xl">Se você deseja ajudar as pessoas vitimas de violência domestica, torne-se um voluntario do Instituto Borboletas. </p>
 
-              <p>Se você deseja ajudar as pessoas vitimas de violência domestica, torne-se um voluntario do Instituto Borboletas. </p>
-
-              <Link to="/seja-voluntario" className="bg-primary text-white py-2 px-4 mt-4 rounded-lg w-1/3 mx-auto">Saiba mais</Link>
+              <Link to="/seja-voluntario" className="bg-primary text-white py-2 px-4 mt-4 rounded-lg xl:w-1/3 xl:text-xl mx-auto">Saiba mais</Link>
             </div>
           </section>
 
