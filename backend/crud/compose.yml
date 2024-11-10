@@ -6,8 +6,8 @@ services:
     volumes:
       - ./ops/init.sql:/docker-entrypoint-initdb.d/init.sql
     environment:
-      - POSTGRES_PASSWORD=crudserverpassword
-      - POSTGRES_USER=crudserver
+      - POSTGRES_PASSWORD=postgrespass
+      - POSTGRES_USER=postgres
       - POSTGRES_DB=borboletas_crud
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres"]
