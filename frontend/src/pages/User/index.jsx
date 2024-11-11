@@ -1,11 +1,7 @@
-import { useEffect, useCallback } from "react";
+import { useEffect } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import {
-  Stack,
-  Text,
   Spinner,
-  InputGroup,
-  Input,
   Button,
 } from "@chakra-ui/react"
 
@@ -73,13 +69,21 @@ export default function User() {
     <>
       <Header />
 
-      <main className="flex p-5 w-5/6">
+      <main className="container p-5 flex w-full md:w-5/6">
         <header className="flex items-center justify-between">
-          <h1 className="font-bold text-xl">
-            Olá, {user?.name}!
-          </h1>
+          <div className="font-bold text-xl self-start">
+            <div className="relative size-28 flex items-center justify-center">
+              <img
+                className="size-full"
+                src="/public/profile.png"
+              />
+            </div>
+            <h1>
+              Olá, {user?.name}!
+            </h1>
+          </div>
 
-          <nav className="flex space-x-2">
+          <nav className="flex flex-col md:flex-row gap-2">
             {
               user?.internal && (
               <Button>
@@ -95,7 +99,7 @@ export default function User() {
 
             <Button
               onClick={logout}
-              colorScheme="red" className="bg-primary text-white py-2 px-4 rounded-lg text-center"
+              colorScheme="red" className="bg-primary text-white md:py-2 md:px-4 rounded-lg text-center"
             >
               Sair
             </Button>
