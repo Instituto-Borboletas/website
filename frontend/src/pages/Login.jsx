@@ -5,10 +5,7 @@ import {
   FormLabel,
   FormErrorMessage,
   Input,
-  InputGroup,
-  InputLeftAddon,
   Button,
-  FormHelperText,
   useToast,
 } from "@chakra-ui/react"
 
@@ -138,11 +135,11 @@ export default function LoginPage() {
   if (view === "login") {
     return (
       <main className="flex flex-row w-full">
-        <div className="w-1/2 h-screen bg-zinc-100 flex items-center justify-center">
+        <div className="w-full md:w-1/2 h-screen bg-zinc-100 flex items-center justify-center">
           <form className="w-3/4 bg-white px-4 py-8 rounded" onSubmit={handleLogin}>
             {
               errorMessage && (
-                <div className="bg-orange-200 text-red-800 p-2 mb-4 rounded">
+                <div className="bg-red-200 text-red-800 p-2 mb-4 rounded">
                   {errorMessage}
                 </div>
               )
@@ -184,13 +181,17 @@ export default function LoginPage() {
             </Link>
           </form>
         </div>
+        <img
+          className="hidden md:block w-1/2 object-cover"
+          src="/public/butterflies.jpg"
+        />
       </main>
     )
   }
 
   return (
     <main className="flex flex-row-reverse w-full">
-      <div className="w-1/2 h-screen bg-zinc-100 flex items-center justify-center">
+      <div className="w-full md:w-1/2 h-screen bg-zinc-100 flex items-center justify-center">
         <form className="w-3/4 bg-white px-4 py-8 rounded" onSubmit={handleUserRegister}>
           {
             errorMessage && (
@@ -252,6 +253,10 @@ export default function LoginPage() {
           </div>
         </form>
       </div>
+      <img
+        className="hidden md:block w-1/2 object-cover"
+        src="/public/butterflies.jpg"
+      />
     </main>
   )
 }
