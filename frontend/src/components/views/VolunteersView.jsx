@@ -57,7 +57,7 @@ export function VolunteersView() {
   }
 
   return (
-    <section className="flex flex-col p-10 h-full">
+    <section className="flex flex-col p-2 md:p-10 h-full">
       <h1 className="text-3xl font-bold">Voluntários</h1>
 
       <header className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-2 mt-10">
