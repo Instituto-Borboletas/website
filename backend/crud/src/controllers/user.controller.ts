@@ -53,12 +53,15 @@ userController.get("/me", meMiddleware, async (req, res) => {
   delete req.user.userType;
 
   const extraData = await req.extraDataRepository.get(req.user!.id)
-  if (!extraData)
-    return res.json(req.user);
 
-  const { extra, address } = extraData;
+  const { extra, address } = extraData ?? { extra: {}, address: {} };
 
-  return res.json({ ...req.user, extra: { ...extra, address } })
+  const helpsPromise = req.db("helps").where({ created_by: req.user!.id })
+  const volunteersPromise = req.db("volunteers").where({ created_by: req.user!.id })
+
+  const [helps, volunteers] = await Promise.all([helpsPromise, volunteersPromise])
+
+  return res.json({ ...req.user, extra: { ...extra, address }, helps, volunteers })
 });
 
 userController.post("/logout", async (_, res) => {

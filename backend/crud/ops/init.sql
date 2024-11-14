@@ -131,6 +131,6 @@ CREATE TABLE IF NOT EXISTS helps (
 -- TODO: REMOVE ON PROD ENV
 -- TEST DATA
 INSERT INTO users (name, email, user_type, password_hash)
-VALUES ('Gabriel Rocha', 'rocha@gmail.com', 'internal', '79809644a830ef92424a66227252b87bbdfb633a9dab18ba450c1b8d35665f20');
+VALUES ('Gabriel Rocha', 'rocha@gmail.com', 'internal', '79809644a830ef92424a66227252b87bbdfb633a9dab18ba450c1b8d35665f20'); -- senha: minhasenha
 -- REMOVE UNTIL HERE
 

@@ -180,29 +180,21 @@ function HelpKindsTable({ helpKinds }) {
     <table className="min-w-full rounded border border-1 border-zinc-200">
       <thead className="bg-zinc-200 text-primary block w-full">
         <tr className="flex w-full">
-          <th className="border w-1/4 text-lg">Tipo</th>
-          <th className="border w-1/4 text-lg">Descrição</th>
-          <th className="border w-1/4 text-lg">Registro</th>
-          <th className="border w-1/4 text-lg">Ações</th>
+          <th className="border w-1/3 text-lg">Tipo</th>
+          <th className="border w-1/3 text-lg">Descrição</th>
+          <th className="border w-1/3 text-lg">Registro</th>
         </tr>
       </thead>
       <tbody className="bg-white text-center max-h-[36rem] overflow-y-auto block w-full">
         {
           helpKinds?.map((kind) => (
             <tr key={kind.id} className="flex w-full">
-              <td className="border p-2 w-1/4 text-lg flex items-center justify-center">{ kind.name }</td>
-              <td className="border p-2 w-1/4 text-md flex items-center justify-center">{ kind.description }</td>
-              <td className="border p-2 w-1/4 text-lg flex items-center justify-center">
+              <td className="border p-2 w-1/3 text-lg flex items-center justify-center">{ kind.name }</td>
+              <td className="border p-2 w-1/3 text-md flex items-center justify-center">{ kind.description }</td>
+              <td className="border p-2 w-1/3 text-lg flex items-center justify-center">
                 <div className="flex flex-col">
-                  <span className="text-lg">{ kind.createdBy }</span>
-                  <span className="text-md">{new Date(kind.createdAt).toLocaleDateString('pt-br')}</span>
-                </div>
-              </td>
-              <td className="border p-2 w-1/4 text-lg flex items-center justify-center">
-                <div className="flex">
-                  <a href="#" className="text-primary">Editar</a>
-                  <span className="px-2">|</span>
-                  <a href="#" className="text-red-500">Excluir</a>
+                  <span className="text-lg">{ kind.username }</span>
+                  <span className="text-md">{new Date(kind.created_at).toLocaleDateString('pt-br')}</span>
                 </div>
               </td>
             </tr>

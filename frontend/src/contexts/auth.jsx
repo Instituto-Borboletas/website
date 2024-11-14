@@ -40,10 +40,8 @@ export function AuthProvider({ children }) {
       const response = await crudApi.post(`/users/login`, { email, password });
       setUser(response.data);
     } catch (err) {
-      if (err.response.status === 401) {
-        throw new Error('Email ou senha inválidos');
-      }
-      setError(err.response.data.message);
+      console.error("error on login", err);
+      throw new Error('Email ou senha inválidos');
     } finally {
       setIsLoading(false);
     }

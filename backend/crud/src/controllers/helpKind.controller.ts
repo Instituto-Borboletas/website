@@ -28,8 +28,11 @@ helpKindController.post("/", authMiddleware("internal"), async (req, res) => {
 
 helpKindController.get("/", authMiddleware("internal"), async (req, res) => {
   try {
-    const helpKinds = await req.helpKindRepository.findAll();
-    return res.json(helpKinds);
+    const data = await req.db("helps_kind")
+      .join("users", "users.id", "helps_kind.created_by")
+      .select("helps_kind.*", "users.name as username");
+
+    return res.json(data);
   } catch (error) {
     req.logger.child({ error }).error("Error fetching help kinds");
     return res.status(500).json({ ok: false, message: "Internal server error" });
