@@ -183,7 +183,7 @@ export default function LoginPage() {
         </div>
         <img
           className="hidden md:block w-1/2 object-cover"
-          src="/public/butterflies.jpg"
+          src="/butterflies.jpg"
         />
       </main>
     )
@@ -255,7 +255,7 @@ export default function LoginPage() {
       </div>
       <img
         className="hidden md:block w-1/2 object-cover"
-        src="/public/butterflies.jpg"
+        src="/butterflies.jpg"
       />
     </main>
   )

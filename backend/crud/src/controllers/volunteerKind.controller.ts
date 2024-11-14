@@ -28,7 +28,11 @@ volunteerKindController.post("/", authMiddleware("internal"), async (req, res) =
 });
 
 volunteerKindController.get("/", authMiddleware("internal"), async (req, res) => {
-  const volunteerKinds = await req.volunteerKindRepository.findAll();
+  const volunteerKinds = await req.db("volunteers_kind")
+    .join("users", "volunteers_kind.created_by", "users.id")
+    .select("volunteers_kind.*", "users.name as created_by_name", "users.email as created_by")
+    .orderBy("volunteers_kind.created_at", "desc")
+    .select();
 
   res.json(volunteerKinds);
 });

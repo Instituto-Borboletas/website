@@ -71,7 +71,7 @@ function App() {
 
           <section id="preciso-de-ajuda" className="flex sm:w-4/5 mx-auto py-10 xl:py-4">
             <div className="w-1/2 flex justify-center">
-              <img src="/public/volunteer.svg" alt="Imagem de uma pessoa pedindo ajuda" className="w-[250px] h-[200px] xl:h-[350px] xl:w-[320px]" />
+              <img src="/volunteer.svg" alt="Imagem de uma pessoa pedindo ajuda" className="w-[250px] h-[200px] xl:h-[350px] xl:w-[320px]" />
             </div>
 
             <div className="w-1/2 xl:w-2/5 flex flex-col text-center justify-center">
@@ -84,7 +84,7 @@ function App() {
 
           <section id="seja-voluntario" className="flex flex-row-reverse sm:w-4/5 mx-auto py-10 xl:py-4">
             <div className="w-1/2 flex justify-center">
-              <img src="/public/help.svg" alt="Imagem de uma pessoa pedindo ajuda" className="w-[250px] h-[200px] xl:h-[350px] xl:w-[320px]" />
+              <img src="/help.svg" alt="Imagem de uma pessoa pedindo ajuda" className="w-[250px] h-[200px] xl:h-[350px] xl:w-[320px]" />
             </div>
 
             <div className="w-1/2 xl:w-2/5 flex flex-col text-center justify-center">

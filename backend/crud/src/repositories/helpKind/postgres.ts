@@ -39,6 +39,8 @@ export class PostgresHelpKindRepository implements HelpKindRepository {
         .where(options?.filterEnabled ? { enabled: true } : {})
         .select();
 
+      this.logger.info(helpKinds, "help kinds")
+
       return helpKinds.map((helpKind: any) => {
         return new HelpKindBuilder({
           id: helpKind.id,

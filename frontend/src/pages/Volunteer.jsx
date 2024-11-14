@@ -104,10 +104,9 @@ export default function Volunteer() {
     <>
       <Header />
 
-      <main className="py-10 flex items-center justify-center">
+      <main className="md:w-1/2 py-10 flex items-center justify-center">
         <h1 className="text-2xl font-bold">Seja voluntario</h1>
 
-        <Stack w="50%" spacing={6} className="mt-12">
           <FormControl isRequired>
             <FormLabel>Nome da sua instituicao ou local</FormLabel>
             <InputGroup className="flex flex-col">
@@ -120,7 +119,7 @@ export default function Volunteer() {
             </InputGroup>
           </FormControl>
 
-          <FormControl isRequired>
+          <FormControl isRequired className="mt-5">
             <FormLabel>Telefone para contato</FormLabel>
             <InputGroup>
               <InputLeftAddon>+55</InputLeftAddon>
@@ -134,7 +133,7 @@ export default function Volunteer() {
             </InputGroup>
           </FormControl>
 
-          <FormControl>
+          <FormControl className="mt-5">
             <FormLabel>Email para contato (opcional)</FormLabel>
             <InputGroup>
               <Input
@@ -147,7 +146,7 @@ export default function Volunteer() {
             <FormHelperText>Caso não informe, usaremos o email presente em seu cadastro</FormHelperText>
           </FormControl>
 
-          <FormControl isRequired>
+          <FormControl className="mt-5">
             <FormLabel>Tipo voluntariado</FormLabel>
             <Select
               value={kind}
@@ -172,6 +171,7 @@ export default function Volunteer() {
           </FormControl>
 
           <Button
+            className="mt-5 w-full"
             isDisabled={!name || !phone || !kind || isLoading}
             isLoading={isLoading}
             loadingText="Registrando..."
@@ -197,7 +197,6 @@ export default function Volunteer() {
               </DrawerBody>
             </DrawerContent>
           </Drawer>
-        </Stack>
       </main>
 
       <Footer />

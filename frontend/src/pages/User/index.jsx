@@ -30,7 +30,7 @@ export default function User() {
     }
   }
 
-  async function logout () {
+  async function logout() {
     await logUserOut()
     navigate("/login", {
       state: {
@@ -75,7 +75,7 @@ export default function User() {
             <div className="relative size-28 flex items-center justify-center">
               <img
                 className="size-full"
-                src="/public/profile.png"
+                src="/profile.png"
               />
             </div>
             <h1>
@@ -86,11 +86,11 @@ export default function User() {
           <nav className="flex flex-col md:flex-row gap-2">
             {
               user?.internal && (
-              <Button>
-                <Link to="/interno">
-                  Acesso interno
-                </Link>
-              </Button>
+                <Button>
+                  <Link to="/interno">
+                    Acesso interno
+                  </Link>
+                </Button>
               )
             }
             <Button onClick={openExtraDataModal}>
@@ -105,15 +105,84 @@ export default function User() {
             </Button>
           </nav>
         </header>
-        <div className="flex flex-col flex-1 items-center justify-center">
-          <section>
-            <h1>Pedidos de ajuda</h1>
-          </section>
 
-          <section>
-            <h1>Voluntariados</h1>
-          </section>
-        </div>
+        <section className="flex flex-col flex-1">
+          {user.helps?.length && (
+            <section className="container">
+              <div className="py-2">
+                <h1 className="font-bold">Pedidos de ajuda</h1>
+                <p className="text-sm text-muted-foreground">Lista dos seus pedidos de ajuda</p>
+              </div>
+              <div className="flex w-full">
+                <table className="min-w-full rounded border border-1 border-zinc-200">
+                  <thead className="bg-zinc-200 text-primary block w-full">
+                    <tr className="flex w-full">
+                      <th className="border w-1/3 text-lg">Tipo</th>
+                      <th className="border w-1/3 text-lg">Descrição</th>
+                      <th className="border w-1/3 text-lg">Registro</th>
+                    </tr>
+                  </thead>
+                  <tbody className="bg-white text-center max-h-[36rem] overflow-y-auto block w-full">
+                    {
+                      user.helps?.map((help) => (
+                        <tr key={help.id} className="flex w-full">
+                          <td className="border p-2 w-1/3 text-lg flex items-center justify-center">{help.name}</td>
+                          <td className="border p-2 w-1/3 text-lg flex items-center justify-center">{help.description}</td>
+                          <td className="border p-2 w-1/3 text-lg flex items-center justify-center">
+                            {/*
+                            <div className="flex flex-col">
+                              <span>{ kind.created_by_name }</span>
+                              <span>{ new Date(kind.created_at).toLocaleDateString('pt-br') }</span>
+                            </div>
+                            */}
+                          </td>
+                        </tr>
+                      ))
+                    }
+                  </tbody>
+                </table>
+              </div>
+            </section>
+          )}
+
+          {user.volunteers?.length && (
+            <section className="container">
+              <div className="py-2">
+                <h1 className="font-bold">Voluntariados</h1>
+                <p className="text-sm text-muted-foreground">Listas dos voluntariados que você ofereceu</p>
+              </div>
+              <div className="flex w-full">
+                <table className="min-w-full rounded border border-1 border-zinc-200">
+                  <thead className="bg-zinc-200 text-primary block w-full">
+                    <tr className="flex w-full">
+                      <th className="border w-1/3 text-lg">Tipo</th>
+                      <th className="border w-1/3 text-lg">Descrição</th>
+                      <th className="border w-1/3 text-lg">Registro</th>
+                    </tr>
+                  </thead>
+                  <tbody className="bg-white text-center max-h-[36rem] overflow-y-auto block w-full">
+                    {
+                      user.volunteers?.map((volunteer) => (
+                        <tr key={volunteer.id} className="flex w-full">
+                          <td className="border p-2 w-1/3 text-lg flex items-center justify-center">{volunteer.name}</td>
+                          <td className="border p-2 w-1/3 text-lg flex items-center justify-center">{volunteer.description}</td>
+                          <td className="border p-2 w-1/3 text-lg flex items-center justify-center">
+                            {/*
+                            <div className="flex flex-col">
+                              <span>{ kind.created_by_name }</span>
+                              <span>{ new Date(kind.created_at).toLocaleDateString('pt-br') }</span>
+                            </div>
+                            */}
+                          </td>
+                        </tr>
+                      ))
+                    }
+                  </tbody>
+                </table>
+              </div>
+            </section>
+          )}
+        </section>
 
         {
           showExtraDataModal && (

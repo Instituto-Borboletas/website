@@ -96,10 +96,9 @@ export default function Helps() {
     <>
       <Header />
 
-      <main className="py-10 flex items-center justify-center">
+      <main className="md:w-1/2 py-10 flex items-center justify-center">
         <h1 className="text-2xl font-bold">Pedir ajuda!</h1>
 
-        <Stack spacing={6} w="50%" className="mt-12">
           <FormControl isRequired>
             <FormLabel>Tipo de ajuda</FormLabel>
             <Select
@@ -123,7 +122,7 @@ export default function Helps() {
             </Button>
           </FormControl>
 
-          <FormControl isRequired>
+          <FormControl isRequired className="mt-5">
             <FormLabel>Detalhe o seu pedido de ajuda</FormLabel>
             <InputGroup className="flex flex-col">
               <Textarea
@@ -131,11 +130,13 @@ export default function Helps() {
                 onChange={(e) => setDescription(e.target.value)}
                 placeholder="Cortar o cabelo..."
                 isRequired={true}
+                className="resize-none"
               />
             </InputGroup>
           </FormControl>
 
           <Button
+            className="mt-5 w-full"
             isDisabled={!description || !kind || isLoading}
             isLoading={isLoading}
             loadingText="Registrando..."
@@ -143,7 +144,6 @@ export default function Helps() {
           >
             Registrar
           </Button>
-        </Stack>
 
         <Drawer onClose={onClose} isOpen={isOpen} size="sm">
           <DrawerOverlay />
