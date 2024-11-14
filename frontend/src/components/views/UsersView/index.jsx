@@ -137,7 +137,7 @@ export function UsersView() {
   }, [typeFilter, users, isUsersLoading]);
 
   return (
-    <section className="flex flex-col p-10 h-full">
+    <section className="flex flex-col p-2 md:p-10 h-full">
       <h1 className="text-3xl font-bold">Usuários</h1>
 
       <header className="flex flex-col">

@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { Button, Icon, Spinner } from "@chakra-ui/react";
-import { BiLogOut } from "react-icons/bi";
+import { BiLogOut, BiMenu } from "react-icons/bi";
 
 import { DashboardView } from "../components/views/DashboardView";
 import { UsersView } from "../components/views/UsersView/";
@@ -32,6 +32,7 @@ export default function Internal () {
   const { user, isLoading, logout } = useAuth();
 
   const [selectedView, setSelectedView] = useState("dashboard");
+  const [isSidebarVisible, setIsSidebarVisible] = useState(false);
 
   function changeSelectedView(view) {
     return () => {
@@ -39,6 +40,7 @@ export default function Internal () {
       const url = new URL(window.location.href);
       url.searchParams.set("pagina", view);
       window.history.pushState({}, "", url);
+      setIsSidebarVisible(false); // Hide sidebar after selecting a view
     }
   }
 
@@ -49,7 +51,6 @@ export default function Internal () {
       setSelectedView(view);
     }
   }, []);
-
 
   useEffect(() => {
     if (!user && !isLoading) {
@@ -71,7 +72,15 @@ export default function Internal () {
   return (
     <InternalProvider>
       <main className="flex flex-row w-full">
-        <aside className="w-1/6 h-screen flex flex-col p-5 pt-10 border-r-zinc-300 border-r-2">
+        <div className="md:hidden">
+          <Button
+            onClick={() => setIsSidebarVisible(!isSidebarVisible)}
+          >
+            <Icon as={BiMenu} />
+          </Button>
+        </div>
+
+        <aside className={`w-full md:w-1/6 h-screen flex flex-col p-5 pt-10 border-r-zinc-300 border-r-2 ${isSidebarVisible ? 'block' : 'hidden'} md:block fixed md:relative bg-white z-50 md:z-auto`}>
           <nav className="flex-1">
             <ul>
               {
@@ -92,6 +101,7 @@ export default function Internal () {
           <div className="w-full mt-auto p-5">
             <nav className="pb-2">
               <ul className="underline">
+            {/*
                 <li className="text-lg">
                   <a
                     onClick={changeSelectedView("configuracoes")}
@@ -99,6 +109,16 @@ export default function Internal () {
                   >
                     Configurações
                   </a>
+                </li>
+            */}
+
+                <li className="text-lg">
+                  <Link
+                    to="/"
+                    className="text-lg"
+                  >
+                    Inicio
+                  </Link>
                 </li>
               </ul>
             </nav>
@@ -112,7 +132,7 @@ export default function Internal () {
           </div>
         </aside>
 
-        <section className="border-l-1 border-zinc-800 w-5/6 text-black">
+        <section className="border-l-1 border-zinc-800 w-full md:w-5/6 text-black">
           <ViewWrapper view={selectedView} />
         </section>
       </main>

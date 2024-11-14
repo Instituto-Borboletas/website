@@ -107,7 +107,7 @@ export default function User() {
         </header>
 
         <section className="flex flex-col flex-1">
-          {user.helps?.length && (
+          {user.helps?.length > 0 && (
             <section className="container">
               <div className="py-2">
                 <h1 className="font-bold">Pedidos de ajuda</h1>
@@ -145,7 +145,7 @@ export default function User() {
             </section>
           )}
 
-          {user.volunteers?.length && (
+          {user.volunteers?.length > 0 && (
             <section className="container">
               <div className="py-2">
                 <h1 className="font-bold">Voluntariados</h1>
