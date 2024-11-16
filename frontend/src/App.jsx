@@ -74,11 +74,11 @@ function App() {
               <img src="/volunteer.svg" alt="Imagem de uma pessoa pedindo ajuda" className="w-[250px] h-[200px] xl:h-[350px] xl:w-[320px]" />
             </div>
 
-            <div className="w-1/2 xl:w-2/5 flex flex-col text-center justify-center">
+            <div className="w-1/2 lg:w-2/5 flex flex-col text-center justify-center">
               <h2 className="font-bold text-md lg:text-xl xl:text-2xl">Preciso de ajuda</h2>
               <p className="text-sm sm:text-md lg:text-lg xl:text-xl">Se você é uma vitima de violência domestica, entre em contato conosco para que possamos te ajudar.</p>
 
-              <Link to="/pedir-ajuda" className="bg-primary text-white py-2 px-4 mt-4 rounded-lg xl:w-1/3 xl:text-xl mx-auto">Saiba mais</Link>
+              <Link to="/pedir-ajuda" className="bg-primary text-white py-2 px-4 mt-4 rounded-lg xl:text-xl mx-auto">Saiba mais</Link>
             </div>
           </section>
 
@@ -91,7 +91,7 @@ function App() {
               <h2 className="font-bold text-md lg:text-xl xl:text-2xl">Seja voluntário</h2>
               <p className="text-sm sm:text-md lg:text-lg xl:text-xl">Se você deseja ajudar as pessoas vitimas de violência domestica, torne-se um voluntario do Instituto Borboletas. </p>
 
-              <Link to="/seja-voluntario" className="bg-primary text-white py-2 px-4 mt-4 rounded-lg xl:w-1/3 xl:text-xl mx-auto">Saiba mais</Link>
+              <Link to="/seja-voluntario" className="bg-primary text-white py-2 px-4 mt-4 rounded-lg xl:text-xl mx-auto">Saiba mais</Link>
             </div>
           </section>
 

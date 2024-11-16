@@ -137,11 +137,11 @@ export function UsersView() {
   }, [typeFilter, users, isUsersLoading]);
 
   return (
-    <section className="flex flex-col p-2 md:p-10 h-full">
+    <section className="flex flex-col p-4 lg:p-10 h-full">
       <h1 className="text-3xl font-bold">Usuários</h1>
 
       <header className="flex flex-col">
-        <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-2 mt-10">
+        <section className="grid grid-cols-1 lg:grid-cols-2 gap-2 mt-10">
           <div
             //  FIX: this is not the right way to render dynamic tailwind. use some lib that fixes it
             className={`bg-white p-5 rounded shadow-md cursor-pointer ${typeFilter === 'external' ? 'bg-zinc-200' : ''}`}
@@ -176,23 +176,23 @@ export function UsersView() {
           : (
             <table className="min-w-full rounded border border-1 border-zinc-200">
               <thead className="bg-zinc-200 text-primary block w-full">
-                <tr className="flex w-full">
-                  <th className="border w-1/4 text-lg">Nome</th>
-                  <th className="border w-1/4 text-lg">Email</th>
-                  <th className="border w-1/4 text-lg">Telefone</th>
-                  <th className="border w-1/4 text-lg">Tipo</th>
-                  <th className="border w-1/5 text-lg">Ações</th>
+                <tr className="flex w-full text-sm lg:text-lg">
+                  <th className="border w-1/4">Nome</th>
+                  <th className="border w-1/4">Email</th>
+                  <th className="border w-1/4">Telefone</th>
+                  <th className="border hidden lg:block w-1/4">Tipo</th>
+                  <th className="border w-1/4 lg:w-1/5">Ações</th>
                 </tr>
               </thead>
               <tbody className="bg-white text-center max-h-[36rem] overflow-y-auto block w-full">
                 {
                   userList.map((user) => (
-                    <tr key={user.id} className="flex w-full">
-                      <td className="border p-2 w-1/4 text-lg">{ user.name }</td>
-                      <td className="border p-2 w-1/4 text-lg">{ user.email }</td>
-                      <td className="border p-2 w-1/4 text-lg">{ user.phone ?? "Não informado" }</td>
-                      <td className="border p-2 w-1/4 text-lg">{ user.userType === "internal" ? "Interno" : "Externo" }</td>
-                      <td className="border p-2 w-1/5 text-lg">
+                    <tr key={user.id} className="flex w-full text-sm lg:text-lg">
+                      <td className="border p-2 w-1/4">{ user.name }</td>
+                      <td className="border p-2 w-1/4">{ user.email }</td>
+                      <td className="border p-2 w-1/4">{ user.phone ?? "Não informado" }</td>
+                      <td className="border p-2 w-1/4 hidden lg:block">{ user.userType === "internal" ? "Interno" : "Externo" }</td>
+                      <td className="border p-2 w-1/4 lg:w-1/5">
                         <Button
                           colorScheme="blue"
                           size="sm"
