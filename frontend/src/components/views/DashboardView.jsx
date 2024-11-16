@@ -19,13 +19,15 @@ export function DashboardView () {
       </header>
 
       <main className="w-full">
-        <section className="mt-10">
-          <h2 className="text-2xl font-bold">Últimos pedidos de ajuda</h2>
-        </section>
+        {/*
+          <section className="mt-10">
+            <h2 className="text-2xl font-bold">Últimos pedidos de ajuda</h2>
+          </section>
 
-        <section className="mt-80">
-          <h2 className="text-2xl font-bold">Mapeamento dos pedidos de ajuda</h2>
-        </section>
+          <section className="mt-80">
+            <h2 className="text-2xl font-bold">Mapeamento dos pedidos de ajuda</h2>
+          </section>
+        */}
       </main>
     </section>
   )

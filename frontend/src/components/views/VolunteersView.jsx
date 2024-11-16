@@ -57,7 +57,7 @@ export function VolunteersView() {
   }
 
   return (
-    <section className="flex flex-col p-2 md:p-10 h-full">
+    <section className="flex flex-col p-4 md:p-10 h-full">
       <h1 className="text-3xl font-bold">Voluntários</h1>
 
       <header className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-2 mt-10">
@@ -109,16 +109,18 @@ export function VolunteersView() {
       <footer className="mt-auto">
         <Button
           colorScheme="green"
-          className="w-1/4"
+          className="w-1/3 sm:w-1/4"
           onClick={onOpen}
         >
-          <Icon as={BiPlus} />
-          <span className="pl-2">Criar um tipo de voluntariado!</span>
+          <span className="hidden md:block">
+            <Icon as={BiPlus}/>
+          </span>
+          <span className="md:pl-2">Criar um tipo</span>
         </Button>
 
         <Button
           colorScheme="blue"
-          className="w-1/5 ml-5"
+          className="w-1/2 sm:w-1/3 ml-5"
           onClick={reloadData}
         >
           { !isReloadLoading ? (<Icon as={TbReload} />) : null }
@@ -191,7 +193,7 @@ function VolunteerKindsTable({ kinds }) {
               <td className="border p-2 w-1/3 text-lg flex items-center justify-center">
                 <div className="flex flex-col">
                   <span>{ kind.created_by_name }</span>
-                  <span>{ new Date(kind.created_at).toLocaleDateString('pt-br') }</span>
+                  <span>{ new Date(kind.createdAt ?? kind.created_at).toLocaleDateString('pt-br') }</span>
                 </div>
               </td>
             </tr>

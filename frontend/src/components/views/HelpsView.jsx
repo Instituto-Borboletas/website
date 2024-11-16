@@ -194,7 +194,7 @@ function HelpKindsTable({ helpKinds }) {
               <td className="border p-2 w-1/3 text-lg flex items-center justify-center">
                 <div className="flex flex-col">
                   <span className="text-lg">{ kind.username }</span>
-                  <span className="text-md">{new Date(kind.created_at).toLocaleDateString('pt-br')}</span>
+                  <span className="text-md">{ new Date(kind.createdAt ?? kind.created_at).toLocaleDateString('pt-br') }</span>
                 </div>
               </td>
             </tr>
