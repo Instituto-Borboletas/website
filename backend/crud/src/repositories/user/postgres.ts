@@ -54,6 +54,8 @@ export class PostgresUserRepository implements UserRespository {
   async findByEmailAndPassword(email: string, passwordHash: string): Promise<User | null> {
     try {
       const userDb = await this.conn("users").where({ email, password_hash: passwordHash }).first();
+
+      if (!userDb) return null
       return UserBuilder.fromDB(userDb);
     } catch (error) {
       this.logger.child({ error }).error("Failed to find user by email and password");
