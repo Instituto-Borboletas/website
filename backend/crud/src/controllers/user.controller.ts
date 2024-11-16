@@ -288,4 +288,26 @@ userController.get("/list", authMiddleware("internal"), async (req, res) => {
   res.json(users);
 });
 
+userController.get("/detail/:userId", authMiddleware("internal"), async (req, res) => {
+  try {
+    const { userId } = req.params
+    const userPromise = req.db("users").where("users.id", userId).first()
+    const extraDataPromise = req.extraDataRepository.get(userId)
+    const helpsPromise = req.db("helps").where("helps.created_by", userId)
+    const volunteersPromise = req.db("volunteers").where("volunteers.created_by", userId)
+
+    const [user, helps, volunteers, extraData] = await Promise.all([
+      userPromise,
+      helpsPromise,
+      volunteersPromise,
+      extraDataPromise
+    ])
+
+    return res.json({ ...user, helps, volunteers, extra: extraData })
+  } catch (err) {
+    req.logger.error(err, "error on detail user")
+    return res.json({ error: "internal server error "}).status(500)
+  }
+})
+
 export { userController };

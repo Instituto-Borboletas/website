@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useEffect } from "react";
 import {
   Button,
   Input,
@@ -14,27 +14,18 @@ import {
   FormLabel,
   Spinner,
 } from "@chakra-ui/react"
-import { useInternalData } from "../../../../contexts/internal";
+import { useQuery } from "@tanstack/react-query";
+import { crudApi } from "../../../../utils/api";
 
+async function fetchUserDetail (userId) {
+  const { data } = await crudApi.get(`/users/detail/${userId}`)
+  return data
+}
 export function DetailUserModal({ userId, isOpen, onClose, errorMessage }) {
-  const { users } = useInternalData();
-
-  const [isLoading, setIsLoading] = useState(true);
-  const [user, setUser] = useState(null);
-
-  useEffect(() => {
-    if (!userId) {
-      return;
-    }
-
-    const userData = users.data.find(user => user.id === userId);
-
-    if (userData) {
-      setUser(userData);
-      setIsLoading(false);
-      return;
-    }
-  }, [userId])
+  const { isLoading, data: user, isError } = useQuery({
+    queryFn: () => fetchUserDetail(userId),
+    queryKey: ["detail", userId],
+  })
 
   if (isLoading) {
     return (
@@ -91,7 +82,6 @@ export function DetailUserModal({ userId, isOpen, onClose, errorMessage }) {
           }
 
           {
-
             !user
               ? (
                 <div className="flex justify-center">
@@ -125,6 +115,8 @@ export function DetailUserModal({ userId, isOpen, onClose, errorMessage }) {
                       disabled
                     />
                   </FormControl>
+
+                  { JSON.stringify(user, null, 2) }
                 </>
               )
           }
