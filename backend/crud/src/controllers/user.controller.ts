@@ -56,8 +56,13 @@ userController.get("/me", meMiddleware, async (req, res) => {
 
   const { extra, address } = extraData ?? { extra: {}, address: {} };
 
-  const helpsPromise = req.db("helps").where({ created_by: req.user!.id })
-  const volunteersPromise = req.db("volunteers").where({ created_by: req.user!.id })
+  const helpsPromise = req.db("helps").where("helps.created_by", req.user!.id)
+    .join("helps_kind", "helps_kind.id", "helps.help_kind_id")
+    .select("helps.description", "helps_kind.name as help_kind_name")
+
+  const volunteersPromise = req.db("volunteers").where("volunteers.created_by", req.user!.id)
+    .join("volunteers_kind", "volunteers_kind.id", "volunteers.kind_id")
+    .select("volunteers.name", "volunteers_kind.name as help_kind_name")
 
   const [helps, volunteers] = await Promise.all([helpsPromise, volunteersPromise])
 

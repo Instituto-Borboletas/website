@@ -16,7 +16,7 @@ import { crudApi } from "../../utils/api";
 export default function User() {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
-  const { user, isLoading, logout: logUserOut } = useAuth();
+  const { user, isLoading, logout: logUserOut, fetchUser } = useAuth();
 
   const { isOpen: showExtraDataModal, onOpen: openExtraDataModal, onClose: closeExtraDataModal } = useDisclosure();
 
@@ -58,6 +58,10 @@ export default function User() {
     }
 
   }, [user, isLoading, navigate, searchParams]); user
+
+  useEffect(() => {
+    fetchUser()
+  }, [])
 
   if (isLoading) {
     return <main className="flex flex-1 items-center justify-center">
@@ -117,25 +121,16 @@ export default function User() {
                 <table className="min-w-full rounded border border-1 border-zinc-200">
                   <thead className="bg-zinc-200 text-primary block w-full">
                     <tr className="flex w-full">
-                      <th className="border w-1/3 text-lg">Tipo</th>
-                      <th className="border w-1/3 text-lg">Descrição</th>
-                      <th className="border w-1/3 text-lg">Registro</th>
+                      <th className="border w-1/2 text-lg">Tipo</th>
+                      <th className="border w-1/2 text-lg">Descrição</th>
                     </tr>
                   </thead>
                   <tbody className="bg-white text-center max-h-[36rem] overflow-y-auto block w-full">
                     {
                       user.helps?.map((help) => (
                         <tr key={help.id} className="flex w-full">
-                          <td className="border p-2 w-1/3 text-lg flex items-center justify-center">{help.name}</td>
-                          <td className="border p-2 w-1/3 text-lg flex items-center justify-center">{help.description}</td>
-                          <td className="border p-2 w-1/3 text-lg flex items-center justify-center">
-                            {/*
-                            <div className="flex flex-col">
-                              <span>{ kind.created_by_name }</span>
-                              <span>{ new Date(kind.created_at).toLocaleDateString('pt-br') }</span>
-                            </div>
-                            */}
-                          </td>
+                          <td className="border p-2 w-1/2 text-lg flex items-center justify-center">{help.help_kind_name}</td>
+                          <td className="border p-2 w-1/2 text-lg flex items-center justify-center">{help.description}</td>
                         </tr>
                       ))
                     }
@@ -155,25 +150,16 @@ export default function User() {
                 <table className="min-w-full rounded border border-1 border-zinc-200">
                   <thead className="bg-zinc-200 text-primary block w-full">
                     <tr className="flex w-full">
-                      <th className="border w-1/3 text-lg">Tipo</th>
-                      <th className="border w-1/3 text-lg">Descrição</th>
-                      <th className="border w-1/3 text-lg">Registro</th>
+                      <th className="border w-1/2 text-lg">Tipo</th>
+                      <th className="border w-1/2 text-lg">Descrição</th>
                     </tr>
                   </thead>
                   <tbody className="bg-white text-center max-h-[36rem] overflow-y-auto block w-full">
                     {
                       user.volunteers?.map((volunteer) => (
                         <tr key={volunteer.id} className="flex w-full">
-                          <td className="border p-2 w-1/3 text-lg flex items-center justify-center">{volunteer.name}</td>
-                          <td className="border p-2 w-1/3 text-lg flex items-center justify-center">{volunteer.description}</td>
-                          <td className="border p-2 w-1/3 text-lg flex items-center justify-center">
-                            {/*
-                            <div className="flex flex-col">
-                              <span>{ kind.created_by_name }</span>
-                              <span>{ new Date(kind.created_at).toLocaleDateString('pt-br') }</span>
-                            </div>
-                            */}
-                          </td>
+                          <td className="border p-2 w-1/2 text-lg flex items-center justify-center">{volunteer.help_kind_name}</td>
+                          <td className="border p-2 w-1/2 text-lg flex items-center justify-center">{volunteer.name}</td>
                         </tr>
                       ))
                     }
