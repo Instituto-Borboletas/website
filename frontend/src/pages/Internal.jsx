@@ -84,7 +84,7 @@ export default function Internal() {
   return (
     <InternalProvider>
       <main className="relative flex flex-row w-full">
-        <div className="absolute top-0 right-0 lg:hidden">
+        <div className="absolute top-3 right-3 lg:hidden">
           <Button
             onClick={showSidebar ? closeSidebar : openSidebar}
           >
