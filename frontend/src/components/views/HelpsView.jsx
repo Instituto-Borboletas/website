@@ -57,7 +57,7 @@ export function HelpsView() {
   }
 
   return (
-    <section className="flex flex-col p-2 md:p-10 h-full">
+    <section className="flex flex-col p-4 md:p-10 h-full">
       <h1 className="text-3xl font-bold">Ajudas</h1>
 
       <header className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-2 mt-5">
@@ -107,16 +107,16 @@ export function HelpsView() {
       <footer className="mt-auto">
         <Button
           colorScheme="green"
-          className="w-1/5"
+          className="w-1/3 md:w-1/5"
           onClick={onOpen}
         >
           <Icon as={BiPlus} />
-          <span className="pl-2">Criar tipo de ajuda</span>
+          <span className="pl-2">Criar tipo</span>
         </Button>
 
         <Button
           colorScheme="blue"
-          className="w-1/5 ml-5"
+          className="w-1/2 sm:w-1/3 ml-5"
           onClick={reloadData}
         >
           { !isReloadLoading ? (<Icon as={TbReload} />) : null }
