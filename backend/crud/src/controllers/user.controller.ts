@@ -303,7 +303,7 @@ userController.get("/detail/:userId", authMiddleware("internal"), async (req, re
       extraDataPromise
     ])
 
-    return res.json({ ...user, helps, volunteers, extra: extraData })
+    return res.json({ ...user, helps, volunteers, ...extraData })
   } catch (err) {
     req.logger.error(err, "error on detail user")
     return res.json({ error: "internal server error "}).status(500)

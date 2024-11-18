@@ -1,6 +1,8 @@
 import { useState, useRef } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import {
+  Stack,
+  Spinner,
   Tabs,
   TabList,
   TabPanels,
@@ -18,7 +20,14 @@ import {
   ModalCloseButton,
   FormControl,
   FormLabel,
-  Textarea
+  Textarea,
+  Drawer,
+  DrawerBody,
+  DrawerContent,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerCloseButton,
+  DrawerOverlay,
 } from "@chakra-ui/react";
 import { BiPlus } from "react-icons/bi";
 import { TbReload } from "react-icons/tb";
@@ -137,6 +146,25 @@ export function VolunteersView() {
 }
 
 function VolunteersTable({ volunteers }) {
+  const { isOpen: showDetail, onOpen: openDetail, onClose: closeDetail } = useDisclosure()
+  const [isLoading, setIsLoading] = useState(false)
+  const [isError, setIsError] = useState(false)
+  const [detailData, setDetailData] = useState({})
+
+  async function openDetailModal (volunteer) {
+    openDetail()
+    try {
+      setIsLoading(true)
+      const { data } = await crudApi.get(`/users/detail/${volunteer.createdBy}`)
+      setDetailData({ ...data, volunteer })
+      setIsError(false)
+    } catch (err) {
+      setIsError(err)
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
   if (volunteers.length === 0)
     return ( <p>Nenhum voluntário registrado até o momento.</p>)
 
@@ -144,25 +172,36 @@ function VolunteersTable({ volunteers }) {
     <table className="min-w-full rounded border border-1 border-zinc-200">
       <thead className="bg-zinc-200 text-primary block w-full">
         <tr className="flex w-full">
-          <th className="border w-1/4 text-lg">Nome</th>
-          <th className="border w-1/4 text-lg">Contato</th>
-          <th className="border w-1/4 text-lg">Tipo de voluntariado</th>
-          <th className="border w-1/4 text-lg">Data de registro</th>
+          <th className="border w-1/3 md:w-1/4 text-lg">Nome</th>
+          <th className="border hidden md:block w-1/4 text-lg">Contato</th>
+          <th className="border w-1/3 md:w-1/4 text-lg">Tipo de voluntariado</th>
+          <th className="border w-1/3 md:w-1/4 text-lg">Ações</th>
         </tr>
       </thead>
       <tbody className="bg-white text-center max-h-[36rem] overflow-y-auto block w-full">
         {
           volunteers.map((volunteer) => (
             <tr key={volunteer.id} className="flex w-full">
-              <td className="border p-2 w-1/3 text-lg flex items-center justify-center">{ volunteer.name }</td>
-              <td className="border p-2 w-1/3 text-lg flex items-center justify-center">
+              <td className="border p-2 w-1/3 md:w-1/4 text-lg flex items-center justify-center">{ volunteer.name }</td>
+              <td className="border p-2 hidden md:w-1/4 text-lg md:flex items-center justify-center">
                 <div className="flex flex-col">
                   <span>{ volunteer.phone }</span>
                   <span>{ volunteer.email }</span>
                 </div>
               </td>
-              <td className="border p-2 w-1/3 text-lg flex items-center justify-center">{ volunteer.kindName }</td>
-              <td className="border p-2 w-1/3 text-lg flex items-center justify-center">{new Date(volunteer.createdAt).toLocaleDateString('pt-br')}</td>
+              <td className="border p-2 w-1/3 md:w-1/4 text-lg flex items-center justify-center">{ volunteer.kindName }</td>
+              <td className="border p-2 w-1/3 md:w-1/4 text-lg flex items-center justify-center">
+                <Button colorScheme="blue" size="sm" onClick={() => openDetailModal(volunteer)}>Detalhar</Button>
+
+                <DetailDrawer
+                  isOpen={showDetail}
+                  onClose={closeDetail}
+                  isError={isError}
+                  isLoading={isLoading}
+                  data={detailData}
+                  onConfirm={(...params) => console.info("submit on detail", ...params)}
+                />
+              </td>
             </tr>
           ))
         }
@@ -281,5 +320,100 @@ function CreateVolunteerKindModal({ isOpen, onCancel, onSubmit, onChange = () =>
         </ModalFooter>
       </ModalContent>
     </Modal>
+  )
+}
+
+
+function DetailDrawer({ isOpen, data, onClose, isLoading, isError }) {
+  async function changeStatus() {
+  }
+
+  if (!isOpen) return null
+
+  return (
+    <Drawer
+      blockScrollOnMount={true}
+      isOpen={true}
+      onClose={onClose}
+      motionPreset="slideInBottom"
+      isCentered
+      size="xl"
+      className="md:max-h-[50vh]"
+    >
+
+      <DrawerOverlay />
+      <DrawerContent>
+        <DrawerHeader>Detalhe</DrawerHeader>
+        <DrawerCloseButton />
+        <DrawerBody>
+          {
+            isLoading
+              ? (
+                <Spinner />
+              )
+              : (
+                <>
+                  <h1 className="font-bold text-xl">Dados do voluntário</h1>
+                  <FormControl mt={4}>
+                    <FormLabel>Nome</FormLabel>
+                    <Input disabled value={data.volunteer?.name} />
+                  </FormControl>
+
+                  <FormControl mt={4}>
+                    <FormLabel>Tipo de voluntariado</FormLabel>
+                    <Input disabled value={data.volunteer?.kindName} />
+                  </FormControl>
+
+                  <FormControl mt={4}>
+                    <FormLabel>Contato</FormLabel>
+                    <Input disabled value={data.volunteer?.email || data.email} />
+                    <Input className="mt-2" disabled value={data.volunteer?.phone} />
+                  </FormControl>
+
+                  <FormControl mt={4}>
+                    <FormLabel>Data de registro</FormLabel>
+                    <Input disabled value={new Date(data.volunteer?.createdAt).toLocaleDateString()} />
+                  </FormControl>
+
+                  <h1 className="mt-10 font-bold text-xl">Dados do usuário</h1>
+                  <FormControl mt={4}>
+                    <FormLabel>Nome completo</FormLabel>
+                    <Input disabled value={data.name} />
+                  </FormControl>
+
+                  <FormControl mt={4}>
+                    <FormLabel>Email</FormLabel>
+                    <Input disabled value={data.email} />
+                  </FormControl>
+
+                  <FormControl mt={4}>
+                    <FormLabel>Telefone</FormLabel>
+                    <Input disabled value={data.phone} />
+                  </FormControl>
+                </>
+              )}
+        </DrawerBody>
+
+        <DrawerFooter>
+          {/*
+            <Button
+              colorScheme="blue"
+              variant="solid"
+              onClick={changeStatus}
+            >
+              Salvar
+            </Button>
+          */}
+
+          <Button
+            variant="ghost"
+            onClick={onClose}
+          >
+            Fechar
+          </Button>
+
+        </DrawerFooter>
+      </DrawerContent>
+    </Drawer>
   )
 }
