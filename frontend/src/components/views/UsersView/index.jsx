@@ -311,6 +311,13 @@ function DetailDrawer({ isOpen, data, onClose, isLoading, isError }) {
     }
     return labels[relationString]
   }
+  useEffect(() => {
+    if (!isOpen) return
+    setTimeout(() => {
+      // TODO change for a better fix
+      document.querySelectorAll(".chakra-portal")[2]?.remove()
+    })
+  }, [isOpen])
 
   if (!isOpen) return null
 
