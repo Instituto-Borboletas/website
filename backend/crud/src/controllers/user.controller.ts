@@ -310,4 +310,24 @@ userController.get("/detail/:userId", authMiddleware("internal"), async (req, re
   }
 })
 
+userController.get("/dashboard", authMiddleware("internal"), async (req, res) => {
+  const userCountPromise = req.db("users").where("users.user_type", "external").count()
+  const helpsCountPromise = req.db("helps").count()
+  const volunteersCountPromise = req.db("volunteers").count()
+
+  const [
+    [{ count: userCount }],
+    [{ count: helpCount }],
+    [{ count: volunteerCount }]
+  ] = await Promise.all([
+    userCountPromise, helpsCountPromise, volunteersCountPromise
+  ])
+
+  return res.json({
+    users: userCount,
+    helps: helpCount,
+    volunteers: volunteerCount
+  })
+})
+
 export { userController };

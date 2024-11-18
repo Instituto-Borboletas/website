@@ -5,6 +5,7 @@ services:
       - 5432:5432
     volumes:
       - ./ops/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - pgdata:/var/lib/postgresql/data
     environment:
       - POSTGRES_PASSWORD=postgrespass
       - POSTGRES_USER=postgres
@@ -14,4 +15,11 @@ services:
       interval: 2s
       timeout: 2s
       retries: 30
+    deploy:
+      resources:
+        limits:
+          memory: 512M   # Set memory limit to 512 MB
+          cpus: "0.5"    # Limit to half a CPU core
 
+volumes:
+  pgdata:
