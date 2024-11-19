@@ -412,6 +412,7 @@ export function ExtraDataDrawer({ isEditing = true, currentUserData, isOpen, onC
             <Button
               variant="ghost"
               onClick={onClose}
+              className="mr-5"
             >
               Fechar
             </Button>
