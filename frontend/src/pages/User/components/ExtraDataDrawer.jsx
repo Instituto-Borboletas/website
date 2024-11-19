@@ -243,7 +243,7 @@ export function ExtraDataDrawer({ isEditing = true, currentUserData, isOpen, onC
               </FormControl>
             </Stack>
 
-            <FormControl mt={4}>
+            <div className="mt-4">
               <FormLabel>Possui filhos</FormLabel>
               { /* FIX: on false select, change values of kidChildren and adultChildren to undefined */}
               <Checkbox
@@ -260,7 +260,7 @@ export function ExtraDataDrawer({ isEditing = true, currentUserData, isOpen, onC
               >
                 Menores de 18 anos
               </Checkbox>
-            </FormControl>
+            </div>
 
             {hasAdultChildren && (
               <FormControl mt={4}>
