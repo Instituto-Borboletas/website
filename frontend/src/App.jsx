@@ -62,6 +62,10 @@ function App() {
 
       <main className="py-20">
         <section className="container w-full sm:w-5/6 mx-auto">
+          <img
+            src="/logo.jpeg"
+            className="max-h-[500px] mx-auto py-12"
+          />
           <section id="quem-somos" className="flex flex-col items-center text-center">
             <h1 className="font-bold text-md lg:text-xl xl:text-2xl">Sobre Nós</h1>
             <p className="w-full sm:w-3/5 text-sm sm:text-md lg:text-lg xl:text-xl">
