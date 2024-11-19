@@ -291,7 +291,7 @@ export function ExtraDataDrawer({ isEditing = true, currentUserData, isOpen, onC
                 <option value="-1000">Até R$ 1000</option>
                 <option value="1001-2000">De R$ 1001 até R$ 2000</option>
                 <option value="2001-3000">De R$ 2001 até R$ 5000</option>
-                <option value="5000-">De R$ 2001 até R$ 5000</option>
+                <option value="5000-">Mais R$ 5000</option>
               </Select>
             </FormControl>
 
