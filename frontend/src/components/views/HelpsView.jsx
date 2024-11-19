@@ -151,7 +151,7 @@ function HelpsTable({ helps }) {
     try {
       setIsLoading(true)
       const { data } = await crudApi.get(`/users/detail/${userId}`)
-      setDetailData({ ...data, help })
+      setDetailData({ ...data, help, extra: data.extra ?? {}, address: data.address ?? {} })
       setIsLoading(false)
       setIsError(false)
     } catch (err) {

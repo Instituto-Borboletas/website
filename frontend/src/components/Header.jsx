@@ -21,14 +21,14 @@ export function Header() {
         pathname === "/"
         ? (
           <a onClick={goToTop} className="text-2xl font-bold text-white">
-            <span className="block md:hidden">Borboletas</span>
-            <span className="hidden md:block">Instituto Borboletas</span>
+            <span className="block md:hidden">Borboleta</span>
+            <span className="hidden md:block">Instituto Borboleta</span>
           </a>
         )
         : (
           <Link to="/" className="text-2xl font-bold text-white">
-            <span className="block md:hidden">Borboletas</span>
-            <span className="hidden md:block">Instituto Borboletas</span>
+            <span className="block md:hidden">Borboleta</span>
+            <span className="hidden md:block">Instituto Borboleta</span>
           </Link>
         )
       }

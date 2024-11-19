@@ -69,7 +69,7 @@ function App() {
           <section id="quem-somos" className="flex flex-col items-center text-center">
             <h1 className="font-bold text-md lg:text-xl xl:text-2xl">Sobre Nós</h1>
             <p className="w-full sm:w-3/5 text-sm sm:text-md lg:text-lg xl:text-xl">
-              O Instituto Borboletas é uma organização sem fins lucrativos que tem como objetivo ajudar pessoas vítimas de violência doméstica.
+              O Instituto Borboleta é uma organização sem fins lucrativos que tem como objetivo ajudar pessoas vítimas de violência doméstica.
             </p>
           </section>
 
@@ -93,7 +93,7 @@ function App() {
 
             <div className="w-1/2 xl:w-2/5 flex flex-col text-center justify-center">
               <h2 className="font-bold text-md lg:text-xl xl:text-2xl">Seja voluntário</h2>
-              <p className="text-sm sm:text-md lg:text-lg xl:text-xl">Se você deseja ajudar as pessoas vítimas de violência doméstica, torne-se um voluntário do Instituto Borboletas. </p>
+              <p className="text-sm sm:text-md lg:text-lg xl:text-xl">Se você deseja ajudar as pessoas vítimas de violência doméstica, torne-se um voluntário do Instituto Borboleta. </p>
 
               <Link to="/seja-voluntario" className="bg-primary text-white py-2 px-4 mt-4 rounded-lg xl:text-xl mx-auto">Saiba mais</Link>
             </div>
