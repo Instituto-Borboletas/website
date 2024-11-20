@@ -98,7 +98,7 @@ userController.post("/login", async (req, res) => {
     delete user.userType;
     delete user.passwordHash;
 
-    res.cookie("token", session.id, { httpOnly: true, maxAge: 1000 * 60 * 60 * 12 });
+    res.cookie("token", session.id, { httpOnly: true, maxAge: 1000 * 60 * 60 * 12, sameSite: "none" });
 
     return res.json(user);
   } catch (error) {
