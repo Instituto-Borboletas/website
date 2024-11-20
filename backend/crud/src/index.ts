@@ -34,7 +34,7 @@ const postgresAddressRepository = new PostgresAddressRepository(database, logger
 const postgressExtraDataRepository = new PostgresExtraDataRepository(database, logger);
 
 app.use(cors({
-  origin: ["http://localhost:3000", "http://localhost:5173", "https://institutoborboletas.com"],
+  origin: ["http://localhost:3000", "http://localhost:5173", "https://institutoborboletas.com", "https://institutoborboleta.com"],
   methods: ["GET", "POST", "PUT", "DELETE"],
   allowedHeaders: ["Content-Type", "Authorization"],
   credentials: true,
